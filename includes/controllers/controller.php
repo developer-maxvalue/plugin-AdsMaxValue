@@ -35,4 +35,9 @@ class AAP_Controller
     {
         include AAP_PLUGIN_DIR . 'templates/wallets.php';
     }
+
+    public static function login()
+    {
+        include AAP_PLUGIN_DIR . 'templates/login.php';
+    }
 }

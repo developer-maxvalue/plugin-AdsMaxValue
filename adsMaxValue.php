@@ -48,6 +48,7 @@ function aap_admin_menu() {
     add_submenu_page('aap-dashboard', 'Manage Zones', 'Zones', 'manage_options', 'aap-zones', 'AAP_Controller::zones');
     add_submenu_page('aap-dashboard', 'Reports', 'Reports', 'manage_options', 'aap-reports', 'AAP_Controller::reports');
     add_submenu_page('aap-dashboard', 'Wallets', 'Wallets', 'manage_options', 'aap-wallets', 'AAP_Controller::wallets');
+    add_submenu_page('aap-dashboard', 'Logins', 'Login', 'manage_options', 'aap-login', 'AAP_Controller::login');
 }
 add_action('admin_menu', 'aap_admin_menu');
 
