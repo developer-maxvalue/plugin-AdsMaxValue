@@ -4,12 +4,14 @@ class AAP_Controller
     public static function create_tables()
     {
         AAP_Model_Zones::create_table();
+        AAP_Model_Users::create_table();
         // Tạo thêm các bảng khác nếu cần
     }
 
     public static function drop_tables()
     {
         AAP_Model_Zones::aap_uninstall();
+        AAP_Model_Users::aap_uninstall();
     }
 
     public static function dashboard()
@@ -38,6 +40,31 @@ class AAP_Controller
 
     public static function login()
     {
+        if (is_user_logged_in()) {
+            $user_id = get_current_user_id();
+
+            $token = get_user_meta($user_id, 'jwt_token', true);
+
+            if ($token) {
+                wp_redirect(admin_url('admin.php?page=aap-dashboard'));
+                exit;
+            }
+        }
+
         include AAP_PLUGIN_DIR . 'templates/login.php';
+    }
+
+    public static function logout()
+    {
+        if (is_user_logged_in()) {
+            $user_id = get_current_user_id();
+
+            delete_user_meta($user_id, 'jwt_token');
+
+            wp_logout();
+        }
+
+        wp_redirect(home_url('/login'));
+        exit;
     }
 }
