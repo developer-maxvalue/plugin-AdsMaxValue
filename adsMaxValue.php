@@ -17,6 +17,7 @@ define( 'AAP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'AAP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 require_once plugin_dir_path(__FILE__) . 'includes/controllers/controller.php';
 require_once plugin_dir_path(__FILE__) . 'includes/models/zones.php';
+require_once plugin_dir_path(__FILE__) . 'includes/models/users.php';
 
 // Tự động tải các file cần thiết
 function aap_autoload($class_name) {
