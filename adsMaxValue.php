@@ -47,10 +47,12 @@ register_uninstall_hook(__FILE__, 'aap_uninstall');
 
 // Tạo các mục menu trong admin
 function aap_admin_menu() {
-    add_menu_page('Dashboard', 'Ad MaxValue', 'manage_options', 'aap-dashboard', 'AAP_Controller::dashboard', 'dashicons-welcome-widgets-menus');
+    add_menu_page('Ad MaxValue', 'Ad MaxValue', 'manage_options', 'aap-dashboard', 'AAP_Controller::dashboard', 'dashicons-welcome-widgets-menus');
     add_submenu_page('aap-dashboard', 'Manage Zones', 'Zones', 'manage_options', 'aap-zones', 'AAP_Controller::zones');
     add_submenu_page('aap-dashboard', 'Reports', 'Reports', 'manage_options', 'aap-reports', 'AAP_Controller::reports');
     add_submenu_page('aap-dashboard', 'Wallets', 'Wallets', 'manage_options', 'aap-wallets', 'AAP_Controller::wallets');
+    add_submenu_page('aap-dashboard', 'Ads.txt', 'Ads.txt', 'manage_options', 'aap-adstxt', 'AAP_Controller::adsTxt');
+    add_submenu_page('aap-dashboard', 'Referral', 'Referral', 'manage_options', 'aap-referral', 'AAP_Controller::referral');
     add_submenu_page('aap-dashboard', 'Logins', 'Login', 'manage_options', 'aap-login', 'AAP_Controller::login');
 }
 
