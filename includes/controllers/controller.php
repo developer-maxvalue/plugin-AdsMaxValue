@@ -146,6 +146,8 @@ class AAP_Controller
 
                 update_user_meta($user_id, 'jwt_token', $data['token']);
 
+                set_transient('user_info', $data, 12 * HOUR_IN_SECONDS);
+
                 wp_redirect(admin_url('admin.php?page=aap-dashboard'));
                 exit;
             } else {
@@ -167,6 +169,7 @@ class AAP_Controller
             $user_id = get_current_user_id();
 
             delete_user_meta($user_id, 'jwt_token');
+            delete_transient('user_info');
 
             wp_logout();
         }
