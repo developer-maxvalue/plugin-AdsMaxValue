@@ -104,15 +104,6 @@ class AAP_Controller
 
     public static function login()
     {
-        if (is_user_logged_in()) {
-            $user_id = get_current_user_id();
-
-            if (AAP_Model_Users::user_has_valid_token($user_id)) {
-                wp_redirect(admin_url('admin.php?page=aap-dashboard'));
-                exit;
-            }
-        }
-
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $email = sanitize_email($_POST['email']);
             $password = sanitize_text_field($_POST['password']);
@@ -135,24 +126,22 @@ class AAP_Controller
             $body = wp_remote_retrieve_body($response);
             $data = json_decode($body, true);
 
-            if (!empty($data['token'])) {
-                $user = AAP_Model_Users::get_user_by_email($email);
+            print_r($data);
 
-                if ($user) {
-                    AAP_Model_Users::update_user_token($email, $data['token']);
-                } else {
-                    AAP_Model_Users::insert_user($user_id, $email, $password, $data['token']);
-                }
+            // if (!empty($data['token'])) {
+            //     $user = AAP_Model_Users::get_user_by_email($email);
 
-                update_user_meta($user_id, 'jwt_token', $data['token']);
+            //     if ($user) {
+            //         AAP_Model_Users::update_user_token($email, $data['token']);
+            //     } else {
+            //         AAP_Model_Users::insert_user($email, $password, $data['token']);
+            //     }
 
-                set_transient('user_info', $data, 12 * HOUR_IN_SECONDS);
-
-                wp_redirect(admin_url('admin.php?page=aap-dashboard'));
-                exit;
-            } else {
-                echo 'Login failed: Invalid credentials or API error';
-            }
+            //     echo json_encode(array('token' => $data['token'], 'user_info' => $data['user'], 'redirect' => admin_url('admin.php?page=aap-dashboard')));
+            //     exit;
+            // } else {
+            //     echo 'Login failed: Invalid credentials or API error';
+            // }
         }
 
         include AAP_PLUGIN_DIR . 'templates/login.php';
@@ -170,11 +159,9 @@ class AAP_Controller
 
             delete_user_meta($user_id, 'jwt_token');
             delete_transient('user_info');
-
-            wp_logout();
         }
 
-        wp_redirect(home_url('/login'));
+        include AAP_PLUGIN_DIR . 'templates/logout.php';
         exit;
     }
 }

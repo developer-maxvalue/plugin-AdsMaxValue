@@ -43,9 +43,6 @@
 </style>
 
 <div class="container page-sign">
-    <div class="logout-section">
-        <a href="<?php echo wp_logout_url(home_url()); ?>" class="btn btn-danger">Logout</a>
-    </div>
     <div class="card card-sign">
         <div class="card-header" style="background-color: unset; border-bottom: 0; padding: 2rem 1rem 0;">
             <a href="<?php echo home_url('/'); ?>" class="header-logo mb-4">MaxValue</a>
@@ -83,3 +80,41 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        document.querySelector("form").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            var email = document.getElementById("email").value;
+            var password = document.getElementById("password").value;
+
+            fetch('https://stg-publisher.maxvalue.media/api/login-jwt', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log("data == ", data);
+                    
+                    // if (data.token) {
+                    //     localStorage.setItem('jwt_token', data.token);
+                    //     localStorage.setItem('user_info', JSON.stringify(data.user));
+                    //     window.location.href = '<?php echo admin_url('admin.php?page=aap-dashboard'); ?>';
+                    // } else {
+                    //     alert(data.message || 'Login failed');
+                    // }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('There was an error with the login request.');
+                });
+        });
+    });
+</script>
