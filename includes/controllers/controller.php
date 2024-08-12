@@ -69,6 +69,11 @@ class AAP_Controller
         include AAP_PLUGIN_DIR . 'templates/reports.php';
     }
 
+    public static function adsTxt()
+    {
+        include AAP_PLUGIN_DIR . 'templates/adsTxt.php';
+    }
+
     public static function wallets()
     {
         include AAP_PLUGIN_DIR . 'templates/wallets.php';
