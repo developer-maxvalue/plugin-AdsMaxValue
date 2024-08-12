@@ -146,6 +146,11 @@ class AAP_Controller
         include AAP_PLUGIN_DIR . 'templates/login.php';
     }
 
+    public static function referral()
+    {
+        include AAP_PLUGIN_DIR . 'templates/referral.php';
+    }
+
     public static function logout()
     {
         if (is_user_logged_in()) {

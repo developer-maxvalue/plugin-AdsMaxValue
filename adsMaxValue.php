@@ -52,6 +52,7 @@ function aap_admin_menu() {
     add_submenu_page('aap-dashboard', 'Reports', 'Reports', 'manage_options', 'aap-reports', 'AAP_Controller::reports');
     add_submenu_page('aap-dashboard', 'Wallets', 'Wallets', 'manage_options', 'aap-wallets', 'AAP_Controller::wallets');
     add_submenu_page('aap-dashboard', 'Ads.txt', 'Ads.txt', 'manage_options', 'aap-adstxt', 'AAP_Controller::adsTxt');
+    add_submenu_page('aap-dashboard', 'Referral', 'Referral', 'manage_options', 'aap-referral', 'AAP_Controller::referral');
     add_submenu_page('aap-dashboard', 'Logins', 'Login', 'manage_options', 'aap-login', 'AAP_Controller::login');
 }
 
