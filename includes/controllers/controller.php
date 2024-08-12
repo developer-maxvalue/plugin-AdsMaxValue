@@ -25,8 +25,18 @@ class AAP_Controller
             return;
         }
 
-        $api_url = 'https://stg-publisher.maxvalue.media/api/dashboard';
+        $website_id = isset($_GET['website_id']) ? sanitize_text_field($_GET['website_id']) : '';
+        $date_option = isset($_GET['date_option']) ? sanitize_text_field($_GET['date_option']) : '';
+        $start = isset($_GET['start']) ? sanitize_text_field($_GET['start']) : '';
+        $end = isset($_GET['end']) ? sanitize_text_field($_GET['end']) : '';
 
+        $api_url = add_query_arg(array(
+            'website_id' => $website_id,
+            'date_option' => $date_option,
+            'start' => $start,
+            'end' => $end,
+        ), 'https://stg-publisher.maxvalue.media/api/dashboard');
+    
         $args = array(
             'headers' => array(
                 'Authorization' => 'Bearer ' . $token,

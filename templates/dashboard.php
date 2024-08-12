@@ -299,8 +299,12 @@
                     <div class="col-md-5 col-sm-12 report-via"
                         style="display: flex; align-items: center; gap: 10px; padding: 0;">
                         <div class="form-check form-switch" style="display: flex; align-items: center">
-                            <input style="font-size: 20px; margin-left: -34px" id="emailCheckbox"
-                                class="form-check-input switchUpdate" type="checkbox" role="switch" <?php echo $dashboardData['sent_email'] ? 'checked' : ''; ?>>
+                            <input style="font-size: 20px; margin-left: -34px"
+                                id="emailCheckbox"
+                                class="form-check-input"
+                                type="checkbox"
+                                role="switch"
+                                <?php echo $dashboardData['sent_email'] ? 'checked' : ''; ?>>
                             <label style="margin-top: 3px" class="form-check-label ms-2" for="switch">
                                 Get Report via Email
                             </label>
@@ -489,6 +493,14 @@
 
                 form.submit();
             }
+
+            function clickDownloadReport() {
+                let searchParams = new URLSearchParams(window.location.search);
+                var websiteId = document.querySelector('select[name="website_id"]').value;
+                var exportUrl = "https://stg-publisher.maxvalue.media" + "?website_id=" + websiteId + "&start=" +
+                    searchParams.get('start') + "&end=" + searchParams.get('end');
+                window.open(exportUrl, '_blank');
+            }
         </script>
 
         <script type="text/javascript">
@@ -506,6 +518,37 @@
                     multiSelectRegion: true
                 });
             });
+        </script>
+
+        <script>
+            document.getElementById("emailCheckbox").addEventListener("click", function() {
+                var emailCheckbox = document.getElementById("emailCheckbox");
+                var emailCheckboxValue = emailCheckbox.checked ? 1 : 0;
+                updateSendMail(emailCheckboxValue);
+            });
+
+            function updateSendMail(emailChecked) {
+                $("#loader").show();
+
+                $.ajax({
+                    url: "https://stg-publisher.maxvalue.media/dashboard/send-email",
+                    method: "PUT",
+                    headers: {
+                        'Authorization': 'Bearer <?php echo get_user_meta(get_current_user_id(), "jwt_token", true); ?>',
+                    },
+                    data: {
+                        sendMail: emailChecked
+                    },
+                    success: function(response) {
+                        $("#loader").hide();
+                        console.log("API call successful", response);
+                    },
+                    error: function(xhr, status, error) {
+                        $("#loader").hide();
+                        console.error("API call failed:", error);
+                    }
+                });
+            }
         </script>
 
         <script>

@@ -54,6 +54,8 @@ function aap_admin_menu() {
     add_submenu_page('aap-dashboard', 'Logins', 'Login', 'manage_options', 'aap-login', 'AAP_Controller::login');
 }
 
+
+
 function register_webhook()
 {
     add_action('rest_api_init', function () {
@@ -105,4 +107,18 @@ function aap_enqueue_assets() {
     wp_enqueue_style('aap-admin-css', AAP_PLUGIN_URL . 'assets/css/admin.css');
     wp_enqueue_script('aap-admin-js', AAP_PLUGIN_URL . 'assets/js/admin.js', array('jquery'), null, true);
 }
+
+function update_send_mail() {
+    check_ajax_referer('update_send_mail_nonce', 'nonce');
+
+    $send_mail = isset($_POST['sendMail']) ? intval($_POST['sendMail']) : 0;
+
+    $user_id = get_current_user_id();
+    update_user_meta($user_id, 'send_mail', $send_mail);
+
+    wp_send_json_success(array('message' => 'Send mail status updated successfully.'));
+}
+
 add_action('admin_enqueue_scripts', 'aap_enqueue_assets');
+add_action('wp_ajax_update_send_mail', 'update_send_mail');
+add_action('wp_ajax_nopriv_update_send_mail', 'update_send_mail');
