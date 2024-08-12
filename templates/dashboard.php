@@ -1,8 +1,10 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js" integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <style>
@@ -30,22 +32,15 @@
         </div>
     </div>
     <div class="row g-3 justify-content-center mb-4">
-        <div class="col-md-6 col-xl">
+        <div class="col-md-3 col-xl">
             <div class="card card-one">
                 <div class="card-body">
-                    <div class="row">
-                        <div class="col-7">
-                            <h3 class="card-value mb-1">$<?= number_format($dashboardData['revenueYesterday'] ?? 0, 2) ?></h3>
-                            <label class="card-title fw-medium text-dark mb-1">Yesterday Earning</label>
-                        </div>
-                        <div class="col-5">
-                            <div id="apexChart1"></div>
-                        </div>
-                    </div>
+                    <h3 class="card-value mb-1">$<?= number_format($dashboardData['revenueYesterday'] ?? 0, 2) ?></h3>
+                    <label class="card-title fw-medium text-dark mb-1">Yesterday Earning</label>
                 </div>
             </div>
         </div>
-        <div class="col-md-6 col-xl">
+        <div class="col-md-3 col-xl">
             <div class="card card-one">
                 <div class="card-body">
                     <div class="row">
@@ -60,7 +55,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6 col-xl">
+        <div class="col-md-3 col-xl">
             <div class="card card-one">
                 <div class="card-body">
                     <div class="row">
@@ -75,7 +70,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6 col-xl">
+        <div class="col-md-3 col-xl">
             <div class="card card-one">
                 <div class="card-body">
                     <div class="row">
@@ -93,7 +88,7 @@
         </div>
 
         <div class="col-md-12 col-xl-12">
-            <div class="card card-one">
+            <div class="card card-one" style="max-width: unset;">
                 <div class="card-body">
                     <form action="<?php echo esc_url(admin_url('admin.php')); ?>" class="searchReport" method="GET">
                         <input type="hidden" name="page" value="aap-dashboard">
@@ -258,196 +253,31 @@
 
     </div>
 
-    <!-- <div class="card card-one mt-3">
-        <div class="card-body p-3">
-            <div class="row justify-content-end p-3">
-                <div class="col-md-7 col-sm-12" style="padding-left: 0px;">
-                    <form action="{{ route('user.dashboard.index') }}" class="searchReport" method="GET">
-                        <input type="hidden" name="date_option" value="{{ request('date_option') }}">
-                        <input type="hidden" name="start" value="{{ request('start') }}">
-                        <input type="hidden" name="end" value="{{ request('end') }}">
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <select id="searchWebsite" class="form-select form-control" name="website_id">
-                                    <option value="null">-Website-</option>
-                                    @foreach ($websites as $website)
-                                    <option value="{{ $website->id }}" {{ request('website_id') == $website->id ? 'selected' : '' }}>
-                                        {{ $website->name }}
-                                    </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-sm-3">
-                                <input type="text" class="form-control" id="select_date" readonly>
-                            </div>
-                            <div class="col-sm-6">
-                                <div class="form-group">
-                                    <button type="button" class="btn btn-outline-primary generate" onclick="clickSearchReport(this)"> Generate
-                                    </button>
-                                    <button style="min-width: 130px" type="button" class="btn btn-outline-success download" onclick="clickDownloadReport()">
-                                        <i class="ri-download-2-fill"></i> Download
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="col-md-5 col-sm-12 report-via" style="display: flex; align-items: center; gap: 10px; padding: 0;">
-                    <div class="form-check form-switch" style="display: flex; align-items: center">
-                        <input style="font-size: 20px; margin-left: -34px" id="emailCheckbox" class="form-check-input switchUpdate" type="checkbox" role="switch" <?php echo $user->sent_email ? 'checked' : ''; ?>>
-                        <label style="margin-top: 3px" class="form-check-label ms-2" for="switch">
-                            Get Report via Email
-                        </label>
-                    </div>
-                </div>
-            </div>
-            <div class="table-responsive" id="table-report">
-                <table class="table table-hover table-four table-bordered">
-                    <thead>
-                        <tr>
-                            <th scope="col" class="textCenter">Date</th>
-                            <th scope="col" class="textCenter">Website</th>
-                            <th scope="col" class="textCenter cpm_sort">Impressions</th>
-                            <th scope="col" class="textCenter cpm_sort">eCPM</th>
-                            <th scope="col" class="textCenter revenue_sort">Revenue</th>
-                            <th scope="col" class="textCenter">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @php
-                        use Carbon\Carbon;
+    <script>
+        jQuery(document).ready(function($) {
+            $("#websiteSearch").select2({
+                placeholder: "- Website -",
+                allowClear: true,
+            });
 
-                        $currentDate = Carbon::today();
-                        $yesterday = Carbon::yesterday();
-                        $threeDaysAgo = Carbon::now()->subDays(3);
-                        $currentHourUTC = Carbon::now('UTC')->hour;
-                        $previousDate = null;
-                        $rowspanCount = 0;
-                        @endphp
-                        @foreach ($items as $index => $itemReportSite)
-                        @if (
-                        $isNewPub &&
-                        $currentHourUTC < \App\Models\ReportModel::REPORT_DAILY_TIME && ($itemReportSite->date == $yesterday->toDateString() ||
-                            $itemReportSite->date == $currentDate->toDateString() ||
-                            $itemReportSite->total_impressions == 0))
-                            @else
-                            @php
-                            $currentDate = $itemReportSite->date;
-                            $rowspanCount = $items->where('date', $currentDate)->count();
-                            @endphp
-
-                            @if ($currentDate !== $previousDate)
-                            <tr>
-                                <td class="textCenter" rowspan="{{ $rowspanCount }}" style="vertical-align: middle;">{{ $itemReportSite->date }}
-                                </td>
-                                <td class="textCenter">
-                                    <div>{{ $itemReportSite->websiteName }}</div>
-                                </td>
-                                <td class="textCenter">
-                                    {{ number_format($itemReportSite->total_impressions ?? 0) }}
-                                </td>
-                                <td class="textCenter">
-                                    @if ($itemReportSite->date != \Carbon\Carbon::today()->toDateString() && $itemReportSite->average_cpm != 0)
-                                    {{ number_format($itemReportSite->average_cpm ?? 0, 2) }}
-                                    @endif
-                                </td>
-                                <td class="textCenter">
-                                    @if ($itemReportSite->date != \Carbon\Carbon::today()->toDateString() && $itemReportSite->total_revenue != 0)
-                                    ${{ number_format($itemReportSite->total_revenue, 2, '.', ',') }}
-                                    @endif
-                                </td>
-                                <td class="textCenter">
-                                    @if (
-                                    ($itemReportSite->date <= $threeDaysAgo->toDateString() && $itemReportSite->status) ||
-                                        (isset($itemReportSite->status_display) && $itemReportSite->status_display))
-                                        <span class="badge bg-success">Confirmed</span>
-                                        @elseif (isset($itemReportSite->status_display) && !$itemReportSite->status_display)
-                                        <span class="badge bg-warning">Validating</span>
-                                        <i class="ri-error-warning-fill" data-bs-toggle="tooltip" data-bs-placement="top" title="This is not your final data"></i>
-                                        @else
-                                        @endif
-                                </td>
-                            </tr>
-                            @else
-                            <tr>
-                                <td class="textCenter">
-                                    <div>{{ $itemReportSite->websiteName }}</div>
-                                </td>
-                                <td class="textCenter">
-                                    {{ number_format($itemReportSite->total_impressions ?? 0) }}
-                                </td>
-                                <td class="textCenter">
-                                    @if ($itemReportSite->date != \Carbon\Carbon::today()->toDateString() && $itemReportSite->average_cpm != 0)
-                                    {{ number_format($itemReportSite->average_cpm ?? 0, 2) }}
-                                    @endif
-                                </td>
-                                <td class="textCenter">
-                                    @if ($itemReportSite->date != \Carbon\Carbon::today()->toDateString() && $itemReportSite->total_revenue != 0)
-                                    ${{ number_format($itemReportSite->total_revenue, 2, '.', ',') }}
-                                    @endif
-                                </td>
-                                <td class="textCenter">
-                                    @if (
-                                    ($itemReportSite->date <= $threeDaysAgo->toDateString() && $itemReportSite->status) ||
-                                        (isset($itemReportSite->status_display) && $itemReportSite->status_display))
-                                        <span class="badge bg-success">Confirmed</span>
-                                        @elseif (isset($itemReportSite->status_display) && !$itemReportSite->status_display)
-                                        <span class="badge bg-warning">Validating</span>
-                                        <i class="ri-error-warning-fill" data-bs-toggle="tooltip" data-bs-placement="top" title="This is not your final data"></i>
-                                        @else
-                                        @endif
-                                </td>
-                            </tr>
-                            @endif
-
-                            @php
-                            $previousDate = $currentDate;
-                            @endphp
-                            @endif
-                            @endforeach
-                            @if (
-                            ($countItem['totalImpressions'] == 0 && $countItem['averageCPM'] == 0 && $countItem['totalChangeRevenue'] == 0) ||
-                            ($isNewPub && $currentHourUTC < \App\Models\ReportModel::REPORT_DAILY_TIME)) @else <tr style="font-weight: bold">
-                                <td class="textCenter" scope="row" data-column="Date">Total</td>
-                                <td></td>
-                                <td class="textCenter">
-                                    {{ empty($countItem['totalImpressions']) ? 0 : number_format($countItem['totalImpressions']) }}
-                                </td>
-                                <td class="textCenter">
-                                    {{ empty($countItem['averageCPM']) ? 0 : round($countItem['averageCPM'], 2) }}
-                                </td>
-                                <td class="textCenter">
-                                    ${{ empty($countItem['totalChangeRevenue']) ? 0 : number_format($countItem['totalChangeRevenue'], 2, '.', ',') }}
-                                </td>
-                                <td></td>
-                                </tr>
-                                @endif
-                    </tbody>
-                </table>
-                <div>
-                    @include('publisher.common.footer_table')
-                </div>
-            </div>
-        </div>
-    </div> -->
+            $('#websiteSearch').one('select2:open', function(e) {
+                $('input.select2-search__field').prop('placeholder', 'Search...');
+            });
+        });
+    </script>
 
     <script>
         function clickSearchReport(button) {
-            // Get the current URL
             let searchParams = new URLSearchParams(window.location.search);
             var url = new URL(window.location.href);
 
-            // Update URL parameters
             url.searchParams.set("start", searchParams.get('start'));
             url.searchParams.set("end", searchParams.get('end'));
 
-            // Find the closest form element to the button clicked
             var form = button.closest('form.searchReport');
 
-            // Set the form action attribute
             form.action = url.href;
 
-            // Submit the form
             form.submit();
         }
     </script>
