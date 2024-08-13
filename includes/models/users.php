@@ -34,22 +34,40 @@ class AAP_Model_Users
         $wpdb->query($sql);
     }
 
-    public static function insert_user($email, $password, $token = null)
+    public static function insert_user($user_id, $email, $password, $token = null)
     {
         global $wpdb;
         $table_name = $wpdb->prefix . 'mv_users';
-        $wpdb->insert(
-            $table_name,
-            array(
-                'email' => $email,
-                'password' => $password,
-                'token' => $token
-            )
-        );
 
-        if ($wpdb->last_error) {
-            error_log("Error inserting user into $table_name: " . $wpdb->last_error);
+        $inserted = $wpdb->insert($table_name, [
+            'user_id' => $user_id,
+            'email' => $email,
+            'password' => wp_hash_password($password),
+            'token' => $token,
+        ]);
+
+        if (false === $inserted) {
+            error_log('Failed to insert user: ' . $wpdb->last_error);
         }
+
+        return $inserted;
+    }
+
+    public static function update_user($user_id, $email, $token)
+    {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'mv_users';
+
+        $updated = $wpdb->update($table_name, [
+            'user_id' => $user_id,
+            'token' => $token,
+        ], ['email' => $email]);
+
+        if (false === $updated) {
+            error_log('Failed to update user: ' . $wpdb->last_error);
+        }
+
+        return $updated;
     }
 
     public static function get_users()
@@ -70,15 +88,7 @@ class AAP_Model_Users
     {
         global $wpdb;
         $table_name = $wpdb->prefix . 'mv_users';
-        $wpdb->update(
-            $table_name,
-            array('token' => $token),
-            array('email' => $email)
-        );
-
-        if ($wpdb->last_error) {
-            error_log("Error updating token for user $email in $table_name: " . $wpdb->last_error);
-        }
+        return $wpdb->update($table_name, ['token' => $token], ['email' => $email]);
     }
 
     public static function get_user_token_by_user_id($user_id)

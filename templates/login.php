@@ -101,15 +101,36 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    console.log("data == ", data);
-                    
-                    // if (data.token) {
-                    //     localStorage.setItem('jwt_token', data.token);
-                    //     localStorage.setItem('user_info', JSON.stringify(data.user));
-                    //     window.location.href = '<?php echo admin_url('admin.php?page=aap-dashboard'); ?>';
-                    // } else {
-                    //     alert(data.message || 'Login failed');
-                    // }
+                    let res = data.data;
+                    if (data.success) {
+                        fetch('<?php echo admin_url('admin-ajax.php?action=aap_save_user_data'); ?>', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    email: email,
+                                    password: password,
+                                    token: res.token,
+                                    user_id: res.user
+                                })
+                            })
+                            .then(response => response.json())
+                            .then(serverData => {
+                                if (serverData.success) {
+                                    localStorage.setItem('jwt_token', res.token);
+                                    localStorage.setItem('user_info', JSON.stringify(res.user));
+                                    window.location.href = '<?php echo admin_url('admin.php?page=aap-dashboard'); ?>';
+                                } else {
+                                    alert('Failed to save user data: ' + serverData.message);
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error saving user data:', error);
+                            });
+                    } else {
+                        alert(res.message || 'Login failed');
+                    }
                 })
                 .catch(error => {
                     console.error('Error:', error);
