@@ -6,24 +6,29 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js" integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-<div class="wrap">
-    <div class="d-flex align-items-center justify-content-between mb-4">
-        <div>
-            <h4 class="main-title mb-0">Ads.Txt Configuration</h4>
-            <p>You have successfully uploaded ads.txt on your website</p>
+<?php
+include_once 'base.php';
+?>
+<div id="content-wrapper" style="display:none;">
+    <div class="wrap">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h4 class="main-title mb-0">Ads.Txt Configuration</h4>
+                <p>You have successfully uploaded ads.txt on your website</p>
+            </div>
         </div>
-    </div>
-    <div class="row mb-3">
-        <form method="POST">
-            <div class="mb-3">
-                <textarea class="form-control" id="adsTxt" name="adsTxt" rows="10">
+        <div class="row mb-3">
+            <form method="POST">
+                <div class="mb-3">
+                    <textarea class="form-control" id="adsTxt" name="adsTxt" rows="10">
                     <?php print(trim($contentAdsTxt ?? '')); ?>
                 </textarea>
-                <p class="mt-3">The file is available on <a href='<?php echo (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']
-                        === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST']?>/ads.txt' target="_blank"><?php echo (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']
-                            === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST']?>/ads.txt</a> .</p>
-            </div>
-            <button type="submit" class="btn btn-primary mb-3">Update</button>
-        </form>
+                    <p class="mt-3">The file is available on <a href='<?php echo (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']
+                                                                            === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'] ?>/ads.txt' target="_blank"><?php echo (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']
+                                                                                                                    === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'] ?>/ads.txt</a> .</p>
+                </div>
+                <button type="submit" class="btn btn-primary mb-3">Update</button>
+            </form>
+        </div>
     </div>
 </div>

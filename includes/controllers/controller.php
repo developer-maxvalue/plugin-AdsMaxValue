@@ -19,14 +19,12 @@ class AAP_Controller
         $user_id = get_user_meta(get_current_user_id(), 'api_user_id', true);
 
         if (!$user_id) {
-            wp_redirect(admin_url('admin.php?page=aap-login'));
             exit;
         }
 
         $token = get_user_meta($user_id, 'jwt_token', true);
 
         if (!$token) {
-            wp_redirect(admin_url('admin.php?page=aap-login'));
             exit;
         }
 

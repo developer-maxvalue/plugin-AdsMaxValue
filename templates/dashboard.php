@@ -46,239 +46,86 @@
         }
     }
 </style>
-<div class="wrap">
-    <div class="d-flex align-items-center justify-content-between mb-4">
-        <div>
-            <h4 class="main-title mb-0">Welcome to Dashboard</h4>
-        </div>
-    </div>
-    <div class="row g-3 justify-content-center mb-4">
-        <div class="col-md-3 col-xl">
-            <div class="card card-one">
-                <div class="card-body">
-                    <h3 class="card-value mb-1">$<?= number_format($dashboardData['revenueYesterday'] ?? 0, 2) ?></h3>
-                    <label class="card-title fw-medium text-dark mb-1">Yesterday Earning</label>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 col-xl">
-            <div class="card card-one">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-7">
-                            <h3 class="card-value mb-1">$<?= number_format($dashboardData['revenueThisMonth'] ?? 0, 2) ?></h3>
-                            <label class="card-title fw-medium text-dark mb-1">This Month</label>
-                        </div>
-                        <div class="col-5">
-                            <div id="apexChart2"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 col-xl">
-            <div class="card card-one">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-7">
-                            <h3 class="card-value mb-1">$<?php echo number_format($dashboardData['revenueLastMonth'] ?? 0, 2); ?></h3>
-                            <label class="card-title fw-medium text-dark mb-1">Last Month</label>
-                        </div>
-                        <div class="col-5">
-                            <div id="apexChart3"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-3 col-xl">
-            <div class="card card-one">
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-7">
-                            <h3 class="card-value mb-1">
-                                $<?= number_format($dashboardData['totalReport'] ?? 0, 2) ?></h3>
-                            <label class="card-title fw-medium text-dark mb-1">Total Earning</label>
-                        </div>
-                        <div class="col-5">
-                            <div id="apexChart03"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
-        <div class="col-md-12 col-xl-12">
-            <div class="card card-one unsetWidth">
-                <div class="card-body">
-                    <form action="<?php echo esc_url(admin_url('admin.php')); ?>" class="searchReport" method="GET">
-                        <input type="hidden" name="page" value="aap-dashboard">
-                        <input type="hidden" name="date_option" value="<?php echo isset($_GET['date_option']) ? esc_attr($_GET['date_option']) : ''; ?>">
-                        <input type="hidden" name="start" value="<?php echo isset($_GET['start']) ? esc_attr($_GET['start']) : ''; ?>">
-                        <input type="hidden" name="end" value="<?php echo isset($_GET['end']) ? esc_attr($_GET['end']) : ''; ?>">
+<?php
+
+include_once 'base.php';
+
+?>
+<div id="content-wrapper" style="display:none;">
+    <div class="wrap">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <div>
+                <h4 class="main-title mb-0">Welcome to Dashboard</h4>
+            </div>
+        </div>
+        <div class="row g-3 justify-content-center mb-4">
+            <div class="col-md-3 col-xl">
+                <div class="card card-one">
+                    <div class="card-body">
+                        <h3 class="card-value mb-1">$<?= number_format($dashboardData['revenueYesterday'] ?? 0, 2) ?></h3>
+                        <label class="card-title fw-medium text-dark mb-1">Yesterday Earning</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 col-xl">
+                <div class="card card-one">
+                    <div class="card-body">
                         <div class="row">
-                            <div class="col-md-3 col-sm-3">
-                                <select id="websiteSearch" class="form-select form-control" name="website_id">
-                                    <option value="null">-Website-</option>
-                                    <?php if (!empty($dashboardData['websites'])) : ?>
-                                        <?php foreach ($dashboardData['websites'] as $website) : ?>
-                                            <option value="<?php echo esc_attr($website['id']); ?>" <?php echo isset($_GET['website_id']) && $_GET['website_id'] == $website['id'] ? 'selected' : ''; ?>>
-                                                <?php echo esc_html($website['name']); ?>
-                                            </option>
-                                        <?php endforeach; ?>
-                                    <?php endif; ?>
-                                </select>
+                            <div class="col-7">
+                                <h3 class="card-value mb-1">$<?= number_format($dashboardData['revenueThisMonth'] ?? 0, 2) ?></h3>
+                                <label class="card-title fw-medium text-dark mb-1">This Month</label>
                             </div>
-                            <div class="col-md-3 col-sm-3">
-                                <input type="text" class="form-control" id="date_select" readonly>
+                            <div class="col-5">
+                                <div id="apexChart2"></div>
                             </div>
-                            <div class="col-md-4 col-sm-6">
-                                <div class="form-group">
-                                    <button type="button" class="btn btn-outline-primary generate" onclick="clickSearchReport(this)"> Generate
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-md-12 col-lg-12 col-xl-12">
-            <div class="card card-one unsetWidth">
-                <div class="card-header" style="display: flex;justify-content: space-between;align-items: center;">
-                    <h6 class="card-title">Revenue Chart</h6>
-                </div>
-                <div class="card-body" style="padding-bottom: 0">
-                    <div id="chart_custom" class="apex-chart-nine"></div>
-                </div>
-                <h6 class="text-center text-danger" style="padding-bottom: 6px">
-                    We do need 1- 3 weeks to integrate our demands to optimize your revenue.
-                </h6>
-            </div>
-        </div>
-
-        <div class="col-md-12 col-lg-8 col-xl-9">
-            <div class="card card-one unsetWidth">
-                <div class="card-header">
-                    <h6 class="card-title">Your Top Countries</h6>
-                </div>
-                <div class="card-body p-4">
-                    <div class="row g-3">
-                        <div class="col-md-3 d-flex flex-column">
-                            <table class="table table-one mb-4">
-                                <?php if (!empty($dashboardData['listCountryTraffic'])) : ?>
-                                    <?php foreach ($dashboardData['listCountryTraffic'] as $itemTraffic) : ?>
-                                        <tr>
-                                            <td scope="row" data-column="Date">
-                                                <span class="flag-icon flag-icon-<?php echo esc_attr($itemTraffic['code']); ?> flag-icon-<?php echo esc_attr($itemTraffic['code']); ?>"></span>
-                                                <span class="fw-medium"><?php echo esc_html($itemTraffic['name']); ?></span>
-                                            </td>
-                                            <td>
-                                                <?php echo $dashboardData['totalCountryTraffic'] != 0 ? round(($itemTraffic['total_impressions'] / $dashboardData['totalCountryTraffic']) * 100, 2) : 0; ?>%
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                <?php endif; ?>
-                            </table>
-                        </div>
-                        <div class="col-md-9 mt-5 mt-md-0">
-                            <div id="vmap" style="width: auto; height: 400px"></div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div class="col-md-12 col-lg-4 col-xl-3 d-flex flex-column">
-            <!-- Traffic Source -->
-            <div class="card card-one mb-1">
-                <div class="card-header">
-                    <h6 class="card-title">Traffic Source</h6>
-                </div>
-                <div class="card-body p-3">
-                    <div class="progress progress-one ht-8 mt-2 mb-4">
-                        <?php
-                        $colors = ['bg-success', 'bg-orange', 'bg-pink', 'bg-info', 'bg-indigo'];
-                        ?>
-                        <?php if (!empty($dashboardData['reportRefererDomain'])) : ?>
-                            <?php foreach ($dashboardData['reportRefererDomain'] as $index => $domain) : ?>
-                                <div class="progress <?php echo esc_attr($colors[$index % count($colors)]); ?>" style="width: <?php echo esc_attr($domain['percent']); ?>%; border-radius: unset" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
+            <div class="col-md-3 col-xl">
+                <div class="card card-one">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-7">
+                                <h3 class="card-value mb-1">$<?php echo number_format($dashboardData['revenueLastMonth'] ?? 0, 2); ?></h3>
+                                <label class="card-title fw-medium text-dark mb-1">Last Month</label>
+                            </div>
+                            <div class="col-5">
+                                <div id="apexChart3"></div>
+                            </div>
+                        </div>
                     </div>
-                    <table class="table table-three">
-                        <tbody>
-                            <?php if (!empty($dashboardData['reportRefererDomain'])) : ?>
-                                <?php foreach ($dashboardData['reportRefererDomain'] as $index => $domain) : ?>
-                                    <tr>
-                                        <td>
-                                            <div class="badge-dot <?php echo esc_attr($colors[$index % count($colors)]); ?>"></div>
-                                        </td>
-                                        <td class="domain-name"><?php echo esc_html($domain['name']); ?></td>
-                                        <td><?php echo round($domain['percent'], 2); ?>%</td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            <?php else : ?>
-                                <tr>
-                                    <td colspan="3">No data available</td>
-                                </tr>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
+                </div>
+            </div>
+            <div class="col-md-3 col-xl">
+                <div class="card card-one">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-7">
+                                <h3 class="card-value mb-1">
+                                    $<?= number_format($dashboardData['totalReport'] ?? 0, 2) ?></h3>
+                                <label class="card-title fw-medium text-dark mb-1">Total Earning</label>
+                            </div>
+                            <div class="col-5">
+                                <div id="apexChart03"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <!-- Device Used By Users -->
-            <div class="card card-one">
-                <div class="card-header">
-                    <h6 class="card-title">Device Used By Users</h6>
-                </div>
-                <div class="card-body p-3">
-                    <div class="progress progress-one ht-8 mt-2 mb-4">
-                        <?php
-                        $colors = ['bg-success', 'bg-orange', 'bg-pink', 'bg-info', 'bg-indigo'];
-                        ?>
-                        <?php if (!empty($dashboardData['reportDevice'])) : ?>
-                            <?php foreach ($dashboardData['reportDevice'] as $index => $device) : ?>
-                                <div class="progress <?php echo esc_attr($colors[$index % count($colors)]); ?>" style="width: <?php echo esc_attr($device['percent']); ?>%; border-radius: unset" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
-                    </div>
-                    <table class="table table-three">
-                        <tbody>
-                            <?php if (!empty($dashboardData['reportDevice'])) : ?>
-                                <?php foreach ($dashboardData['reportDevice'] as $index => $device) : ?>
-                                    <tr>
-                                        <td>
-                                            <div class="badge-dot <?php echo esc_attr($colors[$index % count($colors)]); ?>"></div>
-                                        </td>
-                                        <td><?php echo esc_html($device['name']); ?></td>
-                                        <td><?php echo esc_html($device['percent']); ?>%</td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            <?php else : ?>
-                                <tr>
-                                    <td colspan="3">No data available</td>
-                                </tr>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-
-        <div class="card card-one mt-3">
-            <div class="card-body p-3">
-                <div class="row justify-content-end p-3">
-                    <div class="col-md-7 col-sm-12" style="padding-left: 0px;">
-                        <form action="{{ route('user.dashboard.index') }}" class="searchReport" method="GET">
-                            <input type="hidden" name="date_option" value="{{ request('date_option') }}">
-                            <input type="hidden" name="start" value="{{ request('start') }}">
-                            <input type="hidden" name="end" value="{{ request('end') }}">
+            <div class="col-md-12 col-xl-12">
+                <div class="card card-one unsetWidth">
+                    <div class="card-body">
+                        <form action="<?php echo esc_url(admin_url('admin.php')); ?>" class="searchReport" method="GET">
+                            <input type="hidden" name="page" value="aap-dashboard">
+                            <input type="hidden" name="date_option" value="<?php echo isset($_GET['date_option']) ? esc_attr($_GET['date_option']) : ''; ?>">
+                            <input type="hidden" name="start" value="<?php echo isset($_GET['start']) ? esc_attr($_GET['start']) : ''; ?>">
+                            <input type="hidden" name="end" value="<?php echo isset($_GET['end']) ? esc_attr($_GET['end']) : ''; ?>">
                             <div class="row">
-                                <div class="col-sm-3">
-                                    <select id="searchWebsite" class="form-select form-control" name="website_id">
+                                <div class="col-md-3 col-sm-3">
+                                    <select id="websiteSearch" class="form-select form-control" name="website_id">
                                         <option value="null">-Website-</option>
                                         <?php if (!empty($dashboardData['websites'])) : ?>
                                             <?php foreach ($dashboardData['websites'] as $website) : ?>
@@ -289,226 +136,376 @@
                                         <?php endif; ?>
                                     </select>
                                 </div>
-                                <div class="col-sm-3">
-                                    <input type="text" class="form-control" id="select_date" readonly>
+                                <div class="col-md-3 col-sm-3">
+                                    <input type="text" class="form-control" id="date_select" readonly>
                                 </div>
-                                <div class="col-sm-6">
+                                <div class="col-md-4 col-sm-6">
                                     <div class="form-group">
-                                        <button type="button" class="btn btn-outline-primary generate"
-                                            onclick="clickSearchReport(this)"> Generate
-                                        </button>
-                                        <button style="min-width: 130px" type="button"
-                                            class="btn btn-outline-success download" onclick="clickDownloadReport()">
-                                            <i class="ri-download-2-fill"></i> Download
+                                        <button type="button" class="btn btn-outline-primary generate" onclick="clickSearchReport(this)"> Generate
                                         </button>
                                     </div>
                                 </div>
                             </div>
                         </form>
                     </div>
-                    <div class="col-md-5 col-sm-12 report-via"
-                        style="display: flex; align-items: center; gap: 10px; padding: 0;">
-                        <div class="form-check form-switch" style="display: flex; align-items: center">
-                            <input style="font-size: 20px; margin-left: -34px"
-                                id="emailCheckbox"
-                                class="form-check-input"
-                                type="checkbox"
-                                role="switch"
-                                <?php echo $dashboardData['sent_email'] ? 'checked' : ''; ?>>
-                            <label style="margin-top: 3px" class="form-check-label ms-2" for="switch">
-                                Get Report via Email
-                            </label>
+                </div>
+            </div>
+
+            <div class="col-md-12 col-lg-12 col-xl-12">
+                <div class="card card-one unsetWidth">
+                    <div class="card-header" style="display: flex;justify-content: space-between;align-items: center;">
+                        <h6 class="card-title">Revenue Chart</h6>
+                    </div>
+                    <div class="card-body" style="padding-bottom: 0">
+                        <div id="chart_custom" class="apex-chart-nine"></div>
+                    </div>
+                    <h6 class="text-center text-danger" style="padding-bottom: 6px">
+                        We do need 1- 3 weeks to integrate our demands to optimize your revenue.
+                    </h6>
+                </div>
+            </div>
+
+            <div class="col-md-12 col-lg-8 col-xl-9">
+                <div class="card card-one unsetWidth">
+                    <div class="card-header">
+                        <h6 class="card-title">Your Top Countries</h6>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row g-3">
+                            <div class="col-md-3 d-flex flex-column">
+                                <table class="table table-one mb-4">
+                                    <?php if (!empty($dashboardData['listCountryTraffic'])) : ?>
+                                        <?php foreach ($dashboardData['listCountryTraffic'] as $itemTraffic) : ?>
+                                            <tr>
+                                                <td scope="row" data-column="Date">
+                                                    <span class="flag-icon flag-icon-<?php echo esc_attr($itemTraffic['code']); ?> flag-icon-<?php echo esc_attr($itemTraffic['code']); ?>"></span>
+                                                    <span class="fw-medium"><?php echo esc_html($itemTraffic['name']); ?></span>
+                                                </td>
+                                                <td>
+                                                    <?php echo $dashboardData['totalCountryTraffic'] != 0 ? round(($itemTraffic['total_impressions'] / $dashboardData['totalCountryTraffic']) * 100, 2) : 0; ?>%
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </table>
+                            </div>
+                            <div class="col-md-9 mt-5 mt-md-0">
+                                <div id="vmap" style="width: auto; height: 400px"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="table-responsive" id="table-report">
-                    <table class="table table-hover table-four table-bordered">
-                        <thead>
-                            <tr>
-                                <th scope="col" class="textCenter">Date</th>
-                                <th scope="col" class="textCenter">Website</th>
-                                <th scope="col" class="textCenter cpm_sort">Impressions</th>
-                                <th scope="col" class="textCenter cpm_sort">eCPM</th>
-                                <th scope="col" class="textCenter revenue_sort">Revenue</th>
-                                <th scope="col" class="textCenter">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
+            <div class="col-md-12 col-lg-4 col-xl-3 d-flex flex-column">
+                <!-- Traffic Source -->
+                <div class="card card-one mb-1">
+                    <div class="card-header">
+                        <h6 class="card-title">Traffic Source</h6>
+                    </div>
+                    <div class="card-body p-3">
+                        <div class="progress progress-one ht-8 mt-2 mb-4">
                             <?php
-                            $items = $dashboardData['items']['data'];
-
-                            $currentDate = new DateTime();
-                            $yesterday = (clone $currentDate)->modify('-1 day');
-                            $threeDaysAgo = (clone $currentDate)->modify('-3 days');
-                            $currentHourUTC = (new DateTime('now', new DateTimeZone('UTC')))->format('H');
-                            $previousDate = null;
-                            $rowspanCount = 0;
-
-                            foreach ($items as $index => $itemReportSite):
-                                if (
-                                    $isNewPub &&
-                                    $currentHourUTC < 12 &&
-                                    ($itemReportSite['date'] == $yesterday->format('Y-m-d') ||
-                                        $itemReportSite['date'] == $currentDate->format('Y-m-d') ||
-                                        $itemReportSite['total_impressions'] == 0)
-                                ) {
-                                    continue;
-                                }
-
-                                $currentDate = $itemReportSite['date'];
-                                $rowspanCount = count(array_filter($items, function ($item) use ($currentDate) {
-                                    return $item['date'] == $currentDate;
-                                }));
-
-                                if ($currentDate !== $previousDate):
+                            $colors = ['bg-success', 'bg-orange', 'bg-pink', 'bg-info', 'bg-indigo'];
                             ?>
+                            <?php if (!empty($dashboardData['reportRefererDomain'])) : ?>
+                                <?php foreach ($dashboardData['reportRefererDomain'] as $index => $domain) : ?>
+                                    <div class="progress <?php echo esc_attr($colors[$index % count($colors)]); ?>" style="width: <?php echo esc_attr($domain['percent']); ?>%; border-radius: unset" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </div>
+                        <table class="table table-three">
+                            <tbody>
+                                <?php if (!empty($dashboardData['reportRefererDomain'])) : ?>
+                                    <?php foreach ($dashboardData['reportRefererDomain'] as $index => $domain) : ?>
+                                        <tr>
+                                            <td>
+                                                <div class="badge-dot <?php echo esc_attr($colors[$index % count($colors)]); ?>"></div>
+                                            </td>
+                                            <td class="domain-name"><?php echo esc_html($domain['name']); ?></td>
+                                            <td><?php echo round($domain['percent'], 2); ?>%</td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php else : ?>
                                     <tr>
-                                        <td class="textCenter" rowspan="<?php echo $rowspanCount; ?>" style="vertical-align: middle;"><?php echo esc_html($itemReportSite['date']); ?></td>
-                                        <td class="textCenter">
-                                            <div><?php echo esc_html($itemReportSite['websiteName']); ?></div>
-                                        </td>
-                                        <td class="textCenter"><?php echo number_format($itemReportSite['total_impressions'] ?? 0); ?></td>
-                                        <td class="textCenter">
-                                            <?php if ($itemReportSite['date'] != date('Y-m-d') && $itemReportSite['average_cpm'] != 0): ?>
-                                                <?php echo number_format($itemReportSite['average_cpm'] ?? 0, 2); ?>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td class="textCenter">
-                                            <?php if ($itemReportSite['date'] != date('Y-m-d') && $itemReportSite['total_revenue'] != 0): ?>
-                                                $<?php echo number_format($itemReportSite['total_revenue'], 2, '.', ','); ?>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td class="textCenter">
-                                            <?php if (
-                                                ($itemReportSite['date'] <= $threeDaysAgo->format('Y-m-d') && $itemReportSite['status']) ||
-                                                (isset($itemReportSite['status_display']) && $itemReportSite['status_display'])
-                                            ): ?>
-                                                <span class="badge bg-success">Confirmed</span>
-                                            <?php elseif (isset($itemReportSite['status_display']) && !$itemReportSite['status_display']): ?>
-                                                <span class="badge bg-warning">Validating</span>
-                                                <i class="ri-error-warning-fill" data-bs-toggle="tooltip" data-bs-placement="top" title="This is not your final data"></i>
-                                            <?php endif; ?>
-                                        </td>
-                                    </tr>
-                                <?php else: ?>
-                                    <tr>
-                                        <td class="textCenter">
-                                            <div><?php echo esc_html($itemReportSite['websiteName']); ?></div>
-                                        </td>
-                                        <td class="textCenter"><?php echo number_format($itemReportSite['total_impressions'] ?? 0); ?></td>
-                                        <td class="textCenter">
-                                            <?php if ($itemReportSite['date'] != date('Y-m-d') && $itemReportSite['average_cpm'] != 0): ?>
-                                                <?php echo number_format($itemReportSite['average_cpm'] ?? 0, 2); ?>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td class="textCenter">
-                                            <?php if ($itemReportSite['date'] != date('Y-m-d') && $itemReportSite['total_revenue'] != 0): ?>
-                                                $<?php echo number_format($itemReportSite['total_revenue'], 2, '.', ','); ?>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td class="textCenter">
-                                            <?php if (
-                                                ($itemReportSite['date'] <= $threeDaysAgo->format('Y-m-d') && $itemReportSite['status']) ||
-                                                (isset($itemReportSite['status_display']) && $itemReportSite['status_display'])
-                                            ): ?>
-                                                <span class="badge bg-success">Confirmed</span>
-                                            <?php elseif (isset($itemReportSite['status_display']) && !$itemReportSite['status_display']): ?>
-                                                <span class="badge bg-warning">Validating</span>
-                                                <i class="ri-error-warning-fill" data-bs-toggle="tooltip" data-bs-placement="top" title="This is not your final data"></i>
-                                            <?php endif; ?>
-                                        </td>
+                                        <td colspan="3">No data available</td>
                                     </tr>
                                 <?php endif; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Device Used By Users -->
+                <div class="card card-one">
+                    <div class="card-header">
+                        <h6 class="card-title">Device Used By Users</h6>
+                    </div>
+                    <div class="card-body p-3">
+                        <div class="progress progress-one ht-8 mt-2 mb-4">
                             <?php
-                                $previousDate = $currentDate;
-                                $countItem = $dashboardData['countItem'];
-                            endforeach;
-
-                            if (
-                                ($countItem['totalImpressions'] == 0 && $countItem['averageCPM'] == 0 && $countItem['totalChangeRevenue'] == 0) ||
-                                ($dashboardData['isNewPub'] && $currentHourUTC < 12)
-                            ):
-                            else:
+                            $colors = ['bg-success', 'bg-orange', 'bg-pink', 'bg-info', 'bg-indigo'];
                             ?>
-                                <tr style="font-weight: bold">
-                                    <td class="textCenter" scope="row" data-column="Date">Total</td>
-                                    <td></td>
-                                    <td class="textCenter">
-                                        <?php echo empty($countItem['totalImpressions']) ? 0 : number_format($countItem['totalImpressions']); ?>
-                                    </td>
-                                    <td class="textCenter">
-                                        <?php echo empty($countItem['averageCPM']) ? 0 : round($countItem['averageCPM'], 2); ?>
-                                    </td>
-                                    <td class="textCenter">
-                                        $<?php echo empty($countItem['totalChangeRevenue']) ? 0 : number_format($countItem['totalChangeRevenue'], 2, '.', ','); ?>
-                                    </td>
-                                    <td></td>
-                                </tr>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
-                    <?php if ($dashboardData['items']['last_page'] > 1): ?>
-                        <nav aria-label="Page navigation">
-                            <ul class="pagination">
-                                <?php foreach ($dashboardData['items']['links'] as $link): ?>
-                                    <li class="page-item <?php echo $link['active'] ? 'active' : ''; ?>">
-                                        <?php if ($link['url']): ?>
-                                            <a class="page-link" href="<?php echo esc_url($link['url']); ?>"><?php echo esc_html($link['label']); ?></a>
-                                        <?php else: ?>
-                                            <span class="page-link"><?php echo esc_html($link['label']); ?></span>
-                                        <?php endif; ?>
-                                    </li>
+                            <?php if (!empty($dashboardData['reportDevice'])) : ?>
+                                <?php foreach ($dashboardData['reportDevice'] as $index => $device) : ?>
+                                    <div class="progress <?php echo esc_attr($colors[$index % count($colors)]); ?>" style="width: <?php echo esc_attr($device['percent']); ?>%; border-radius: unset" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
                                 <?php endforeach; ?>
-                            </ul>
-                        </nav>
-                    <?php endif; ?>
-                </div>
-            </div>
-        </div>
-
-        <div id="loader" style="display: none">
-            <div id="loader-text" class="d-flex justify-content-center align-items-center">
-                <div class="text-primary" role="status">
-                    <h4 class="text-center loader-logo">Loading...</h4>
-                    <div class="spinner-grow text-primary" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                    <div class="spinner-grow text-secondary" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                    <div class="spinner-grow text-success" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                    <div class="spinner-grow text-danger" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                    <div class="spinner-grow text-warning" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                    <div class="spinner-grow text-info" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                    <div class="spinner-grow text-light" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                    <div class="spinner-grow text-dark" role="status">
-                        <span class="visually-hidden">Loading...</span>
+                            <?php endif; ?>
+                        </div>
+                        <table class="table table-three">
+                            <tbody>
+                                <?php if (!empty($dashboardData['reportDevice'])) : ?>
+                                    <?php foreach ($dashboardData['reportDevice'] as $index => $device) : ?>
+                                        <tr>
+                                            <td>
+                                                <div class="badge-dot <?php echo esc_attr($colors[$index % count($colors)]); ?>"></div>
+                                            </td>
+                                            <td><?php echo esc_html($device['name']); ?></td>
+                                            <td><?php echo esc_html($device['percent']); ?>%</td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php else : ?>
+                                    <tr>
+                                        <td colspan="3">No data available</td>
+                                    </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
+
+            <div class="card card-one mt-3">
+                <div class="card-body p-3">
+                    <div class="row justify-content-end p-3">
+                        <div class="col-md-7 col-sm-12" style="padding-left: 0px;">
+                            <form action="{{ route('user.dashboard.index') }}" class="searchReport" method="GET">
+                                <input type="hidden" name="date_option" value="{{ request('date_option') }}">
+                                <input type="hidden" name="start" value="{{ request('start') }}">
+                                <input type="hidden" name="end" value="{{ request('end') }}">
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <select id="searchWebsite" class="form-select form-control" name="website_id">
+                                            <option value="null">-Website-</option>
+                                            <?php if (!empty($dashboardData['websites'])) : ?>
+                                                <?php foreach ($dashboardData['websites'] as $website) : ?>
+                                                    <option value="<?php echo esc_attr($website['id']); ?>" <?php echo isset($_GET['website_id']) && $_GET['website_id'] == $website['id'] ? 'selected' : ''; ?>>
+                                                        <?php echo esc_html($website['name']); ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            <?php endif; ?>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-3">
+                                        <input type="text" class="form-control" id="select_date" readonly>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <button type="button" class="btn btn-outline-primary generate"
+                                                onclick="clickSearchReport(this)"> Generate
+                                            </button>
+                                            <button style="min-width: 130px" type="button"
+                                                class="btn btn-outline-success download" onclick="clickDownloadReport()">
+                                                <i class="ri-download-2-fill"></i> Download
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-md-5 col-sm-12 report-via"
+                            style="display: flex; align-items: center; gap: 10px; padding: 0;">
+                            <div class="form-check form-switch" style="display: flex; align-items: center">
+                                <input style="font-size: 20px; margin-left: -34px"
+                                    id="emailCheckbox"
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    role="switch"
+                                    <?php echo $dashboardData['sent_email'] ? 'checked' : ''; ?>>
+                                <label style="margin-top: 3px" class="form-check-label ms-2" for="switch">
+                                    Get Report via Email
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive" id="table-report">
+                        <table class="table table-hover table-four table-bordered">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="textCenter">Date</th>
+                                    <th scope="col" class="textCenter">Website</th>
+                                    <th scope="col" class="textCenter cpm_sort">Impressions</th>
+                                    <th scope="col" class="textCenter cpm_sort">eCPM</th>
+                                    <th scope="col" class="textCenter revenue_sort">Revenue</th>
+                                    <th scope="col" class="textCenter">Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php
+                                $items = $dashboardData['items']['data'];
+
+                                $currentDate = new DateTime();
+                                $yesterday = (clone $currentDate)->modify('-1 day');
+                                $threeDaysAgo = (clone $currentDate)->modify('-3 days');
+                                $currentHourUTC = (new DateTime('now', new DateTimeZone('UTC')))->format('H');
+                                $previousDate = null;
+                                $rowspanCount = 0;
+
+                                foreach ($items as $index => $itemReportSite):
+                                    if (
+                                        $isNewPub &&
+                                        $currentHourUTC < 12 &&
+                                        ($itemReportSite['date'] == $yesterday->format('Y-m-d') ||
+                                            $itemReportSite['date'] == $currentDate->format('Y-m-d') ||
+                                            $itemReportSite['total_impressions'] == 0)
+                                    ) {
+                                        continue;
+                                    }
+
+                                    $currentDate = $itemReportSite['date'];
+                                    $rowspanCount = count(array_filter($items, function ($item) use ($currentDate) {
+                                        return $item['date'] == $currentDate;
+                                    }));
+
+                                    if ($currentDate !== $previousDate):
+                                ?>
+                                        <tr>
+                                            <td class="textCenter" rowspan="<?php echo $rowspanCount; ?>" style="vertical-align: middle;"><?php echo esc_html($itemReportSite['date']); ?></td>
+                                            <td class="textCenter">
+                                                <div><?php echo esc_html($itemReportSite['websiteName']); ?></div>
+                                            </td>
+                                            <td class="textCenter"><?php echo number_format($itemReportSite['total_impressions'] ?? 0); ?></td>
+                                            <td class="textCenter">
+                                                <?php if ($itemReportSite['date'] != date('Y-m-d') && $itemReportSite['average_cpm'] != 0): ?>
+                                                    <?php echo number_format($itemReportSite['average_cpm'] ?? 0, 2); ?>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td class="textCenter">
+                                                <?php if ($itemReportSite['date'] != date('Y-m-d') && $itemReportSite['total_revenue'] != 0): ?>
+                                                    $<?php echo number_format($itemReportSite['total_revenue'], 2, '.', ','); ?>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td class="textCenter">
+                                                <?php if (
+                                                    ($itemReportSite['date'] <= $threeDaysAgo->format('Y-m-d') && $itemReportSite['status']) ||
+                                                    (isset($itemReportSite['status_display']) && $itemReportSite['status_display'])
+                                                ): ?>
+                                                    <span class="badge bg-success">Confirmed</span>
+                                                <?php elseif (isset($itemReportSite['status_display']) && !$itemReportSite['status_display']): ?>
+                                                    <span class="badge bg-warning">Validating</span>
+                                                    <i class="ri-error-warning-fill" data-bs-toggle="tooltip" data-bs-placement="top" title="This is not your final data"></i>
+                                                <?php endif; ?>
+                                            </td>
+                                        </tr>
+                                    <?php else: ?>
+                                        <tr>
+                                            <td class="textCenter">
+                                                <div><?php echo esc_html($itemReportSite['websiteName']); ?></div>
+                                            </td>
+                                            <td class="textCenter"><?php echo number_format($itemReportSite['total_impressions'] ?? 0); ?></td>
+                                            <td class="textCenter">
+                                                <?php if ($itemReportSite['date'] != date('Y-m-d') && $itemReportSite['average_cpm'] != 0): ?>
+                                                    <?php echo number_format($itemReportSite['average_cpm'] ?? 0, 2); ?>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td class="textCenter">
+                                                <?php if ($itemReportSite['date'] != date('Y-m-d') && $itemReportSite['total_revenue'] != 0): ?>
+                                                    $<?php echo number_format($itemReportSite['total_revenue'], 2, '.', ','); ?>
+                                                <?php endif; ?>
+                                            </td>
+                                            <td class="textCenter">
+                                                <?php if (
+                                                    ($itemReportSite['date'] <= $threeDaysAgo->format('Y-m-d') && $itemReportSite['status']) ||
+                                                    (isset($itemReportSite['status_display']) && $itemReportSite['status_display'])
+                                                ): ?>
+                                                    <span class="badge bg-success">Confirmed</span>
+                                                <?php elseif (isset($itemReportSite['status_display']) && !$itemReportSite['status_display']): ?>
+                                                    <span class="badge bg-warning">Validating</span>
+                                                    <i class="ri-error-warning-fill" data-bs-toggle="tooltip" data-bs-placement="top" title="This is not your final data"></i>
+                                                <?php endif; ?>
+                                            </td>
+                                        </tr>
+                                    <?php endif; ?>
+                                <?php
+                                    $previousDate = $currentDate;
+                                    $countItem = $dashboardData['countItem'];
+                                endforeach;
+
+                                if (
+                                    ($countItem['totalImpressions'] == 0 && $countItem['averageCPM'] == 0 && $countItem['totalChangeRevenue'] == 0) ||
+                                    ($dashboardData['isNewPub'] && $currentHourUTC < 12)
+                                ):
+                                else:
+                                ?>
+                                    <tr style="font-weight: bold">
+                                        <td class="textCenter" scope="row" data-column="Date">Total</td>
+                                        <td></td>
+                                        <td class="textCenter">
+                                            <?php echo empty($countItem['totalImpressions']) ? 0 : number_format($countItem['totalImpressions']); ?>
+                                        </td>
+                                        <td class="textCenter">
+                                            <?php echo empty($countItem['averageCPM']) ? 0 : round($countItem['averageCPM'], 2); ?>
+                                        </td>
+                                        <td class="textCenter">
+                                            $<?php echo empty($countItem['totalChangeRevenue']) ? 0 : number_format($countItem['totalChangeRevenue'], 2, '.', ','); ?>
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                <?php endif; ?>
+                            </tbody>
+                        </table>
+                        <?php if ($dashboardData['items']['last_page'] > 1): ?>
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination">
+                                    <?php foreach ($dashboardData['items']['links'] as $link): ?>
+                                        <li class="page-item <?php echo $link['active'] ? 'active' : ''; ?>">
+                                            <?php if ($link['url']): ?>
+                                                <a class="page-link" href="<?php echo esc_url($link['url']); ?>"><?php echo esc_html($link['label']); ?></a>
+                                            <?php else: ?>
+                                                <span class="page-link"><?php echo esc_html($link['label']); ?></span>
+                                            <?php endif; ?>
+                                        </li>
+                                    <?php endforeach; ?>
+                                </ul>
+                            </nav>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+
+            <div id="loader" style="display: none">
+                <div id="loader-text" class="d-flex justify-content-center align-items-center">
+                    <div class="text-primary" role="status">
+                        <h4 class="text-center loader-logo">Loading...</h4>
+                        <div class="spinner-grow text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <div class="spinner-grow text-secondary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <div class="spinner-grow text-success" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <div class="spinner-grow text-danger" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <div class="spinner-grow text-warning" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <div class="spinner-grow text-info" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <div class="spinner-grow text-light" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <div class="spinner-grow text-dark" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                var token = localStorage.getItem('jwt_token');
-
-                if (!token) {
-                    window.location.href = "<?php echo admin_url('admin.php?page=aap-login'); ?>";
-                    return;
-                }
-            });
-        </script>
 
         <script>
             jQuery(document).ready(function($) {
