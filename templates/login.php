@@ -83,6 +83,36 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
+        var token = localStorage.getItem('jwt_token');
+
+        if (token) {
+            fetch('<?php echo admin_url('admin-ajax.php?action=verify_token'); ?>', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        token: token
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = "<?php echo admin_url('admin.php?page=aap-dashboard'); ?>";
+                    } else {
+                        localStorage.removeItem('jwt_token');
+                        localStorage.removeItem('user_info');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+    });
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
         document.querySelector("form").addEventListener("submit", function(event) {
             event.preventDefault();
 
@@ -112,7 +142,7 @@
                                     email: email,
                                     password: password,
                                     token: res.token,
-                                    user_id: res.user
+                                    user_id: res.user.id
                                 })
                             })
                             .then(response => response.json())

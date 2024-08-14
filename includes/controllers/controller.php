@@ -16,15 +16,18 @@ class AAP_Controller
 
     public static function dashboard()
     {
-        $user_id = get_current_user_id();
+        $user_id = get_user_meta(get_current_user_id(), 'api_user_id', true);
+
+        if (!$user_id) {
+            wp_redirect(admin_url('admin.php?page=aap-login'));
+            exit;
+        }
 
         $token = get_user_meta($user_id, 'jwt_token', true);
 
-        echo $token;
-
         if (!$token) {
-            echo 'Token không tồn tại. Vui lòng đăng nhập lại.';
-            return;
+            wp_redirect(admin_url('admin.php?page=aap-login'));
+            exit;
         }
 
         $website_id = isset($_GET['website_id']) ? sanitize_text_field($_GET['website_id']) : '';
@@ -130,6 +133,10 @@ class AAP_Controller
             $token = sanitize_text_field($input['token']);
             $user_id = intval($input['user_id']);
 
+            $current_user_id = get_current_user_id();
+            update_user_meta($current_user_id, 'api_user_id', $user_id);
+            update_user_meta($user_id, 'jwt_token', $token);
+
             $user = AAP_Model_Users::get_user_by_email($email);
 
             if ($user) {
@@ -153,7 +160,28 @@ class AAP_Controller
 
         wp_die();
     }
+
+    public static function verify_token()
+    {
+        $input = json_decode(file_get_contents('php://input'), true);
+        $token = sanitize_text_field($input['token']);
+
+        global $wpdb;
+        $user_id = $wpdb->get_var($wpdb->prepare("
+            SELECT user_id FROM {$wpdb->prefix}mv_users WHERE token = %s
+        ", $token));
+
+        if ($user_id) {
+            wp_send_json_success();
+        } else {
+            wp_send_json_error();
+        }
+
+        wp_die();
+    }
 }
 
 add_action('wp_ajax_aap_save_user_data', 'AAP_Controller::save_user_data');
 add_action('wp_ajax_nopriv_aap_save_user_data', 'AAP_Controller::save_user_data');
+add_action('wp_ajax_verify_token', 'AAP_Controller::verify_token');
+add_action('wp_ajax_nopriv_verify_token', 'AAP_Controller::verify_token');
