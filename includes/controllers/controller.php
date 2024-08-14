@@ -22,7 +22,7 @@ class AAP_Controller
             exit;
         }
 
-        $token = get_user_meta($user_id, 'jwt_token', true);
+        $token = get_user_meta($user_id, 'mv_jwt_token', true);
 
         if (!$token) {
             exit;
@@ -133,7 +133,7 @@ class AAP_Controller
 
             $current_user_id = get_current_user_id();
             update_user_meta($current_user_id, 'api_user_id', $user_id);
-            update_user_meta($user_id, 'jwt_token', $token);
+            update_user_meta($user_id, 'mv_jwt_token', $token);
 
             $user = AAP_Model_Users::get_user_by_email($email);
 

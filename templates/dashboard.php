@@ -584,7 +584,7 @@ include_once 'base.php';
                     url: "https://stg-publisher.maxvalue.media/dashboard/send-email",
                     method: "PUT",
                     headers: {
-                        'Authorization': 'Bearer <?php echo get_user_meta(get_current_user_id(), "jwt_token", true); ?>',
+                        'Authorization': 'Bearer <?php echo get_user_meta(get_current_user_id(), "mv_jwt_token", true); ?>',
                     },
                     data: {
                         sendMail: emailChecked

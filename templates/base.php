@@ -7,7 +7,7 @@ function check_user_token()
 ?>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            var token = localStorage.getItem('jwt_token');
+            var token = localStorage.getItem('mv_jwt_token');
 
             if (!token) {
                 showLoginPopup();
@@ -26,7 +26,7 @@ function check_user_token()
                 .then(response => response.json())
                 .then(data => {
                     if (!data.success) {
-                        localStorage.removeItem('jwt_token');
+                        localStorage.removeItem('mv_jwt_token');
                         localStorage.removeItem('user_info');
                         showLoginPopup();
                     } else {
@@ -206,7 +206,7 @@ check_user_token();
                         .then(response => response.json())
                         .then(serverData => {
                             if (serverData.success) {
-                                localStorage.setItem('jwt_token', res.token);
+                                localStorage.setItem('mv_jwt_token', res.token);
                                 localStorage.setItem('user_info', JSON.stringify(res.user));
                                 location.reload();
                             } else {

@@ -15,6 +15,7 @@ if ( !defined( 'ABSPATH' ) ) exit;
 // Định nghĩa các hằng số
 define( 'AAP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'AAP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'AAP_MAXVALUE_URL', 'https://publisher.maxvalue.media');
 define('MY_WEBHOOK_SECRET_KEY', 'SaYoWRY6B9uIgL3QJNBkLw5wiEodXzm7');
 
 require_once plugin_dir_path(__FILE__) . 'includes/controllers/controller.php';
@@ -47,14 +48,12 @@ register_uninstall_hook(__FILE__, 'aap_uninstall');
 
 // Tạo các mục menu trong admin
 function aap_admin_menu() {
-    add_menu_page('Ad MaxValue', 'Ad MaxValue', 'manage_options', 'aap-dashboard', 'AAP_Controller::dashboard', 'dashicons-welcome-widgets-menus');
-    add_submenu_page('aap-dashboard', 'Manage Zones', 'Zones', 'manage_options', 'aap-zones', 'AAP_Controller::zones');
-    add_submenu_page('aap-dashboard', 'Reports', 'Reports', 'manage_options', 'aap-reports', 'AAP_Controller::reports');
-    add_submenu_page('aap-dashboard', 'Wallets', 'Wallets', 'manage_options', 'aap-wallets', 'AAP_Controller::wallets');
-    add_submenu_page('aap-dashboard', 'Ads.txt', 'Ads.txt', 'manage_options', 'aap-adstxt', 'AAP_Controller::adsTxt');
-    add_submenu_page('aap-dashboard', 'Referral', 'Referral', 'manage_options', 'aap-referral', 'AAP_Controller::referral');
-    add_submenu_page('aap-dashboard', 'Logins', 'Login', 'manage_options', 'aap-login', 'AAP_Controller::login');
-    add_submenu_page('aap-dashboard', 'Logout', 'Logout', 'manage_options', 'aap-logout', 'AAP_Controller::logout');
+    add_menu_page('Ad MaxValue', 'Ad MaxValue', 'manage_options', 'mv-dashboard', 'AAP_Controller::dashboard', 'dashicons-welcome-widgets-menus');
+    add_submenu_page('mv-dashboard', 'Manage Zones', 'Zones', 'manage_options', 'mv-zones', 'AAP_Controller::zones');
+    add_submenu_page('mv-dashboard', 'Reports', 'Reports', 'manage_options', 'mv-reports', 'AAP_Controller::reports');
+    add_submenu_page('mv-dashboard', 'Wallets', 'Wallets', 'manage_options', 'mv-wallets', 'AAP_Controller::wallets');
+    add_submenu_page('mv-dashboard', 'Ads.txt', 'Ads.txt', 'manage_options', 'mv-adstxt', 'AAP_Controller::adsTxt');
+    add_submenu_page('mv-dashboard', 'Referral', 'Referral', 'manage_options', 'mv-referral', 'AAP_Controller::referral');
 }
 
 function register_webhook()
@@ -105,8 +104,8 @@ add_action('init', 'register_webhook');
 
 // Tải các file CSS và JS cần thiết
 function aap_enqueue_assets() {
-    wp_enqueue_style('aap-admin-css', AAP_PLUGIN_URL . 'assets/css/admin.css');
-    wp_enqueue_script('aap-admin-js', AAP_PLUGIN_URL . 'assets/js/admin.js', array('jquery'), null, true);
+//    wp_enqueue_style('mv-admin-css', AAP_PLUGIN_URL . 'assets/css/admin.css');
+//    wp_enqueue_script('mv-admin-js', AAP_PLUGIN_URL . 'assets/js/admin.js', array('jquery'), null, true);
 }
 
 function update_send_mail() {
