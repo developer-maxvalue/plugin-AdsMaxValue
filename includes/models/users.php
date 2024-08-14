@@ -110,7 +110,7 @@ class AAP_Model_Users
             $user_id = get_current_user_id();
 
             if (self::user_has_valid_token($user_id)) {
-                wp_redirect(admin_url('admin.php?page=aap-dashboard'));
+                wp_redirect(admin_url('admin.php?page=mv-dashboard'));
                 exit;
             }
         }

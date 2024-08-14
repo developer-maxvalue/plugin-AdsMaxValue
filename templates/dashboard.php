@@ -119,23 +119,11 @@ include_once 'base.php';
                 <div class="card card-one unsetWidth">
                     <div class="card-body">
                         <form action="<?php echo esc_url(admin_url('admin.php')); ?>" class="searchReport" method="GET">
-                            <input type="hidden" name="page" value="aap-dashboard">
+                            <input type="hidden" name="page" value="mv-dashboard">
                             <input type="hidden" name="date_option" value="<?php echo isset($_GET['date_option']) ? esc_attr($_GET['date_option']) : ''; ?>">
                             <input type="hidden" name="start" value="<?php echo isset($_GET['start']) ? esc_attr($_GET['start']) : ''; ?>">
                             <input type="hidden" name="end" value="<?php echo isset($_GET['end']) ? esc_attr($_GET['end']) : ''; ?>">
                             <div class="row">
-                                <div class="col-md-3 col-sm-3">
-                                    <select id="websiteSearch" class="form-select form-control" name="website_id">
-                                        <option value="null">-Website-</option>
-                                        <?php if (!empty($dashboardData['websites'])) : ?>
-                                            <?php foreach ($dashboardData['websites'] as $website) : ?>
-                                                <option value="<?php echo esc_attr($website['id']); ?>" <?php echo isset($_GET['website_id']) && $_GET['website_id'] == $website['id'] ? 'selected' : ''; ?>>
-                                                    <?php echo esc_html($website['name']); ?>
-                                                </option>
-                                            <?php endforeach; ?>
-                                        <?php endif; ?>
-                                    </select>
-                                </div>
                                 <div class="col-md-3 col-sm-3">
                                     <input type="text" class="form-control" id="date_select" readonly>
                                 </div>
@@ -284,18 +272,6 @@ include_once 'base.php';
                                 <input type="hidden" name="start" value="{{ request('start') }}">
                                 <input type="hidden" name="end" value="{{ request('end') }}">
                                 <div class="row">
-                                    <div class="col-sm-3">
-                                        <select id="searchWebsite" class="form-select form-control" name="website_id">
-                                            <option value="null">-Website-</option>
-                                            <?php if (!empty($dashboardData['websites'])) : ?>
-                                                <?php foreach ($dashboardData['websites'] as $website) : ?>
-                                                    <option value="<?php echo esc_attr($website['id']); ?>" <?php echo isset($_GET['website_id']) && $_GET['website_id'] == $website['id'] ? 'selected' : ''; ?>>
-                                                        <?php echo esc_html($website['name']); ?>
-                                                    </option>
-                                                <?php endforeach; ?>
-                                            <?php endif; ?>
-                                        </select>
-                                    </div>
                                     <div class="col-sm-3">
                                         <input type="text" class="form-control" id="select_date" readonly>
                                     </div>
@@ -508,28 +484,6 @@ include_once 'base.php';
         </div>
 
         <script>
-            jQuery(document).ready(function($) {
-                $("#websiteSearch").select2({
-                    placeholder: "- Website -",
-                    allowClear: true,
-                });
-
-                $('#websiteSearch').one('select2:open', function(e) {
-                    $('input.select2-search__field').prop('placeholder', 'Search...');
-                });
-
-                $("#searchWebsite").select2({
-                    placeholder: "- Website -",
-                    allowClear: true,
-                });
-
-                $('#searchWebsite').one('select2:open', function(e) {
-                    $('input.select2-search__field').prop('placeholder', 'Search...');
-                });
-            });
-        </script>
-
-        <script>
             function clickSearchReport(button) {
                 let searchParams = new URLSearchParams(window.location.search);
                 var url = new URL(window.location.href);
@@ -689,7 +643,7 @@ include_once 'base.php';
                 }, function(start, end, label) {
                     var from = start.format('YYYY-MM-DD');
                     var to = end.format('YYYY-MM-DD');
-                    var route = "<?php echo esc_js(admin_url('admin.php?page=aap-dashboard')); ?>";
+                    var route = "<?php echo esc_js(admin_url('admin.php?page=mv-dashboard')); ?>";
                     route += "&website_id=" + <?php echo json_encode($siteId); ?> + "&date_option=";
                     switch (label) {
                         case 'Today':
@@ -732,7 +686,7 @@ include_once 'base.php';
                 }, function(start, end, label) {
                     var from = start.format('YYYY-MM-DD');
                     var to = end.format('YYYY-MM-DD');
-                    var route = "<?php echo esc_js(admin_url('admin.php?page=aap-dashboard')); ?>";
+                    var route = "<?php echo esc_js(admin_url('admin.php?page=mv-dashboard')); ?>";
                     route += "&website_id=" + <?php echo json_encode($siteId); ?> + "&date_option=";
                     switch (label) {
                         case 'Today':
