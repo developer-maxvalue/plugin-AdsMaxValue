@@ -34,14 +34,13 @@ class AAP_Model_Users
         $wpdb->query($sql);
     }
 
-    public static function insert_user($user_id, $email, $password, $token = null)
+    public static function insert_user($email, $password, $token = null)
     {
         global $wpdb;
         $table_name = $wpdb->prefix . 'mv_users';
         $wpdb->insert(
             $table_name,
             array(
-                'user_id' => $user_id,
                 'email' => $email,
                 'password' => $password,
                 'token' => $token

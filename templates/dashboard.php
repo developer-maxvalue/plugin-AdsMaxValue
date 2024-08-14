@@ -30,6 +30,16 @@
         max-width: unset;
     }
 
+    #loader-text {
+        width: 100%;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: rgba(255, 255, 255, 0.7);
+        z-index: 9999;
+    }
+
     @media (min-width: 768px) {
         .report-via {
             justify-content: end;
@@ -453,6 +463,38 @@
                             </ul>
                         </nav>
                     <?php endif; ?>
+                </div>
+            </div>
+        </div>
+
+        <div id="loader" style="display: none">
+            <div id="loader-text" class="d-flex justify-content-center align-items-center">
+                <div class="text-primary" role="status">
+                    <h4 class="text-center loader-logo">Loading...</h4>
+                    <div class="spinner-grow text-primary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <div class="spinner-grow text-secondary" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <div class="spinner-grow text-success" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <div class="spinner-grow text-danger" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <div class="spinner-grow text-warning" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <div class="spinner-grow text-info" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <div class="spinner-grow text-light" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <div class="spinner-grow text-dark" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
                 </div>
             </div>
         </div>

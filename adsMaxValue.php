@@ -55,9 +55,8 @@ function aap_admin_menu() {
     add_submenu_page('mv-dashboard', 'Ads.txt', 'Ads.txt', 'manage_options', 'mv-adstxt', 'AAP_Controller::adsTxt');
     add_submenu_page('mv-dashboard', 'Referral', 'Referral', 'manage_options', 'mv-referral', 'AAP_Controller::referral');
     add_submenu_page('mv-dashboard', 'Logins', 'Login', 'manage_options', 'mv-login', 'AAP_Controller::login');
+    add_submenu_page('mv-dashboard', 'Logout', 'Logout', 'manage_options', 'mv-logout', 'AAP_Controller::logout');
 }
-
-
 
 function register_webhook()
 {
