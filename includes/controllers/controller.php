@@ -16,13 +16,18 @@ class AAP_Controller
 
     public static function dashboard()
     {
-        $user_id = get_current_user_id();
+        $user_id = get_user_meta(get_current_user_id(), 'api_user_id', true);
+
+        if (!$user_id) {
+            wp_redirect(admin_url('admin.php?page=aap-login'));
+            exit;
+        }
 
         $token = get_user_meta($user_id, 'jwt_token', true);
 
         if (!$token) {
-            echo 'Token không tồn tại. Vui lòng đăng nhập lại.';
-            return;
+            wp_redirect(admin_url('admin.php?page=aap-login'));
+            exit;
         }
 
         $website_id = isset($_GET['website_id']) ? sanitize_text_field($_GET['website_id']) : '';
@@ -36,7 +41,7 @@ class AAP_Controller
             'start' => $start,
             'end' => $end,
         ), 'https://stg-publisher.maxvalue.media/api/dashboard');
-    
+
         $args = array(
             'headers' => array(
                 'Authorization' => 'Bearer ' . $token,
@@ -89,8 +94,8 @@ class AAP_Controller
             }
         }
 
-        if ( file_exists( $file_path ) ) {
-            $contentAdsTxt = file_get_contents( $file_path );
+        if (file_exists($file_path)) {
+            $contentAdsTxt = file_get_contents($file_path);
         } else {
             $contentAdsTxt = '';
         }
@@ -104,46 +109,6 @@ class AAP_Controller
 
     public static function login()
     {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $email = sanitize_email($_POST['email']);
-            $password = sanitize_text_field($_POST['password']);
-
-            $response = wp_remote_post('https://stg-publisher.maxvalue.media/api/login-jwt', array(
-                'body' => json_encode(array(
-                    'email' => $email,
-                    'password' => $password,
-                )),
-                'headers' => array(
-                    'Content-Type' => 'application/json',
-                ),
-            ));
-
-            if (is_wp_error($response)) {
-                echo 'Error during API request: ' . $response->get_error_message();
-                return;
-            }
-
-            $body = wp_remote_retrieve_body($response);
-            $data = json_decode($body, true);
-
-            print_r($data);
-
-            // if (!empty($data['token'])) {
-            //     $user = AAP_Model_Users::get_user_by_email($email);
-
-            //     if ($user) {
-            //         AAP_Model_Users::update_user_token($email, $data['token']);
-            //     } else {
-            //         AAP_Model_Users::insert_user($email, $password, $data['token']);
-            //     }
-
-            //     echo json_encode(array('token' => $data['token'], 'user_info' => $data['user'], 'redirect' => admin_url('admin.php?page=aap-dashboard')));
-            //     exit;
-            // } else {
-            //     echo 'Login failed: Invalid credentials or API error';
-            // }
-        }
-
         include AAP_PLUGIN_DIR . 'templates/login.php';
     }
 
@@ -154,14 +119,69 @@ class AAP_Controller
 
     public static function logout()
     {
-        if (is_user_logged_in()) {
-            $user_id = get_current_user_id();
-
-            delete_user_meta($user_id, 'jwt_token');
-            delete_transient('user_info');
-        }
-
         include AAP_PLUGIN_DIR . 'templates/logout.php';
         exit;
     }
+
+    public static function save_user_data()
+    {
+        $input = json_decode(file_get_contents('php://input'), true);
+
+        if (isset($input['email'], $input['password'], $input['token'], $input['user_id'])) {
+            $email = sanitize_email($input['email']);
+            $password = sanitize_text_field($input['password']);
+            $token = sanitize_text_field($input['token']);
+            $user_id = intval($input['user_id']);
+
+            $current_user_id = get_current_user_id();
+            update_user_meta($current_user_id, 'api_user_id', $user_id);
+            update_user_meta($user_id, 'jwt_token', $token);
+
+            $user = AAP_Model_Users::get_user_by_email($email);
+
+            if ($user) {
+                $updated = AAP_Model_Users::update_user($user_id, $email, $token);
+                if ($updated !== false) {
+                    wp_send_json_success(['message' => 'User data updated successfully']);
+                } else {
+                    wp_send_json_error(['message' => 'Failed to update user data']);
+                }
+            } else {
+                $inserted = AAP_Model_Users::insert_user($user_id, $email, $password, $token);
+                if ($inserted) {
+                    wp_send_json_success(['message' => 'User inserted successfully']);
+                } else {
+                    wp_send_json_error(['message' => 'Failed to insert user']);
+                }
+            }
+        } else {
+            wp_send_json_error(['message' => 'Invalid data']);
+        }
+
+        wp_die();
+    }
+
+    public static function verify_token()
+    {
+        $input = json_decode(file_get_contents('php://input'), true);
+        $token = sanitize_text_field($input['token']);
+
+        global $wpdb;
+        $user_id = $wpdb->get_var($wpdb->prepare("
+            SELECT user_id FROM {$wpdb->prefix}mv_users WHERE token = %s
+        ", $token));
+
+        if ($user_id) {
+            wp_send_json_success();
+        } else {
+            wp_send_json_error();
+        }
+
+        wp_die();
+    }
 }
+
+add_action('wp_ajax_aap_save_user_data', 'AAP_Controller::save_user_data');
+add_action('wp_ajax_nopriv_aap_save_user_data', 'AAP_Controller::save_user_data');
+add_action('wp_ajax_verify_token', 'AAP_Controller::verify_token');
+add_action('wp_ajax_nopriv_verify_token', 'AAP_Controller::verify_token');

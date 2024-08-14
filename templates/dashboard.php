@@ -500,6 +500,17 @@
         </div>
 
         <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                var token = localStorage.getItem('jwt_token');
+
+                if (!token) {
+                    window.location.href = "<?php echo admin_url('admin.php?page=aap-login'); ?>";
+                    return;
+                }
+            });
+        </script>
+
+        <script>
             jQuery(document).ready(function($) {
                 $("#websiteSearch").select2({
                     placeholder: "- Website -",
