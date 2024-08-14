@@ -20,9 +20,7 @@ include_once 'base.php';
         <div class="row mb-3">
             <form method="POST">
                 <div class="mb-3">
-                    <textarea class="form-control" id="adsTxt" name="adsTxt" rows="10">
-                    <?php print(trim($contentAdsTxt ?? '')); ?>
-                </textarea>
+                    <textarea class="form-control" id="adsTxt" name="adsTxt" rows="10"> <?php echo esc_textarea(trim($contentAdsTxt ?? '')); ?></textarea>
                     <p class="mt-3">The file is available on <a href='<?php echo (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']
                                                                             === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'] ?>/ads.txt' target="_blank"><?php echo (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']
                                                                                                                     === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'] ?>/ads.txt</a> .</p>

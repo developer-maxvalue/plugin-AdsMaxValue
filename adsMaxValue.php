@@ -58,13 +58,24 @@ function aap_admin_menu() {
 
 function register_webhook()
 {
-    add_action('rest_api_init', function () {
-        register_rest_route('mv', '/webhook', array(
-            'methods' => 'POST',
-            'callback' => 'handle_my_webhook',
-            'permission_callback' => '__return_true',
-        ));
-    });
+    if (isset($_SERVER['REQUEST_URI']) && '/ads.txt' == $_SERVER['REQUEST_URI']) {
+        header('Content-Type: text/plain');
+        $post_id = get_option('adstxt_post', 0);
+//        var_dump($post_id); die();
+        if ($post_id) {
+            $post_content = get_post_field('post_content', $post_id);
+            echo esc_textarea($post_content);
+            exit;
+        }
+    } else{
+        add_action('rest_api_init', function () {
+            register_rest_route('mv', '/webhook', array(
+                'methods' => 'POST',
+                'callback' => 'handle_my_webhook',
+                'permission_callback' => '__return_true',
+            ));
+        });
+    }
 }
 
 function handle_my_webhook(WP_REST_Request $request)
@@ -91,12 +102,24 @@ function handle_my_webhook(WP_REST_Request $request)
 
 function addAdsTxt($content)
 {
-    $file_path = ABSPATH . 'ads.txt';
-    if (file_put_contents($file_path, $content) !== false) {
-        return new WP_REST_Response('ads.txt created successfully.', 200);
+    $post_id = get_option('adstxt_post', 0);
+    if ($post_id) {
+        $post_data = array(
+            'ID'           => $post_id,
+            'post_content' => wp_kses_post($content),
+        );
+        wp_update_post($post_data);
     } else {
-        return new WP_REST_Response('Failed to create ads.txt.', 500);
+        $new_post = array(
+            'post_title'   => 'Ads.txt',
+            'post_content' => wp_kses_post($content),
+            'post_status'  => 'publish',
+            'post_type'    => 'adstxt',
+        );
+        $post_id = wp_insert_post($new_post);
+        update_option('adstxt_post', $post_id);
     }
+    return new WP_REST_Response('ads.txt created successfully.', 200);
 }
 
 add_action('admin_menu', 'aap_admin_menu');
