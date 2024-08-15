@@ -292,6 +292,7 @@ include_once 'base.php';
                         <div class="col-md-5 col-sm-12 report-via"
                             style="display: flex; align-items: center; gap: 10px; padding: 0;">
                             <div class="form-check form-switch" style="display: flex; align-items: center">
+                                <input type="hidden" id="csrf_token" value="<?php echo wp_create_nonce('your_nonce_action'); ?>">
                                 <input style="font-size: 20px; margin-left: -34px"
                                     id="emailCheckbox"
                                     class="form-check-input"
@@ -500,8 +501,8 @@ include_once 'base.php';
 
             function clickDownloadReport() {
                 let searchParams = new URLSearchParams(window.location.search);
-                var websiteId = document.querySelector('select[name="website_id"]').value;
-                var exportUrl = "https://stg-publisher.maxvalue.media" + "?website_id=" + websiteId + "&start=" +
+                var websiteName = window.location.hostname;
+                var exportUrl = "https://stg-publisher.maxvalue.media/reports/export" + "?website_name=" + websiteName + "&start=" +
                     searchParams.get('start') + "&end=" + searchParams.get('end');
                 window.open(exportUrl, '_blank');
             }
@@ -534,14 +535,20 @@ include_once 'base.php';
             function updateSendMail(emailChecked) {
                 $("#loader").show();
 
+                var csrfToken = $("#csrf_token").val();
+
                 $.ajax({
                     url: "https://stg-publisher.maxvalue.media/dashboard/send-email",
                     method: "PUT",
                     headers: {
-                        'Authorization': 'Bearer <?php echo get_user_meta(get_current_user_id(), "mv_jwt_token", true); ?>',
+                        'Authorization': 'Bearer <?php echo get_user_meta(get_user_meta(get_current_user_id(), 'api_user_id', true), "mv_jwt_token", true); ?>',
+                        'Access-Control-Allow-Origin': '*',
+                        'Access-Control-Allow-Methods': 'PUT, GET, POST, DELETE, OPTIONS',
+                        'Access-Control-Allow-Headers': 'Authorization, Content-Type',
                     },
                     data: {
-                        sendMail: emailChecked
+                        sendMail: emailChecked,
+                        _token: csrfToken,
                     },
                     success: function(response) {
                         $("#loader").hide();
