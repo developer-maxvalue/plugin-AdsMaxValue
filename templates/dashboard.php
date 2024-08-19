@@ -25,30 +25,34 @@ include_once 'base.php';
 </div>
 
 <script>
-    function fetchDashboardData(dateOption, startDate, endDate) {
-        let website = window.location.host;
-        let token = localStorage.getItem('jwt_token');
+    const currentUrl = new URL(window.location.href);
 
-        fetch('https://stg-publisher.maxvalue.media/api/dashboard?date_option=' + dateOption + '&start=' + startDate + '&end=' + endDate + '&website_name=' + website, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + token,
-                }
-            })
-            .then(response => response.json())
-            .then(res => {
-                if (res.success) {
-                    let data = res.data;
-                    $('#dashboard-content').html(data.html);
-                } else {
-                    alert(res.message || 'Get data dashboard fail');
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching dashboard data:', error);
-            });
-    }
+    const params = new URLSearchParams(currentUrl.search);
 
-    fetchDashboardData('SUB_7', '2024-08-12', '2024-08-19');
+    const dateOption = params.get('date_option');
+    const startDate = params.get('start');
+    const endDate = params.get('end');
+    const website = params.get('website_name');
+
+    const apiUrl = `https://stg-publisher.maxvalue.media/api/dashboard?date_option=${encodeURIComponent(dateOption)}&start=${encodeURIComponent(startDate)}&end=${encodeURIComponent(endDate)}&website_name=${encodeURIComponent(website)}`;
+
+    fetch(apiUrl, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer <?php echo get_user_meta(get_user_meta(get_current_user_id(), 'api_user_id', true), "mv_jwt_token", true); ?>',
+            }
+        })
+        .then(response => response.json())
+        .then(res => {
+            if (res.success) {
+                let data = res.data;
+                $('#dashboard-content').html(data.html);
+            } else {
+                alert(res.message || 'Get data dashboard fail');
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching dashboard data:', error);
+        });
 </script>
