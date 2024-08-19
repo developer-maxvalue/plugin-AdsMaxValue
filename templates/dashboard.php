@@ -32,7 +32,7 @@ include_once 'base.php';
     const dateOption = params.get('date_option');
     const startDate = params.get('start');
     const endDate = params.get('end');
-    const website = params.get('website_name');
+    const website = window.location.host;
 
     const apiUrl = `https://stg-publisher.maxvalue.media/api/dashboard?date_option=${encodeURIComponent(dateOption)}&start=${encodeURIComponent(startDate)}&end=${encodeURIComponent(endDate)}&website_name=${encodeURIComponent(website)}`;
 
