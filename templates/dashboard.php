@@ -1,3 +1,5 @@
+<meta name="csrf-token" content="{{ csrf_token() }}">
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.52.0/apexcharts.min.css" integrity="sha512-w3pXofOHrtYzBYpJwC6TzPH6SxD6HLAbT/rffdkA759nCQvYi5AHy5trNWFboZnj4xtdyK0AFMBtck9eTmwybg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -23,20 +25,30 @@ include_once 'base.php';
 </div>
 
 <script>
-    fetch('https://stg-publisher.maxvalue.media/api/dashboard', {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer <?php echo get_user_meta(get_user_meta(get_current_user_id(), 'api_user_id', true), "mv_jwt_token", true); ?>',
-            }
-        })
-        .then(response => response.json())
-        .then(res => {
-            if (res.success) {
-                let data = res.data;
-                $('#dashboard-content').html(data.html);
-            } else {
-                alert(res.message || 'Get data dashboard fail');
-            }
-        });
+    function fetchDashboardData(dateOption, startDate, endDate) {
+        let website = window.location.host;
+        let token = localStorage.getItem('jwt_token');
+
+        fetch('https://stg-publisher.maxvalue.media/api/dashboard?date_option=' + dateOption + '&start=' + startDate + '&end=' + endDate + '&website_name=' + website, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token,
+                }
+            })
+            .then(response => response.json())
+            .then(res => {
+                if (res.success) {
+                    let data = res.data;
+                    $('#dashboard-content').html(data.html);
+                } else {
+                    alert(res.message || 'Get data dashboard fail');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching dashboard data:', error);
+            });
+    }
+
+    fetchDashboardData('SUB_7', '2024-08-12', '2024-08-19');
 </script>
