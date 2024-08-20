@@ -56,7 +56,7 @@ check_user_token();
     .page-sign {
         position: fixed;
         top: 0;
-        left: 0;
+        right: 0;
         width: 100%;
         height: 100%;
         display: none;
@@ -64,7 +64,7 @@ check_user_token();
         justify-content: center;
         background-color: rgba(0, 0, 0, 0.5);
         z-index: 9999;
-        max-width: 100%;
+        max-width: calc(100% - 160px) !important;
     }
 
     .card-sign {
