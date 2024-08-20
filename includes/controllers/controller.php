@@ -16,6 +16,54 @@ class AAP_Controller
 
     public static function dashboard()
     {
+        // $user_id = get_user_meta(get_current_user_id(), 'api_user_id', true);
+
+        // if (!$user_id) {
+        //     exit;
+        // }
+
+        // $token = get_user_meta($user_id, 'mv_jwt_token', true);
+
+        // if (!$token) {
+        //     exit;
+        // }
+
+        // $date_option = isset($_GET['date_option']) ? sanitize_text_field($_GET['date_option']) : '';
+        // $start = isset($_GET['start']) ? sanitize_text_field($_GET['start']) : '';
+        // $end = isset($_GET['end']) ? sanitize_text_field($_GET['end']) : '';
+
+        // $api_url = add_query_arg(array(
+        //     'date_option' => $date_option,
+        //     'start' => $start,
+        //     'end' => $end,
+        //     'website_name' => $_SERVER['HTTP_HOST']
+        // ), 'https://stg-publisher.maxvalue.media/api/dashboard');
+
+        // $args = array(
+        //     'headers' => array(
+        //         'Authorization' => 'Bearer ' . $token,
+        //     ),
+        // );
+
+        // $response = wp_remote_get($api_url, $args);
+
+        // if (is_wp_error($response)) {
+        //     $error_message = $response->get_error_message();
+        //     error_log("API Request Failed: $error_message");
+        //     echo 'Không thể kết nối tới API';
+        //     return;
+        // }
+
+        // $body = wp_remote_retrieve_body($response);
+        // $data = json_decode($body, true);
+
+        // if (json_last_error() !== JSON_ERROR_NONE) {
+        //     error_log("Failed to decode JSON: " . json_last_error_msg());
+        //     echo 'Dữ liệu nhận được từ API không hợp lệ';
+        //     return;
+        // }
+
+        // $dashboardData = $data['data'] ?? [];
         include AAP_PLUGIN_DIR . 'templates/dashboard.php';
     }
 
