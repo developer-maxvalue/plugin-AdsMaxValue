@@ -493,58 +493,57 @@ include_once 'base.php';
 
             var chart = new ApexCharts(document.querySelector("#chart_custom"), options);
             chart.render();
-        });
 
-        const currentUrl = new URL(window.location.href);
-        const params = new URLSearchParams(currentUrl.search);
-        const website = window.location.host;
+            const currentUrl = new URL(window.location.href);
+            const params = new URLSearchParams(currentUrl.search);
+            const website = window.location.host;
 
-        const apiUrl = `https://stg-publisher.maxvalue.media/api/dashboard?website_name=${encodeURIComponent(website)}`;
+            const apiUrl = `https://stg-publisher.maxvalue.media/api/dashboard?website_name=${encodeURIComponent(website)}`;
 
-        fetch(apiUrl, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer <?php echo get_user_meta(get_user_meta(get_current_user_id(), 'api_user_id', true), "mv_jwt_token", true); ?>',
-                }
-            })
-            .then(response => response.json())
-            .then(res => {
-                if (res.success) {
-                    let data = res.data;
-                    console.log("data == ", data);
-                    $('#yesterday_earning').text("$" + data.revenueYesterday);
-                    $('#this_month').text("$" + data.revenueThisMonth);
-                    $('#last_month').text("$" + data.revenueLastMonth);
-                    $('#total_earning').text("$" + data.totalReport);
-                    chart.updateSeries(data.chart.data);
-                    chart.updateOptions({
-                        xaxis: {
-                            categories: data.chart.date
-                        },
-                        chart: {
-                            toolbar: {
-                                export: {
-                                    csv: {
-                                        filename: data.fileNameExport,
-                                    },
-                                    svg: {
-                                        filename: data.fileNameExport,
-                                    },
-                                    png: {
-                                        filename: data.fileNameExport,
+            fetch(apiUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer <?php echo get_user_meta(get_user_meta(get_current_user_id(), 'api_user_id', true), "mv_jwt_token", true); ?>',
+                    }
+                })
+                .then(response => response.json())
+                .then(res => {
+                    if (res.success) {
+                        let data = res.data;
+                        $('#yesterday_earning').text("$" + data.revenueYesterday);
+                        $('#this_month').text("$" + data.revenueThisMonth);
+                        $('#last_month').text("$" + data.revenueLastMonth);
+                        $('#total_earning').text("$" + data.totalReport);
+                        chart.updateSeries(data.chart.data);
+                        chart.updateOptions({
+                            xaxis: {
+                                categories: data.chart.date
+                            },
+                            chart: {
+                                toolbar: {
+                                    export: {
+                                        csv: {
+                                            filename: data.fileNameExport,
+                                        },
+                                        svg: {
+                                            filename: data.fileNameExport,
+                                        },
+                                        png: {
+                                            filename: data.fileNameExport,
+                                        }
                                     }
                                 }
                             }
-                        }
-                    });
-                } else {
-                    alert(res.message || 'Get data dashboard fail');
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching dashboard data:', error);
-            });
+                        });
+                    } else {
+                        alert(res.message || 'Get data dashboard fail');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching dashboard data:', error);
+                });
+        });
     </script>
 
     <script>
