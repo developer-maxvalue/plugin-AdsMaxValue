@@ -29,6 +29,23 @@ include_once 'base.php';
                 <thead>
                     <tr>
                         <th class="border-0 fw-bold">
+                            <span>Website</span>
+                        </th>
+                        <th class="border-0 fw-bold text-center">
+                            <span>Status</span>
+                        </th>
+                        <th class="border-0 text-end">
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="accordion table-list-website" id="table-list-website"></tbody>
+            </table>
+        </div>
+        <div class="table-responsive bg-white pb-5 p-3">
+            <table class="table table-hover m-0">
+                <thead>
+                    <tr>
+                        <th class="border-0 fw-bold">
                             <span>Zone</span>
                         </th>
                         <th class="border-0 fw-bold text-center">
@@ -41,8 +58,146 @@ include_once 'base.php';
                         </th>
                     </tr>
                 </thead>
-                <tbody class="accordion table-list-website" id="accordionExample"></tbody>
+                <tbody class="accordion table-list-website" id="accordionContainer"></tbody>
             </table>
+        </div>
+        <div class="modal fade" id="addZoneModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="addZoneModal"
+            aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Add zones</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="accordion accordion-faq" id="accordionExample">
+                            <div class="accordion-item create-website">
+                                <h2 class="accordion-header" id="headingOne">
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#zoneCollapseOne" aria-expanded="true"
+                                        aria-controls="zoneCollapseOne">
+                                        <span class="site-verified"><i class="ri-checkbox-circle-line"></i></span><b> Add
+                                            zones </b><span class="website-name"></span>
+                                    </button>
+                                </h2>
+                                <hr>
+                                <div id="zoneCollapseOne" class="accordion-collapse collapse show"
+                                    aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                    <div class="accordion-body pt-0">
+                                        <div class="alert-message"></div>
+                                        <form id="createZone">
+                                            <input type="text" name="websiteId" class="websiteId" value="" hidden>
+                                            <div class="mt-3">
+                                                <label for="url" class="fw-bold">URL (<span
+                                                        class="text-danger">*</span>)</label>
+                                                <input type="text" name="url"
+                                                    {{ !empty($websiteInfo) ? ' disabled value="' . $websiteInfo->url . '"' : '' }}
+                                                    class="form-control @error('url') is-invalid @enderror"
+                                                    placeholder="example.com" required>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-7 col-xs-12">
+                                                    @foreach ($groupDimensions as $lable => $listDimensions)
+                                                    <label
+                                                        class="control-label fw-semibold mb-2 mt-4">{{ $lable }}</label>
+                                                    <div class="row container">
+                                                        @foreach ($listDimensions as $key => $dimensions)
+                                                        <div
+                                                            class="col-6 @if ($lable === 'Sticky Ads') dimension_sticky @endif ">
+                                                            <div class="form-check">
+                                                                <input
+                                                                    class="form-check-input form-check-label input-dimension"
+                                                                    for="dimension_{{ $key }}"
+                                                                    type="checkbox" value="{{ $key }}"
+                                                                    name="list_zone_dimensions[]"
+                                                                    id="dimension_{{ $key }}">
+                                                                <label class="dimension_label form-check-label"
+                                                                    for="dimension_{{ $key }}">
+                                                                    {{ $dimensions['name'] }}
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                        @endforeach
+                                                    </div>
+                                                    @endforeach
+                                                </div>
+                                                <div class="col-md-5 col-sm-12 col-xs-12"
+                                                    style="height: 380px;position: relative;">
+                                                    <div
+                                                        style="position: relative;top: 0;left: 0;width: 100%;height: 100%;background-image: url('{{ asset('/images/dimensions/Screen.png?v=2') }}'); background-size: cover;">
+
+                                                    </div>
+                                                    <div class="demo-zone-ads">
+                                                        <div class="screen" style="height: 380px;">
+                                                            <span class="demo image-top">
+                                                                <img style="width: 50%;"
+                                                                    src="{{ asset('/images/dimensions/row-not-color.png?v=2') }}">
+                                                            </span>
+                                                            <span class="demo image-160x600">
+                                                                <img style="height: 100px;"
+                                                                    src="{{ asset('/images/dimensions/col-not-color.png?v=2') }}">
+                                                            </span>
+                                                            <span class="demo image-728x90">
+                                                                <img style="width: 50%;height: 5%;"
+                                                                    src="{{ asset('/images/dimensions/row-not-color.png?v=2') }}">
+                                                            </span>
+                                                            <span class="demo image-bottom">
+                                                                <img style="width: 50%;"
+                                                                    src="{{ asset('/images/dimensions/row-not-color.png?v=2') }}">
+                                                            </span>
+                                                            <span class="demo image-video">
+                                                                <img style="width: 20%;"
+                                                                    src="{{ asset('/images/dimensions/video-demo-not-color.png?v=2') }}">
+                                                            </span>
+                                                            <span class="demo image-300x250">
+                                                                <img style="height: 10%;"
+                                                                    src="{{ asset('/images/dimensions/banner300x250-not-color.png?v=2') }}">
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <p class="mt-4"><a class="control link-opacity-100" target="_blank"
+                                                        href="{{ route('user.faqs') }}">To view detailed
+                                                        information,
+                                                        please refer to
+                                                        the Frequently Asked Questions (FAQ) section.</a></p>
+                                            </div>
+
+                                        </form>
+                                        <div class="mb-3 text-center">
+                                            <button type="submit" class="btn btn-primary" onclick="addZones()">Add zones
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="accordion-item complete pointer-events-none">
+                                <h2 class="accordion-header" id="heading-complete">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#zoneCollapseTwo" aria-expanded="false"
+                                        aria-controls="zoneCollapseTwo">
+                                        <span class="site-complete"><i class="ri-checkbox-circle-line"></i></span> Verify
+                                        site
+                                        ownership
+                                    </button>
+                                </h2>
+                                <hr>
+                                <div id="zoneCollapseTwo" class="accordion-collapse collapse"
+                                    aria-labelledby="heading-complete" data-bs-parent="#accordionExample">
+                                    <div class="accordion-body pt-0">
+                                        <div class="row">
+                                            <center>No data !</center>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -54,9 +209,8 @@ include_once 'base.php';
     const params = new URLSearchParams(currentUrl.search);
     const website = window.location.host;
 
-    const apiUrl = `https://stg-publisher.maxvalue.media/api/report?website_name=${encodeURIComponent(website)}`;
+    const apiUrl = `https://stg-publisher.maxvalue.media/api/zone?website_name=${encodeURIComponent(website)}`;
 
-    if (!token) return;
     $('#loader').show();
     fetch(apiUrl, {
             method: 'GET',
@@ -66,5 +220,170 @@ include_once 'base.php';
             }
         })
         .then(response => response.json())
-        .then(res => {})
+        .then(res => {
+            if (res.success) {
+                let data = res.data;
+                console.log('data == ', data);
+                renderItems(data.items, data.spanStatusSite, data.zones, data.zoneStickyFirst);
+                renderTableRows(data.items, data.spanStatusSite);
+                $('#loader').hide();
+            }
+        })
+
+
+    function renderTableRows(items, spanStatusSite) {
+        const tableBody = document.getElementById('table-list-website');
+
+        Object.keys(items).forEach((key) => {
+            let item = items[key];
+
+            let rowHtml = `
+            <tr>
+                <td class="fw-bold">
+                    ${item.name}
+                </td>
+                <td class="text-center">
+                    ${spanStatusSite}
+                </td>
+                <td class="text-end">
+                    
+                </td>
+            </tr>
+        `;
+
+            tableBody.innerHTML += rowHtml;
+        });
+    }
+
+    function renderItems(items, spanStatusSite, zones, zoneStickyFirst) {
+        const accordionContainer = document.getElementById('accordionContainer');
+
+        Object.keys(items).forEach((key, index) => {
+            let item = items[key];
+
+            let itemHtml = `
+            <div class="accordion-item">
+                <tr class="accordion-header collapsed ${item.type_status === 'REVIEWING' ? 'website-info' : ''}"
+                    data-websiteid="${item.id}" data-websitestatus="${item.type_status}"
+                    data-stickyidz="${zoneStickyFirst ? zoneStickyFirst.id : ''}"
+                    data-stickycode="${zoneStickyFirst && zoneStickyFirst.ad_code ? JSON.parse(zoneStickyFirst.ad_code)[0].code : ''}"
+                    id="heading${index}" data-bs-toggle="collapse" data-bs-target="#collapse${index}"
+                    aria-expanded="true" aria-controls="collapse${index}">
+                    <td class="w-20">
+                        <h6 class="fw-bold"><i class="ri-arrow-down-s-line"></i><i class="ri-arrow-up-s-line"></i> ${item.name}</h6>
+                        <span class="limited-width" style="font-size: 11px; margin-left: 5px;">
+                            <i>
+                                ${item.note ? item.note : (item.checkShowCodeZone === false && item.status !== 3510 ? 'Please integrate our code into your site' : '')}
+                            </i>
+                        </span>
+                    </td>
+                    <td class="w-20 text-center">${spanStatusSite}</td>
+                    <td class="text-center w-10">
+                        <a class="mb-1" href="${generateReportUrl(item.api_site_id)}" onclick="redirectReport('${generateReportUrl(item.api_site_id)}')"><i class="ri-bar-chart-2-line"></i> Statistics</a>
+                    </td>
+                    <td class="text-end w-10">
+                        ${generateButtons(item)}
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="6" class="p-0">
+                        <div id="collapse${index}" class="accordion-collapse collapse"
+                             aria-labelledby="heading${index}"
+                             ${(!(item.status === 'STATUS_APPROVED' && item.type_status !== 'TYPE_STATUS_AUTO' && item.type_status !== 'TYPE_STATUS_REVIEWING') || zones.length === 0) ? 'style="display: none !important;"' : ''}
+                             data-bs-parent="#accordionExample${index}">
+                            <div class="accordion-body" style="padding: 0.5rem;">
+                                <table class="table table-hover m-0 tableZone">
+                                    <tbody class="accordion" id="accordionExample${index}">
+                                        ${renderZones(zones)}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </div>
+        `;
+
+            accordionContainer.innerHTML += itemHtml;
+        });
+    }
+
+    function generateReportUrl(apiSiteId) {
+        wp_redirect(admin_url('admin.php?page=mv-report'));
+    }
+
+    function generateButtons(item) {
+        const isApproved = item.status === 'STATUS_APPROVED';
+        const isReviewingOrAuto = ['TYPE_STATUS_AUTO', 'TYPE_STATUS_REVIEWING'].includes(item.type_status);
+        const hasNoZones = zones.length === 0;
+        const isRejected = item.status === 'STATUS_REJECTED';
+
+        if ((isApproved && !isReviewingOrAuto) || hasNoZones) {
+            return `<button id="add_zone_${item.id}" class="btn btn-outline-primary btn-sm mb-1 button-format" onclick="showModelAddZone(${item.id})">
+                    <i class="ri-add-circle-fill"></i> Add zone
+                </button>`;
+        } else {
+            if (!isRejected) {
+                return `<button class="btn btn-outline-primary btn-sm mb-1 button-format" ${isRejected ? 'disabled' : ''}>
+                        <i class="ri-check-double-fill"></i> Verify site
+                    </button>`;
+            }
+        }
+        return '';
+    }
+
+    function showModelAddZone(websiteInfo) {
+        $(".alert-message").empty();
+        $(".dimension_sticky").removeClass("pointer-events-none");
+        event.stopPropagation();
+        clearImageDemo();
+        $(".site-verified i").removeClass('ri-checkbox-circle-fill text-success').addClass('ri-checkbox-circle-line');
+        // add params to input
+        $('#addZoneModal input[name="websiteId"]').attr('value', websiteInfo.id)
+        $('#addZoneModal input[name="url"]').attr('value', websiteInfo.name)
+        $('#addZoneModal input[name="url"]').attr('disabled', 'disabled')
+
+        $(".complete").addClass("pointer-events-none");
+        websiteInfo.zones.forEach(item => {
+            if (item.dimension_id == 1) {
+                $(".dimension_sticky").addClass("pointer-events-none");
+            }
+        });
+        $(".complete .accordion-button").addClass("collapsed");
+        $("#addZoneModal #zoneCollapseOne").addClass("show");
+        $(".complete #zoneCollapseTwo").removeClass("show");
+
+        $('#addZoneModal').modal('show');
+    }
+
+    function renderZones(zones) {
+        let zonesHtml = '';
+        zones.forEach(zone => {
+            zonesHtml += `
+            <tr>
+                <td class="w-20"><span>${zone.name}</span></td>
+                <td class="text-center w-20">${convertSpanStatusZone(zone)}</td>
+                <td class="w-20">&nbsp;</td>
+                <td class="w-20">&nbsp;</td>
+                <td class="text-center w-10" style="padding-left: 0.9rem;">
+                    <a class="mb-1" href="${generateZoneReportUrl(zone.ad_zone_id)}"><i class="ri-bar-chart-2-line"></i> Statistics</a>
+                </td>
+                <td class="fw-bold w-10" style="padding-left: 0.9rem;">
+                    <button class="btn btn-outline-primary btn-sm mb-1" ${zone.status === 'STATUS_APPROVED' ? '' : 'disabled'} onclick="getCode(${zone.ad_zone_id})">
+                        <i class="ri-code-s-slash-line"></i> Get Code
+                    </button>
+                </td>
+            </tr>
+        `;
+        });
+        return zonesHtml;
+    }
+
+    function generateZoneReportUrl(adZoneId) {
+        return `your-report-url?zones[]=${adZoneId}`;
+    }
+
+    function convertSpanStatusZone(zone) {
+        return `<!-- Replace with logic for \App\Services\Common::convertSpanStatusZone -->`;
+    }
 </script>
