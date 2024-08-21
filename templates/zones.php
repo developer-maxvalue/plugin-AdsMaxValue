@@ -234,13 +234,10 @@ include_once 'base.php';
     function renderTableRows(items, spanStatusSite) {
         const tableBody = document.getElementById('table-list-website');
 
-        Object.keys(items).forEach((key) => {
-            let item = items[key];
-
-            let rowHtml = `
+        let rowHtml = `
             <tr>
                 <td class="fw-bold">
-                    ${item.name}
+                    ${items.name}
                 </td>
                 <td class="text-center">
                     ${spanStatusSite}
@@ -251,8 +248,7 @@ include_once 'base.php';
             </tr>
         `;
 
-            tableBody.innerHTML += rowHtml;
-        });
+        tableBody.innerHTML += rowHtml;
     }
 
     function renderItems(items, spanStatusSite, zones, zoneStickyFirst) {
