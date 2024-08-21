@@ -449,7 +449,7 @@ include_once 'base.php';
                             tableDevice.appendChild(noDataRow);
                         }
 
-                        let items = data.items.length > 0 ? data.items.data : [];
+                        let items = data.items && data.items.data.length > 0 ? data.items.data : [];
                         let countItem = data.countItem;
                         let isNewPub = data.isNewPub;
                         let currentDate = new Date();
@@ -464,7 +464,6 @@ include_once 'base.php';
                         tableBody.innerHTML = '';
 
                         items.forEach((itemReportSite, index) => {
-                            console.log('itemReportSite == ', itemReportSite);
                             if (
                                 isNewPub &&
                                 currentHourUTC < 12 &&
@@ -472,7 +471,6 @@ include_once 'base.php';
                                     itemReportSite.date === formatDate(currentDate) ||
                                     itemReportSite.total_impressions === 0)
                             ) {
-                                console.log("Return");
                                 return;
                             }
 
@@ -753,7 +751,7 @@ include_once 'base.php';
                             tableDevice.appendChild(noDataRow);
                         }
 
-                        let items = data.items.length > 0 ? data.items.data : [];
+                        let items = data.items && data.items.data.length > 0 ? data.items.data : [];
                         let countItem = data.countItem;
                         let isNewPub = data.isNewPub;
                         let currentDate = new Date();
