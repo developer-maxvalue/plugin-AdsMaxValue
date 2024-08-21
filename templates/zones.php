@@ -312,7 +312,7 @@ include_once 'base.php';
     function generateReportUrl(apiSiteId) {
         const reportUrl = `${currentUrl.origin}/wp-admin/admin.php?page=mv-report`;
 
-        window.location.href = reportUrl;
+        // window.location.href = reportUrl;
     }
 
     function generateButtons(item) {
