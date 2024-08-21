@@ -449,7 +449,7 @@ include_once 'base.php';
                             tableDevice.appendChild(noDataRow);
                         }
 
-                        let items = data.items;
+                        let items = data.items.length > 0 ? data.items.data : [];
                         let countItem = data.countItem;
                         let isNewPub = data.isNewPub;
                         let currentDate = new Date();
@@ -751,7 +751,7 @@ include_once 'base.php';
                             tableDevice.appendChild(noDataRow);
                         }
 
-                        let items = data.items;
+                        let items = data.items.length > 0 ? data.items.data : [];
                         let countItem = data.countItem;
                         let isNewPub = data.isNewPub;
                         let currentDate = new Date();
