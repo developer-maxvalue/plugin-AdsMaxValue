@@ -5,6 +5,7 @@ class AAP_Controller
     {
         AAP_Model_Zones::create_table();
         AAP_Model_Users::create_table();
+        AAP_Model_AdsTxt::create_row();
         // Tạo thêm các bảng khác nếu cần
     }
 

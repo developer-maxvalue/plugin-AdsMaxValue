@@ -21,6 +21,7 @@ define('MY_WEBHOOK_SECRET_KEY', 'SaYoWRY6B9uIgL3QJNBkLw5wiEodXzm7');
 require_once plugin_dir_path(__FILE__) . 'includes/controllers/controller.php';
 require_once plugin_dir_path(__FILE__) . 'includes/models/zones.php';
 require_once plugin_dir_path(__FILE__) . 'includes/models/users.php';
+require_once plugin_dir_path(__FILE__) . 'includes/models/adstxt.php';
 
 // Tự động tải các file cần thiết
 function aap_autoload($class_name) {
@@ -61,7 +62,6 @@ function register_webhook()
     if (isset($_SERVER['REQUEST_URI']) && '/ads.txt' == $_SERVER['REQUEST_URI']) {
         header('Content-Type: text/plain');
         $post_id = get_option('adstxt_post', 0);
-//        var_dump($post_id); die();
         if ($post_id) {
             $post_content = get_post_field('post_content', $post_id);
             echo esc_textarea($post_content);
