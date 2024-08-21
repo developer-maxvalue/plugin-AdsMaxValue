@@ -561,13 +561,6 @@ include_once 'base.php';
             form.submit();
         }
 
-        function clickDownloadReport() {
-            let searchParams = new URLSearchParams(window.location.search);
-            var websiteName = window.location.hostname;
-            var exportUrl = "https://stg-publisher.maxvalue.media/reports/export" + "?website_name=" + websiteName + "&start=" +
-                searchParams.get('start') + "&end=" + searchParams.get('end');
-            window.open(exportUrl, '_blank');
-        }
     </script>
 
     <script type="text/javascript">
