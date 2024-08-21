@@ -388,7 +388,7 @@ include_once 'base.php';
                                 row.appendChild(nameCell);
 
                                 let percentCell = document.createElement('td');
-                                percentCell.textContent = `${round(domain.percent, 2)}%`;
+                                percentCell.textContent = `${domain.percent}%`;
                                 row.appendChild(percentCell);
 
                                 tableDomain.appendChild(row);
@@ -690,7 +690,7 @@ include_once 'base.php';
                                 row.appendChild(nameCell);
 
                                 let percentCell = document.createElement('td');
-                                percentCell.textContent = `${round(domain.percent, 2)}%`;
+                                percentCell.textContent = `${domain.percent}%`;
                                 row.appendChild(percentCell);
 
                                 tableDomain.appendChild(row);
