@@ -314,7 +314,7 @@ include_once 'base.php';
         // window.location.href = reportUrl;
     }
 
-    function generateButtons(item) {
+    function generateButtons(item, zones) {
         const isApproved = item.status === 3500;
         const isReviewingOrAuto = ['AUTO', 'REVIEWING'].includes(item.type_status);
         const hasNoZones = zones.length === 0;
