@@ -251,6 +251,8 @@ include_once 'base.php';
     <script>
         let chart;
 
+        const token = localStorage.getItem('mv_jwt_token');
+
         document.addEventListener('DOMContentLoaded', function() {
             var options = {
                 colors: ['rgb(0, 143, 251)', 'rgb(0, 227, 150)', 'rgb(254, 176, 25)', 'rgb(255, 69, 96)',
@@ -318,12 +320,13 @@ include_once 'base.php';
 
             const apiUrl = `https://stg-publisher.maxvalue.media/api/dashboard?website_name=${encodeURIComponent(website)}`;
 
+            if (!token) return;
             $('#loader').show();
             fetch(apiUrl, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': 'Bearer <?php echo get_user_meta(get_user_meta(get_current_user_id(), 'api_user_id', true), "mv_jwt_token", true); ?>',
+                        'Authorization': `Bearer ${token}`,
                     }
                 })
                 .then(response => response.json())
@@ -629,7 +632,7 @@ include_once 'base.php';
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': 'Bearer <?php echo get_user_meta(get_user_meta(get_current_user_id(), 'api_user_id', true), "mv_jwt_token", true); ?>',
+                        'Authorization': `Bearer ${token}`,
                     }
                 })
                 .then(response => response.json())
