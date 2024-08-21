@@ -206,6 +206,7 @@ include_once 'base.php';
     const token = localStorage.getItem('mv_jwt_token');
 
     const currentUrl = new URL(window.location.href);
+    
     const params = new URLSearchParams(currentUrl.search);
     const website = window.location.host;
 
@@ -289,7 +290,7 @@ include_once 'base.php';
                     <td colspan="6" class="p-0">
                         <div id="collapse${index}" class="accordion-collapse collapse"
                              aria-labelledby="heading${index}"
-                             ${(!(item.status === 'STATUS_APPROVED' && item.type_status !== 'TYPE_STATUS_AUTO' && item.type_status !== 'TYPE_STATUS_REVIEWING') || zones.length === 0) ? 'style="display: none !important;"' : ''}
+                             ${(!(item.status === 'STATUS_APPROVED' && item.type_status !== 'AUTO' && item.type_status !== 'REVIEWING') || zones.length === 0) ? 'style="display: none !important;"' : ''}
                              data-bs-parent="#accordionExample${index}">
                             <div class="accordion-body" style="padding: 0.5rem;">
                                 <table class="table table-hover m-0 tableZone">
@@ -309,14 +310,16 @@ include_once 'base.php';
     }
 
     function generateReportUrl(apiSiteId) {
-        wp_redirect(admin_url('admin.php?page=mv-report'));
+        const reportUrl = `${currentUrl.origin}/wp-admin/admin.php?page=mv-report`;
+
+        window.location.href = reportUrl;
     }
 
     function generateButtons(item) {
-        const isApproved = item.status === 'STATUS_APPROVED';
-        const isReviewingOrAuto = ['TYPE_STATUS_AUTO', 'TYPE_STATUS_REVIEWING'].includes(item.type_status);
+        const isApproved = item.status === 3500;
+        const isReviewingOrAuto = ['AUTO', 'REVIEWING'].includes(item.type_status);
         const hasNoZones = zones.length === 0;
-        const isRejected = item.status === 'STATUS_REJECTED';
+        const isRejected = item.status === 3510;
 
         if ((isApproved && !isReviewingOrAuto) || hasNoZones) {
             return `<button id="add_zone_${item.id}" class="btn btn-outline-primary btn-sm mb-1 button-format" onclick="showModelAddZone(${item.id})">
