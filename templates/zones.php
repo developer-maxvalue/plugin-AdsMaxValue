@@ -258,50 +258,17 @@ include_once 'base.php';
 
     function renderItems(items, spanStatusSite, zones, zoneStickyFirst) {
         const accordionContainer = document.getElementById('accordionContainer');
-        
+
         Object.keys(items).forEach((key, index) => {
             let item = items[key];
             let itemHtml = `
-            <div class="accordion-item">
-                <tr class="accordion-header collapsed ${item.type_status === 'REVIEWING' ? 'website-info' : ''}"
-                    data-websiteid="${item.id}" data-websitestatus="${item.type_status}"
-                    data-stickyidz="${zoneStickyFirst ? zoneStickyFirst.id : ''}"
-                    data-stickycode="${zoneStickyFirst && zoneStickyFirst.ad_code ? JSON.parse(zoneStickyFirst.ad_code)[0].code : ''}"
-                    id="heading${index}" data-bs-toggle="collapse" data-bs-target="#collapse${index}"
-                    aria-expanded="true" aria-controls="collapse${index}">
-                    <td class="w-20">
-                        <h6 class="fw-bold"><i class="ri-arrow-down-s-line"></i><i class="ri-arrow-up-s-line"></i> ${item.name}</h6>
-                        <span class="limited-width" style="font-size: 11px; margin-left: 5px;">
-                            <i>
-                                ${item.note ? item.note : (item.checkShowCodeZone === false && item.status !== 3510 ? 'Please integrate our code into your site' : '')}
-                            </i>
-                        </span>
-                    </td>
-                    <td class="w-20 text-center">${spanStatusSite}</td>
-                    <td class="text-center w-10">
-                        <a class="mb-1" href="${generateReportUrl(item.api_site_id)}" onclick="redirectReport('${generateReportUrl(item.api_site_id)}')"><i class="ri-bar-chart-2-line"></i> Statistics</a>
-                    </td>
-                    <td class="text-end w-10">
-                        ${generateButtons(item, zones)}
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="6" class="p-0">
-                        <div id="collapse${index}" class="accordion-collapse collapse"
-                             aria-labelledby="heading${index}"
-                             ${(!(item.status === 'STATUS_APPROVED' && item.type_status !== 'AUTO' && item.type_status !== 'REVIEWING') || zones.length === 0) ? 'style="display: none !important;"' : ''}
-                             data-bs-parent="#accordionExample${index}">
-                            <div class="accordion-body" style="padding: 0.5rem;">
+            <div class="accordion-body" style="padding: 0.5rem;">
                                 <table class="table table-hover m-0 tableZone">
                                     <tbody class="accordion" id="accordionExample${index}">
                                         ${renderZones(zones)}
                                     </tbody>
                                 </table>
                             </div>
-                        </div>
-                    </td>
-                </tr>
-            </div>
         `;
 
             accordionContainer.innerHTML += itemHtml;
@@ -316,7 +283,7 @@ include_once 'base.php';
 
     function generateButtons(item, zones) {
         const isApproved = item.status === 3500;
-        const isReviewingOrAuto = ['AUTO', 'REVIEWING'].includes(item.type_status);
+        const isReviewingOrAuto = ['AUTO', 'REVIEWING'].includes(item?.type_status);
         const hasNoZones = zones.length === 0;
         const isRejected = item.status === 3510;
 
