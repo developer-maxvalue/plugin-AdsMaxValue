@@ -151,19 +151,7 @@ include_once 'base.php';
                         <div class="row g-3">
                             <div class="col-md-3 d-flex flex-column">
                                 <table class="table table-one mb-4">
-                                    <!-- <?php if (!empty($dashboardData['listCountryTraffic'])) : ?>
-                                    <?php foreach ($dashboardData['listCountryTraffic'] as $itemTraffic) : ?>
-                                        <tr>
-                                            <td scope="row" data-column="Date">
-                                                <span class="flag-icon flag-icon-<?php echo esc_attr($itemTraffic['code']); ?> flag-icon-<?php echo esc_attr($itemTraffic['code']); ?>"></span>
-                                                <span class="fw-medium"><?php echo esc_html($itemTraffic['name']); ?></span>
-                                            </td>
-                                            <td>
-                                                <?php echo $dashboardData['totalCountryTraffic'] != 0 ? round(($itemTraffic['total_impressions'] / $dashboardData['totalCountryTraffic']) * 100, 2) : 0; ?>%
-                                            </td>
-                                        </tr>
-                                    <?php endforeach; ?>
-                                <?php endif; ?> -->
+                                    <tbody id="country-traffic-table"></tbody>
                                 </table>
                             </div>
                             <div class="col-md-9 mt-5 mt-md-0">
@@ -181,34 +169,10 @@ include_once 'base.php';
                         <h6 class="card-title">Traffic Source</h6>
                     </div>
                     <div class="card-body p-3">
-                        <div class="progress progress-one ht-8 mt-2 mb-4">
-                            <?php
-                            $colors = ['bg-success', 'bg-orange', 'bg-pink', 'bg-info', 'bg-indigo'];
-                            ?>
-                            <!-- <?php if (!empty($dashboardData['reportRefererDomain'])) : ?>
-                            <?php foreach ($dashboardData['reportRefererDomain'] as $index => $domain) : ?>
-                                <div class="progress <?php echo esc_attr($colors[$index % count($colors)]); ?>" style="width: <?php echo esc_attr($domain['percent']); ?>%; border-radius: unset" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-                            <?php endforeach; ?>
-                        <?php endif; ?> -->
+                        <div class="progress progress-one ht-8 mt-2 mb-4" id="progress-container">
                         </div>
                         <table class="table table-three">
-                            <tbody>
-                                <!-- <?php if (!empty($dashboardData['reportRefererDomain'])) : ?>
-                                <?php foreach ($dashboardData['reportRefererDomain'] as $index => $domain) : ?>
-                                    <tr>
-                                        <td>
-                                            <div class="badge-dot <?php echo esc_attr($colors[$index % count($colors)]); ?>"></div>
-                                        </td>
-                                        <td class="domain-name"><?php echo esc_html($domain['name']); ?></td>
-                                        <td><?php echo round($domain['percent'], 2); ?>%</td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            <?php else : ?>
-                                <tr>
-                                    <td colspan="3">No data available</td>
-                                </tr>
-                            <?php endif; ?> -->
-                            </tbody>
+                            <tbody id="domain-table-body"></tbody>
                         </table>
                     </div>
                 </div>
@@ -218,34 +182,9 @@ include_once 'base.php';
                         <h6 class="card-title">Device Used By Users</h6>
                     </div>
                     <div class="card-body p-3">
-                        <div class="progress progress-one ht-8 mt-2 mb-4">
-                            <?php
-                            $colors = ['bg-success', 'bg-orange', 'bg-pink', 'bg-info', 'bg-indigo'];
-                            ?>
-                            <!-- <?php if (!empty($dashboardData['reportDevice'])) : ?>
-                            <?php foreach ($dashboardData['reportDevice'] as $index => $device) : ?>
-                                <div class="progress <?php echo esc_attr($colors[$index % count($colors)]); ?>" style="width: <?php echo esc_attr($device['percent']); ?>%; border-radius: unset" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
-                            <?php endforeach; ?>
-                        <?php endif; ?> -->
-                        </div>
+                        <div class="progress progress-one ht-8 mt-2 mb-4" id="progress-device"></div>
                         <table class="table table-three">
-                            <tbody>
-                                <!-- <?php if (!empty($dashboardData['reportDevice'])) : ?>
-                                <?php foreach ($dashboardData['reportDevice'] as $index => $device) : ?>
-                                    <tr>
-                                        <td>
-                                            <div class="badge-dot <?php echo esc_attr($colors[$index % count($colors)]); ?>"></div>
-                                        </td>
-                                        <td><?php echo esc_html($device['name']); ?></td>
-                                        <td><?php echo esc_html($device['percent']); ?>%</td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            <?php else : ?>
-                                <tr>
-                                    <td colspan="3">No data available</td>
-                                </tr>
-                            <?php endif; ?> -->
-                            </tbody>
+                            <tbody id="table-device"></tbody>
                         </table>
                     </div>
                 </div>
@@ -265,135 +204,12 @@ include_once 'base.php';
                                     <th scope="col" class="textCenter">Status</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <?php
-                                $items = $dashboardData['items']['data'];
-
-                                $currentDate = new DateTime();
-                                $yesterday = (clone $currentDate)->modify('-1 day');
-                                $threeDaysAgo = (clone $currentDate)->modify('-3 days');
-                                $currentHourUTC = (new DateTime('now', new DateTimeZone('UTC')))->format('H');
-                                $previousDate = null;
-                                $rowspanCount = 0;
-
-                                foreach ($items as $index => $itemReportSite):
-                                    if (
-                                        $isNewPub &&
-                                        $currentHourUTC < 12 &&
-                                        ($itemReportSite['date'] == $yesterday->format('Y-m-d') ||
-                                            $itemReportSite['date'] == $currentDate->format('Y-m-d') ||
-                                            $itemReportSite['total_impressions'] == 0)
-                                    ) {
-                                        continue;
-                                    }
-
-                                    $currentDate = $itemReportSite['date'];
-                                    $rowspanCount = count(array_filter($items, function ($item) use ($currentDate) {
-                                        return $item['date'] == $currentDate;
-                                    }));
-
-                                    if ($currentDate !== $previousDate):
-                                ?>
-                                        <tr>
-                                            <td class="textCenter" rowspan="<?php echo $rowspanCount; ?>" style="vertical-align: middle;"><?php echo esc_html($itemReportSite['date']); ?></td>
-                                            <td class="textCenter">
-                                                <div><?php echo esc_html($itemReportSite['websiteName']); ?></div>
-                                            </td>
-                                            <td class="textCenter"><?php echo number_format($itemReportSite['total_impressions'] ?? 0); ?></td>
-                                            <td class="textCenter">
-                                                <?php if ($itemReportSite['date'] != date('Y-m-d') && $itemReportSite['average_cpm'] != 0): ?>
-                                                    <?php echo number_format($itemReportSite['average_cpm'] ?? 0, 2); ?>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td class="textCenter">
-                                                <?php if ($itemReportSite['date'] != date('Y-m-d') && $itemReportSite['total_revenue'] != 0): ?>
-                                                    $<?php echo number_format($itemReportSite['total_revenue'], 2, '.', ','); ?>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td class="textCenter">
-                                                <?php if (
-                                                    ($itemReportSite['date'] <= $threeDaysAgo->format('Y-m-d') && $itemReportSite['status']) ||
-                                                    (isset($itemReportSite['status_display']) && $itemReportSite['status_display'])
-                                                ): ?>
-                                                    <span class="badge bg-success">Confirmed</span>
-                                                <?php elseif (isset($itemReportSite['status_display']) && !$itemReportSite['status_display']): ?>
-                                                    <span class="badge bg-warning">Validating</span>
-                                                    <i class="ri-error-warning-fill" data-bs-toggle="tooltip" data-bs-placement="top" title="This is not your final data"></i>
-                                                <?php endif; ?>
-                                            </td>
-                                        </tr>
-                                    <?php else: ?>
-                                        <tr>
-                                            <td class="textCenter">
-                                                <div><?php echo esc_html($itemReportSite['websiteName']); ?></div>
-                                            </td>
-                                            <td class="textCenter"><?php echo number_format($itemReportSite['total_impressions'] ?? 0); ?></td>
-                                            <td class="textCenter">
-                                                <?php if ($itemReportSite['date'] != date('Y-m-d') && $itemReportSite['average_cpm'] != 0): ?>
-                                                    <?php echo number_format($itemReportSite['average_cpm'] ?? 0, 2); ?>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td class="textCenter">
-                                                <?php if ($itemReportSite['date'] != date('Y-m-d') && $itemReportSite['total_revenue'] != 0): ?>
-                                                    $<?php echo number_format($itemReportSite['total_revenue'], 2, '.', ','); ?>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td class="textCenter">
-                                                <?php if (
-                                                    ($itemReportSite['date'] <= $threeDaysAgo->format('Y-m-d') && $itemReportSite['status']) ||
-                                                    (isset($itemReportSite['status_display']) && $itemReportSite['status_display'])
-                                                ): ?>
-                                                    <span class="badge bg-success">Confirmed</span>
-                                                <?php elseif (isset($itemReportSite['status_display']) && !$itemReportSite['status_display']): ?>
-                                                    <span class="badge bg-warning">Validating</span>
-                                                    <i class="ri-error-warning-fill" data-bs-toggle="tooltip" data-bs-placement="top" title="This is not your final data"></i>
-                                                <?php endif; ?>
-                                            </td>
-                                        </tr>
-                                    <?php endif; ?>
-                                <?php
-                                    $previousDate = $currentDate;
-                                    $countItem = $dashboardData['countItem'];
-                                endforeach;
-
-                                if (
-                                    ($countItem['totalImpressions'] == 0 && $countItem['averageCPM'] == 0 && $countItem['totalChangeRevenue'] == 0) ||
-                                    ($dashboardData['isNewPub'] && $currentHourUTC < 12)
-                                ):
-                                else:
-                                ?>
-                                    <tr style="font-weight: bold">
-                                        <td class="textCenter" scope="row" data-column="Date">Total</td>
-                                        <td></td>
-                                        <td class="textCenter">
-                                            <?php echo empty($countItem['totalImpressions']) ? 0 : number_format($countItem['totalImpressions']); ?>
-                                        </td>
-                                        <td class="textCenter">
-                                            <?php echo empty($countItem['averageCPM']) ? 0 : round($countItem['averageCPM'], 2); ?>
-                                        </td>
-                                        <td class="textCenter">
-                                            $<?php echo empty($countItem['totalChangeRevenue']) ? 0 : number_format($countItem['totalChangeRevenue'], 2, '.', ','); ?>
-                                        </td>
-                                        <td></td>
-                                    </tr>
-                                <?php endif; ?>
-                            </tbody>
+                            <tbody id="report-table-body"></tbody>
                         </table>
-                        <?php if ($dashboardData['items']['last_page'] > 1): ?>
-                            <nav aria-label="Page navigation">
-                                <ul class="pagination">
-                                    <?php foreach ($dashboardData['items']['links'] as $link): ?>
-                                        <li class="page-item <?php echo $link['active'] ? 'active' : ''; ?>">
-                                            <?php if ($link['url']): ?>
-                                                <a class="page-link" href="<?php echo esc_url($link['url']); ?>"><?php echo esc_html($link['label']); ?></a>
-                                            <?php else: ?>
-                                                <span class="page-link"><?php echo esc_html($link['label']); ?></span>
-                                            <?php endif; ?>
-                                        </li>
-                                    <?php endforeach; ?>
-                                </ul>
-                            </nav>
-                        <?php endif; ?>
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination" id="pagination-links">
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             </div>
@@ -433,6 +249,8 @@ include_once 'base.php';
     </div>
 
     <script>
+        let chart;
+
         document.addEventListener('DOMContentLoaded', function() {
             var options = {
                 colors: ['rgb(0, 143, 251)', 'rgb(0, 227, 150)', 'rgb(254, 176, 25)', 'rgb(255, 69, 96)',
@@ -491,7 +309,7 @@ include_once 'base.php';
                 }]
             };
 
-            var chart = new ApexCharts(document.querySelector("#chart_custom"), options);
+            chart = new ApexCharts(document.querySelector("#chart_custom"), options);
             chart.render();
 
             const currentUrl = new URL(window.location.href);
@@ -500,6 +318,7 @@ include_once 'base.php';
 
             const apiUrl = `https://stg-publisher.maxvalue.media/api/dashboard?website_name=${encodeURIComponent(website)}`;
 
+            $('#loader').show();
             fetch(apiUrl, {
                     method: 'GET',
                     headers: {
@@ -536,31 +355,550 @@ include_once 'base.php';
                                 }
                             }
                         });
+                        let colors = ['bg-success', 'bg-orange', 'bg-pink', 'bg-info', 'bg-indigo'];
+                        let progressContainerTrafic = document.getElementById('progress-container');
+                        progressContainerTrafic.innerHTML = '';
+                        data.reportRefererDomain.forEach((domain, index) => {
+                            let progressBar = document.createElement('div');
+                            progressBar.className = `progress ${colors[index % colors.length]}`;
+                            progressBar.style.width = `${domain.percent}%`;
+                            progressBar.setAttribute('aria-valuenow', domain.percent);
+                            progressBar.setAttribute('aria-valuemin', '0');
+                            progressBar.setAttribute('aria-valuemax', '100');
+                            progressBar.style.borderRadius = 'unset';
+
+                            progressContainerTrafic.appendChild(progressBar);
+                        });
+                        let tableDomain = document.getElementById('domain-table-body');
+                        tableDomain.innerHTML = '';
+
+                        if (data.reportRefererDomain.length > 0) {
+                            data.reportRefererDomain.forEach((domain, index) => {
+                                let row = document.createElement('tr');
+
+                                let colorCell = document.createElement('td');
+                                let badgeDot = document.createElement('div');
+                                badgeDot.className = `badge-dot ${colors[index % colors.length]}`;
+                                colorCell.appendChild(badgeDot);
+                                row.appendChild(colorCell);
+
+                                let nameCell = document.createElement('td');
+                                nameCell.className = 'domain-name';
+                                nameCell.textContent = domain.name;
+                                row.appendChild(nameCell);
+
+                                let percentCell = document.createElement('td');
+                                percentCell.textContent = `${round(domain.percent, 2)}%`;
+                                row.appendChild(percentCell);
+
+                                tableDomain.appendChild(row);
+                            });
+                        } else {
+                            let noDataRow = document.createElement('tr');
+                            let noDataCell = document.createElement('td');
+                            noDataCell.colSpan = 3;
+                            noDataCell.textContent = 'No data available';
+                            noDataRow.appendChild(noDataCell);
+                            tableDomain.appendChild(noDataRow);
+                        }
+
+                        let progressContainerDevice = document.getElementById('progress-device');
+                        progressContainerDevice.innerHTML = '';
+
+                        data.reportDevice.forEach((device, index) => {
+                            let progressBar = document.createElement('div');
+                            progressBar.className = `progress ${colors[index % colors.length]}`;
+                            progressBar.style.width = `${device.percent}%`;
+                            progressBar.setAttribute('aria-valuenow', device.percent);
+                            progressBar.setAttribute('aria-valuemin', '0');
+                            progressBar.setAttribute('aria-valuemax', '100');
+                            progressBar.style.borderRadius = 'unset';
+
+                            progressContainerDevice.appendChild(progressBar);
+                        });
+
+                        let tableDevice = document.getElementById('table-device');
+                        tableDevice.innerHTML = '';
+
+                        if (data.reportDevice.length > 0) {
+                            data.reportDevice.forEach((device, index) => {
+                                let row = document.createElement('tr');
+
+                                let colorCell = document.createElement('td');
+                                let badgeDot = document.createElement('div');
+                                badgeDot.className = `badge-dot ${colors[index % colors.length]}`;
+                                colorCell.appendChild(badgeDot);
+                                row.appendChild(colorCell);
+
+                                let nameCell = document.createElement('td');
+                                nameCell.textContent = device.name;
+                                row.appendChild(nameCell);
+
+                                let percentCell = document.createElement('td');
+                                percentCell.textContent = `${device.percent}%`;
+                                row.appendChild(percentCell);
+
+                                tableDevice.appendChild(row);
+                            });
+                        } else {
+                            let noDataRow = document.createElement('tr');
+                            let noDataCell = document.createElement('td');
+                            noDataCell.colSpan = 3;
+                            noDataCell.textContent = 'No data available';
+                            noDataRow.appendChild(noDataCell);
+                            tableDevice.appendChild(noDataRow);
+                        }
+
+                        let items = data.items;
+                        let countItem = data.countItem;
+                        let isNewPub = data.isNewPub;
+                        let currentDate = new Date();
+                        let yesterday = new Date();
+                        yesterday.setDate(currentDate.getDate() - 1);
+                        let threeDaysAgo = new Date();
+                        threeDaysAgo.setDate(currentDate.getDate() - 3);
+                        let currentHourUTC = new Date().getUTCHours();
+                        let previousDate = null;
+
+                        let tableBody = document.getElementById('report-table-body');
+                        tableBody.innerHTML = '';
+
+                        items.forEach((itemReportSite, index) => {
+                            if (
+                                isNewPub &&
+                                currentHourUTC < 12 &&
+                                (itemReportSite.date === formatDate(yesterday) ||
+                                    itemReportSite.date === formatDate(currentDate) ||
+                                    itemReportSite.total_impressions === 0)
+                            ) {
+                                return;
+                            }
+
+                            let currentDate = itemReportSite.date;
+                            let rowspanCount = items.filter(item => item.date === currentDate).length;
+
+                            if (currentDate !== previousDate) {
+                                let row = document.createElement('tr');
+                                row.innerHTML = `
+                        <td class="textCenter" rowspan="${rowspanCount}" style="vertical-align: middle;">${itemReportSite.date}</td>
+                        <td class="textCenter"><div>${itemReportSite.websiteName}</div></td>
+                        <td class="textCenter">${formatNumber(itemReportSite.total_impressions)}</td>
+                        <td class="textCenter">${(itemReportSite.date !== formatDate(new Date()) && itemReportSite.average_cpm !== 0) ? formatNumber(itemReportSite.average_cpm, 2) : ''}</td>
+                        <td class="textCenter">${(itemReportSite.date !== formatDate(new Date()) && itemReportSite.total_revenue !== 0) ? '$' + formatNumber(itemReportSite.total_revenue, 2) : ''}</td>
+                        <td class="textCenter">
+                            ${(itemReportSite.date <= formatDate(threeDaysAgo) && itemReportSite.status) || (itemReportSite.status_display !== undefined && itemReportSite.status_display) ? 
+                                '<span class="badge bg-success">Confirmed</span>' : 
+                                (itemReportSite.status_display === false ? '<span class="badge bg-warning">Validating</span><i class="ri-error-warning-fill" data-bs-toggle="tooltip" data-bs-placement="top" title="This is not your final data"></i>' : '')
+                            }
+                        </td>
+                    `;
+                                tableBody.appendChild(row);
+                            } else {
+                                let row = document.createElement('tr');
+                                row.innerHTML = `
+                        <td class="textCenter"><div>${itemReportSite.websiteName}</div></td>
+                        <td class="textCenter">${formatNumber(itemReportSite.total_impressions)}</td>
+                        <td class="textCenter">${(itemReportSite.date !== formatDate(new Date()) && itemReportSite.average_cpm !== 0) ? formatNumber(itemReportSite.average_cpm, 2) : ''}</td>
+                        <td class="textCenter">${(itemReportSite.date !== formatDate(new Date()) && itemReportSite.total_revenue !== 0) ? '$' + formatNumber(itemReportSite.total_revenue, 2) : ''}</td>
+                        <td class="textCenter">
+                            ${(itemReportSite.date <= formatDate(threeDaysAgo) && itemReportSite.status) || (itemReportSite.status_display !== undefined && itemReportSite.status_display) ? 
+                                '<span class="badge bg-success">Confirmed</span>' : 
+                                (itemReportSite.status_display === false ? '<span class="badge bg-warning">Validating</span><i class="ri-error-warning-fill" data-bs-toggle="tooltip" data-bs-placement="top" title="This is not your final data"></i>' : '')
+                            }
+                        </td>
+                    `;
+                                tableBody.appendChild(row);
+                            }
+
+                            previousDate = currentDate;
+                        });
+
+                        if (
+                            (countItem.totalImpressions === 0 && countItem.averageCPM === 0 && countItem.totalChangeRevenue === 0) ||
+                            (isNewPub && currentHourUTC < 12)
+                        ) {} else {
+                            let totalRow = document.createElement('tr');
+                            totalRow.style.fontWeight = 'bold';
+                            totalRow.innerHTML = `
+                    <td class="textCenter" scope="row" data-column="Date">Total</td>
+                    <td></td>
+                    <td class="textCenter">${formatNumber(countItem.totalImpressions)}</td>
+                    <td class="textCenter">${formatNumber(countItem.averageCPM, 2)}</td>
+                    <td class="textCenter">$${formatNumber(countItem.totalChangeRevenue, 2)}</td>
+                    <td></td>
+                `;
+                            tableBody.appendChild(totalRow);
+                        }
+
+                        let pagination = data.items;
+
+                        if (pagination.last_page > 1) {
+                            let paginationContainer = document.getElementById('pagination-links');
+                            paginationContainer.innerHTML = '';
+
+                            pagination.links.forEach(link => {
+                                let li = document.createElement('li');
+                                li.className = `page-item ${link.active ? 'active' : ''}`;
+
+                                if (link.url) {
+                                    let a = document.createElement('a');
+                                    a.className = 'page-link';
+                                    a.href = link.url;
+                                    a.textContent = link.label;
+                                    li.appendChild(a);
+                                } else {
+                                    let span = document.createElement('span');
+                                    span.className = 'page-link';
+                                    span.textContent = link.label;
+                                    li.appendChild(span);
+                                }
+
+                                paginationContainer.appendChild(li);
+                            });
+                        }
+                        let listCountryTraffic = data.listCountryTraffic;
+                        let totalCountryTraffic = data.totalCountryTraffic;
+                        let countryTraffic = document.getElementById('country-traffic-table');
+
+                        countryTraffic.innerHTML = '';
+
+                        if (listCountryTraffic.length > 0) {
+                            listCountryTraffic.forEach(itemTraffic => {
+                                let percentage = totalCountryTraffic != 0 ?
+                                    ((itemTraffic.total_impressions / totalCountryTraffic) * 100).toFixed(2) :
+                                    0;
+
+                                let row = document.createElement('tr');
+                                row.innerHTML = `
+                        <td scope="row" data-column="Date">
+                            <span class="flag-icon flag-icon-${itemTraffic.code}"></span>
+                            <span class="fw-medium">${itemTraffic.name}</span>
+                        </td>
+                        <td>${percentage}%</td>
+                    `;
+
+                                countryTraffic.appendChild(row);
+                            });
+                        } else {
+                            let noDataRow = document.createElement('tr');
+                            noDataRow.innerHTML = `
+                    <td colspan="2">No data available</td>
+                `;
+                            countryTraffic.appendChild(noDataRow);
+                        }
+                        $('#loader').hide();
                     } else {
                         alert(res.message || 'Get data dashboard fail');
+                        $('#loader').hide();
                     }
                 })
                 .catch(error => {
                     console.error('Error fetching dashboard data:', error);
+                    $('#loader').hide();
                 });
+
         });
-    </script>
 
-    <script>
-        function clickSearchReport(button) {
-            let searchParams = new URLSearchParams(window.location.search);
-            var url = new URL(window.location.href);
-
-            url.searchParams.set("start", searchParams.get('start'));
-            url.searchParams.set("end", searchParams.get('end'));
-
-            var form = button.closest('form.searchReport');
-
-            form.action = url.href;
-
-            form.submit();
+        function formatDate(date) {
+            return date.toISOString().split('T')[0];
         }
 
+        function formatNumber(number, decimals = 0) {
+            return number ? number.toLocaleString(undefined, {
+                minimumFractionDigits: decimals,
+                maximumFractionDigits: decimals
+            }) : 0;
+        }
+
+        function clickSearchReport(button) {
+            event.preventDefault();
+            $('#loader').show();
+            let form = button.closest('form.searchReport');
+            let formData = new FormData(form);
+
+            let website = window.location.host;
+
+            var urlParams = new URLSearchParams(window.location.search);
+            var start = urlParams.get('start');
+            var end = urlParams.get('end');
+            var date_option = urlParams.get('date_option');
+
+            const apiUrl = `https://stg-publisher.maxvalue.media/api/dashboard?website_name=${encodeURIComponent(website)}&start=${start}&end=${end}&date_option=${date_option}`;
+
+            fetch(apiUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer <?php echo get_user_meta(get_user_meta(get_current_user_id(), 'api_user_id', true), "mv_jwt_token", true); ?>',
+                    }
+                })
+                .then(response => response.json())
+                .then(res => {
+                    if (res.success) {
+                        let data = res.data;
+                        chart.updateSeries(data.chart.data);
+                        chart.updateOptions({
+                            xaxis: {
+                                categories: data.chart.date
+                            },
+                            chart: {
+                                toolbar: {
+                                    export: {
+                                        csv: {
+                                            filename: data.fileNameExport,
+                                        },
+                                        svg: {
+                                            filename: data.fileNameExport,
+                                        },
+                                        png: {
+                                            filename: data.fileNameExport,
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                        let colors = ['bg-success', 'bg-orange', 'bg-pink', 'bg-info', 'bg-indigo'];
+                        let progressContainerTrafic = document.getElementById('progress-container');
+                        progressContainerTrafic.innerHTML = '';
+                        data.reportRefererDomain.forEach((domain, index) => {
+                            let progressBar = document.createElement('div');
+                            progressBar.className = `progress ${colors[index % colors.length]}`;
+                            progressBar.style.width = `${domain.percent}%`;
+                            progressBar.setAttribute('aria-valuenow', domain.percent);
+                            progressBar.setAttribute('aria-valuemin', '0');
+                            progressBar.setAttribute('aria-valuemax', '100');
+                            progressBar.style.borderRadius = 'unset';
+
+                            progressContainerTrafic.appendChild(progressBar);
+                        });
+                        let tableDomain = document.getElementById('domain-table-body');
+                        tableDomain.innerHTML = '';
+
+                        if (data.reportRefererDomain.length > 0) {
+                            data.reportRefererDomain.forEach((domain, index) => {
+                                let row = document.createElement('tr');
+
+                                let colorCell = document.createElement('td');
+                                let badgeDot = document.createElement('div');
+                                badgeDot.className = `badge-dot ${colors[index % colors.length]}`;
+                                colorCell.appendChild(badgeDot);
+                                row.appendChild(colorCell);
+
+                                let nameCell = document.createElement('td');
+                                nameCell.className = 'domain-name';
+                                nameCell.textContent = domain.name;
+                                row.appendChild(nameCell);
+
+                                let percentCell = document.createElement('td');
+                                percentCell.textContent = `${round(domain.percent, 2)}%`;
+                                row.appendChild(percentCell);
+
+                                tableDomain.appendChild(row);
+                            });
+                        } else {
+                            let noDataRow = document.createElement('tr');
+                            let noDataCell = document.createElement('td');
+                            noDataCell.colSpan = 3;
+                            noDataCell.textContent = 'No data available';
+                            noDataRow.appendChild(noDataCell);
+                            tableDomain.appendChild(noDataRow);
+                        }
+
+                        let progressContainerDevice = document.getElementById('progress-device');
+                        progressContainerDevice.innerHTML = '';
+
+                        data.reportDevice.forEach((device, index) => {
+                            let progressBar = document.createElement('div');
+                            progressBar.className = `progress ${colors[index % colors.length]}`;
+                            progressBar.style.width = `${device.percent}%`;
+                            progressBar.setAttribute('aria-valuenow', device.percent);
+                            progressBar.setAttribute('aria-valuemin', '0');
+                            progressBar.setAttribute('aria-valuemax', '100');
+                            progressBar.style.borderRadius = 'unset';
+
+                            progressContainerDevice.appendChild(progressBar);
+                        });
+
+                        let tableDevice = document.getElementById('table-device');
+                        tableDevice.innerHTML = '';
+
+                        if (data.reportDevice.length > 0) {
+                            data.reportDevice.forEach((device, index) => {
+                                let row = document.createElement('tr');
+
+                                let colorCell = document.createElement('td');
+                                let badgeDot = document.createElement('div');
+                                badgeDot.className = `badge-dot ${colors[index % colors.length]}`;
+                                colorCell.appendChild(badgeDot);
+                                row.appendChild(colorCell);
+
+                                let nameCell = document.createElement('td');
+                                nameCell.textContent = device.name;
+                                row.appendChild(nameCell);
+
+                                let percentCell = document.createElement('td');
+                                percentCell.textContent = `${device.percent}%`;
+                                row.appendChild(percentCell);
+
+                                tableDevice.appendChild(row);
+                            });
+                        } else {
+                            let noDataRow = document.createElement('tr');
+                            let noDataCell = document.createElement('td');
+                            noDataCell.colSpan = 3;
+                            noDataCell.textContent = 'No data available';
+                            noDataRow.appendChild(noDataCell);
+                            tableDevice.appendChild(noDataRow);
+                        }
+
+                        let items = data.items;
+                        let countItem = data.countItem;
+                        let isNewPub = data.isNewPub;
+                        let currentDate = new Date();
+                        let yesterday = new Date();
+                        yesterday.setDate(currentDate.getDate() - 1);
+                        let threeDaysAgo = new Date();
+                        threeDaysAgo.setDate(currentDate.getDate() - 3);
+                        let currentHourUTC = new Date().getUTCHours();
+                        let previousDate = null;
+
+                        let tableBody = document.getElementById('report-table-body');
+                        tableBody.innerHTML = '';
+
+                        items.forEach((itemReportSite, index) => {
+                            if (
+                                isNewPub &&
+                                currentHourUTC < 12 &&
+                                (itemReportSite.date === formatDate(yesterday) ||
+                                    itemReportSite.date === formatDate(currentDate) ||
+                                    itemReportSite.total_impressions === 0)
+                            ) {
+                                return;
+                            }
+
+                            let currentDate = itemReportSite.date;
+                            let rowspanCount = items.filter(item => item.date === currentDate).length;
+
+                            if (currentDate !== previousDate) {
+                                let row = document.createElement('tr');
+                                row.innerHTML = `
+                        <td class="textCenter" rowspan="${rowspanCount}" style="vertical-align: middle;">${itemReportSite.date}</td>
+                        <td class="textCenter"><div>${itemReportSite.websiteName}</div></td>
+                        <td class="textCenter">${formatNumber(itemReportSite.total_impressions)}</td>
+                        <td class="textCenter">${(itemReportSite.date !== formatDate(new Date()) && itemReportSite.average_cpm !== 0) ? formatNumber(itemReportSite.average_cpm, 2) : ''}</td>
+                        <td class="textCenter">${(itemReportSite.date !== formatDate(new Date()) && itemReportSite.total_revenue !== 0) ? '$' + formatNumber(itemReportSite.total_revenue, 2) : ''}</td>
+                        <td class="textCenter">
+                            ${(itemReportSite.date <= formatDate(threeDaysAgo) && itemReportSite.status) || (itemReportSite.status_display !== undefined && itemReportSite.status_display) ? 
+                                '<span class="badge bg-success">Confirmed</span>' : 
+                                (itemReportSite.status_display === false ? '<span class="badge bg-warning">Validating</span><i class="ri-error-warning-fill" data-bs-toggle="tooltip" data-bs-placement="top" title="This is not your final data"></i>' : '')
+                            }
+                        </td>
+                    `;
+                                tableBody.appendChild(row);
+                            } else {
+                                let row = document.createElement('tr');
+                                row.innerHTML = `
+                        <td class="textCenter"><div>${itemReportSite.websiteName}</div></td>
+                        <td class="textCenter">${formatNumber(itemReportSite.total_impressions)}</td>
+                        <td class="textCenter">${(itemReportSite.date !== formatDate(new Date()) && itemReportSite.average_cpm !== 0) ? formatNumber(itemReportSite.average_cpm, 2) : ''}</td>
+                        <td class="textCenter">${(itemReportSite.date !== formatDate(new Date()) && itemReportSite.total_revenue !== 0) ? '$' + formatNumber(itemReportSite.total_revenue, 2) : ''}</td>
+                        <td class="textCenter">
+                            ${(itemReportSite.date <= formatDate(threeDaysAgo) && itemReportSite.status) || (itemReportSite.status_display !== undefined && itemReportSite.status_display) ? 
+                                '<span class="badge bg-success">Confirmed</span>' : 
+                                (itemReportSite.status_display === false ? '<span class="badge bg-warning">Validating</span><i class="ri-error-warning-fill" data-bs-toggle="tooltip" data-bs-placement="top" title="This is not your final data"></i>' : '')
+                            }
+                        </td>
+                    `;
+                                tableBody.appendChild(row);
+                            }
+
+                            previousDate = currentDate;
+                        });
+
+                        if (
+                            (countItem.totalImpressions === 0 && countItem.averageCPM === 0 && countItem.totalChangeRevenue === 0) ||
+                            (isNewPub && currentHourUTC < 12)
+                        ) {} else {
+                            let totalRow = document.createElement('tr');
+                            totalRow.style.fontWeight = 'bold';
+                            totalRow.innerHTML = `
+                    <td class="textCenter" scope="row" data-column="Date">Total</td>
+                    <td></td>
+                    <td class="textCenter">${formatNumber(countItem.totalImpressions)}</td>
+                    <td class="textCenter">${formatNumber(countItem.averageCPM, 2)}</td>
+                    <td class="textCenter">$${formatNumber(countItem.totalChangeRevenue, 2)}</td>
+                    <td></td>
+                `;
+                            tableBody.appendChild(totalRow);
+                        }
+
+                        let pagination = data.items;
+
+                        if (pagination.last_page > 1) {
+                            let paginationContainer = document.getElementById('pagination-links');
+                            paginationContainer.innerHTML = '';
+
+                            pagination.links.forEach(link => {
+                                let li = document.createElement('li');
+                                li.className = `page-item ${link.active ? 'active' : ''}`;
+
+                                if (link.url) {
+                                    let a = document.createElement('a');
+                                    a.className = 'page-link';
+                                    a.href = link.url;
+                                    a.textContent = link.label;
+                                    li.appendChild(a);
+                                } else {
+                                    let span = document.createElement('span');
+                                    span.className = 'page-link';
+                                    span.textContent = link.label;
+                                    li.appendChild(span);
+                                }
+
+                                paginationContainer.appendChild(li);
+                            });
+                        }
+                        let listCountryTraffic = data.listCountryTraffic;
+                        let totalCountryTraffic = data.totalCountryTraffic;
+                        let countryTraffic = document.getElementById('country-traffic-table');
+
+                        countryTraffic.innerHTML = '';
+
+                        if (listCountryTraffic.length > 0) {
+                            listCountryTraffic.forEach(itemTraffic => {
+                                let percentage = totalCountryTraffic != 0 ?
+                                    ((itemTraffic.total_impressions / totalCountryTraffic) * 100).toFixed(2) :
+                                    0;
+
+                                let row = document.createElement('tr');
+                                row.innerHTML = `
+                        <td scope="row" data-column="Date">
+                            <span class="flag-icon flag-icon-${itemTraffic.code}"></span>
+                            <span class="fw-medium">${itemTraffic.name}</span>
+                        </td>
+                        <td>${percentage}%</td>
+                    `;
+
+                                countryTraffic.appendChild(row);
+                            });
+                        } else {
+                            let noDataRow = document.createElement('tr');
+                            noDataRow.innerHTML = `
+                    <td colspan="2">No data available</td>
+                `;
+                            countryTraffic.appendChild(noDataRow);
+                        }
+                        $('#loader').hide();
+                    } else {
+                        alert(res.message || 'Get data dashboard fail');
+                        $('#loader').hide();
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching dashboard data:', error);
+                    $('#loader').hide();
+                });
+        }
     </script>
 
     <script type="text/javascript">
@@ -629,7 +967,7 @@ include_once 'base.php';
                         route += "CUSTOM";
                         break;
                 }
-                window.location.href = route + "&start=" + from + "&end=" + to;
+                window.history.pushState(null, '', route + "&start=" + from + "&end=" + to);
             });
         });
     </script>

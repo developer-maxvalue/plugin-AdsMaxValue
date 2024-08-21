@@ -121,20 +121,16 @@ check_user_token();
                 </div>
                 <div class="mb-4">
                     <label class="form-label d-flex justify-content-between">Password
-                        <a href="<?php echo wp_lostpassword_url(); ?>" style="text-decoration: none;">Forgot password?</a>
+                        <a href="https://stg-publisher.maxvalue.media/password/reset" style="text-decoration: none;">Forgot password?</a>
                     </label>
                     <input type="password" class="form-control" name="password" id="password" placeholder="Enter your password" required>
                 </div>
                 <button class="btn btn-primary btn-sign form-control" type="submit">Login</button>
-                <a href="<?php echo home_url('/auth/google/redirect'); ?>" class="btn btn-light btn-sign mt-4 form-control" style="color: black;">
-                    <img src="<?php echo plugins_url('assets/img/google.png', dirname(__FILE__)); ?>" alt="" style="width: 20px; margin-right: 8px">
-                    Login with Google
-                </a>
             </form>
             <p id="login-error" style="color: red;"></p>
         </div>
         <div class="card-footer" style="background-color: unset; border-top: unset">
-            Don't have an account? <a href="<?php echo wp_registration_url(); ?>" style="text-decoration: none;">Create an Account</a>
+            Don't have an account? <a href="https://stg-publisher.maxvalue.media/register" style="text-decoration: none;">Create an Account</a>
         </div>
     </div>
 </div>
