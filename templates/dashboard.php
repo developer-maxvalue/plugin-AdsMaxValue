@@ -40,9 +40,31 @@
         z-index: 9999;
     }
 
-    @media (min-width: 768px) {
-        .report-via {
-            justify-content: end;
+    .vmap-one {
+        height: 200px;
+    }
+
+    .bg-orange {
+        background-color: #fd7e14;
+    }
+
+    .bg-pink {
+        background-color: #ea4c89 !important;
+    }
+
+    .bg-purple {
+        background-color: #6f42c1 !important;
+    }
+
+    @media (min-width: 1200px) {
+        .vmap-one {
+            height: 350px;
+        }
+    }
+
+    @media (min-width: 768px) and (max-width: 1199px) {
+        .vmap-one {
+            height: 300px;
         }
     }
 </style>
@@ -155,7 +177,7 @@ include_once 'base.php';
                                 </table>
                             </div>
                             <div class="col-md-9 mt-5 mt-md-0">
-                                <div id="vmap" style="width: auto; height: 400px"></div>
+                                <div id="vmap" class="vmap-one"></div>
                             </div>
                         </div>
                     </div>

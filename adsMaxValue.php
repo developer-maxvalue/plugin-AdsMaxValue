@@ -52,7 +52,7 @@ function aap_admin_menu() {
     add_menu_page('Ad MaxValue', 'Ad MaxValue', 'manage_options', 'mv-dashboard', 'AAP_Controller::dashboard', 'dashicons-welcome-widgets-menus');
     add_submenu_page('mv-dashboard', 'Manage Zones', 'Zones', 'manage_options', 'mv-zones', 'AAP_Controller::zones');
     add_submenu_page('mv-dashboard', 'Reports', 'Reports', 'manage_options', 'mv-reports', 'AAP_Controller::reports');
-    add_submenu_page('mv-dashboard', 'Wallets', 'Wallets', 'manage_options', 'mv-wallets', 'AAP_Controller::wallets');
+    // add_submenu_page('mv-dashboard', 'Wallets', 'Wallets', 'manage_options', 'mv-wallets', 'AAP_Controller::wallets');
     add_submenu_page('mv-dashboard', 'Ads.txt', 'Ads.txt', 'manage_options', 'mv-adstxt', 'AAP_Controller::adsTxt');
     add_submenu_page('mv-dashboard', 'Referral', 'Referral', 'manage_options', 'mv-referral', 'AAP_Controller::referral');
 }
@@ -131,17 +131,15 @@ function aap_enqueue_assets() {
 //    wp_enqueue_script('mv-admin-js', AAP_PLUGIN_URL . 'assets/js/admin.js', array('jquery'), null, true);
 }
 
-function update_send_mail() {
-    check_ajax_referer('update_send_mail_nonce', 'nonce');
+function enqueue_custom_scripts() {
+    die('test');
+    wp_enqueue_script('custom-script', plugin_dir_url(__FILE__) . 'assets/js/script.js', array('jquery'), null, true);
 
-    $send_mail = isset($_POST['sendMail']) ? intval($_POST['sendMail']) : 0;
-
-    $user_id = get_current_user_id();
-    update_user_meta($user_id, 'send_mail', $send_mail);
-
-    wp_send_json_success(array('message' => 'Send mail status updated successfully.'));
+    wp_localize_script('custom-script', 'myAjax', array(
+        'ajaxurl' => admin_url('client-ajax.php'),  // URL for AJAX requests
+        'security' => wp_create_nonce('my-special-string')  // Security nonce
+    ));
 }
+add_action('wp_enqueue_scripts', 'enqueue_custom_scripts');
 
 add_action('admin_enqueue_scripts', 'aap_enqueue_assets');
-add_action('wp_ajax_update_send_mail', 'update_send_mail');
-add_action('wp_ajax_nopriv_update_send_mail', 'update_send_mail');
