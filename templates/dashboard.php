@@ -464,6 +464,7 @@ include_once 'base.php';
                         tableBody.innerHTML = '';
 
                         items.forEach((itemReportSite, index) => {
+                            console.log('itemReportSite == ', itemReportSite);
                             if (
                                 isNewPub &&
                                 currentHourUTC < 12 &&
@@ -471,6 +472,7 @@ include_once 'base.php';
                                     itemReportSite.date === formatDate(currentDate) ||
                                     itemReportSite.total_impressions === 0)
                             ) {
+                                console.log("Return");
                                 return;
                             }
 
