@@ -223,11 +223,10 @@ include_once 'base.php';
         .then(response => response.json())
         .then(res => {
             if (res.success) {
+                $('#loader').hide();
                 let data = res.data;
-                console.log('data == ', data);
                 renderItems(data.items, data.spanStatusSite, data.zones, data.zoneStickyFirst);
                 renderTableRows(data.items, data.spanStatusSite);
-                $('#loader').hide();
             }
         })
 
@@ -259,13 +258,13 @@ include_once 'base.php';
     function renderItems(items, spanStatusSite, zones, zoneStickyFirst) {
         const accordionContainer = document.getElementById('accordionContainer');
 
-        Object.keys(items).forEach((key, index) => {
+        Object.keys(zones).forEach((key, index) => {
             let item = items[key];
             let itemHtml = `
             <div class="accordion-body" style="padding: 0.5rem;">
                                 <table class="table table-hover m-0 tableZone">
                                     <tbody class="accordion" id="accordionExample${index}">
-                                        ${renderZones(zones)}
+                                        ${renderZones(zones, spanStatusSite)}
                                     </tbody>
                                 </table>
                             </div>
@@ -325,20 +324,18 @@ include_once 'base.php';
         $('#addZoneModal').modal('show');
     }
 
-    function renderZones(zones) {
+    function renderZones(zones, spanStatusSite) {
         let zonesHtml = '';
         zones.forEach(zone => {
             zonesHtml += `
             <tr>
                 <td class="w-20"><span>${zone.name}</span></td>
-                <td class="text-center w-20">${convertSpanStatusZone(zone)}</td>
-                <td class="w-20">&nbsp;</td>
-                <td class="w-20">&nbsp;</td>
+                <td class="text-center w-20">${spanStatusSite}</td>
                 <td class="text-center w-10" style="padding-left: 0.9rem;">
                     <a class="mb-1" href="${generateZoneReportUrl(zone.ad_zone_id)}"><i class="ri-bar-chart-2-line"></i> Statistics</a>
                 </td>
                 <td class="fw-bold w-10" style="padding-left: 0.9rem;">
-                    <button class="btn btn-outline-primary btn-sm mb-1" ${zone.status === 'STATUS_APPROVED' ? '' : 'disabled'} onclick="getCode(${zone.ad_zone_id})">
+                    <button class="btn btn-outline-primary btn-sm mb-1" ${zone.status === 7000 ? '' : 'disabled'} onclick="getCode(${zone.ad_zone_id})">
                         <i class="ri-code-s-slash-line"></i> Get Code
                     </button>
                 </td>
