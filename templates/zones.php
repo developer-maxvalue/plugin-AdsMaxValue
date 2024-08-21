@@ -342,7 +342,7 @@ include_once 'base.php';
     }
 
     function generateZoneReportUrl(adZoneId) {
-        return `your-report-url?zones[]=${adZoneId}`;
+        return `admin.php?page=mv-reports`;
     }
 
     function convertSpanStatusZone(zone) {
