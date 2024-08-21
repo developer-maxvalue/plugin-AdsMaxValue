@@ -90,9 +90,17 @@ function handle_my_webhook(WP_REST_Request $request)
                 case 'ADS.TXT':
                     $content = $request->get_param('content');
                     if (empty($content)) {
-                        return new WP_REST_Response('Content is required.', 400);
+                        return new WP_REST_Response([
+                            'success' => true,
+                            'messages' => 'Content is required.'
+                        ], 400);
                     }
                     return addAdsTxt($content);
+                case 'CHECK':
+                    return new WP_REST_Response([
+                        'success' => true,
+                        'messages' => 'Connect success'
+                    ], 200);
                 default:
                     break;
             }
@@ -119,7 +127,10 @@ function addAdsTxt($content)
         $post_id = wp_insert_post($new_post);
         update_option('adstxt_post', $post_id);
     }
-    return new WP_REST_Response('ads.txt created successfully.', 200);
+    return new WP_REST_Response([
+        'success' => true,
+        'messages' => 'ads.txt created successfully.'
+    ], 200);
 }
 
 add_action('admin_menu', 'aap_admin_menu');
