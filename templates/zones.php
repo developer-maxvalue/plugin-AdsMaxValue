@@ -206,7 +206,7 @@ include_once 'base.php';
     const token = localStorage.getItem('mv_jwt_token');
 
     const currentUrl = new URL(window.location.href);
-    
+
     const params = new URLSearchParams(currentUrl.search);
     const website = window.location.host;
 
@@ -258,10 +258,9 @@ include_once 'base.php';
 
     function renderItems(items, spanStatusSite, zones, zoneStickyFirst) {
         const accordionContainer = document.getElementById('accordionContainer');
-
+        
         Object.keys(items).forEach((key, index) => {
             let item = items[key];
-
             let itemHtml = `
             <div class="accordion-item">
                 <tr class="accordion-header collapsed ${item.type_status === 'REVIEWING' ? 'website-info' : ''}"
@@ -283,7 +282,7 @@ include_once 'base.php';
                         <a class="mb-1" href="${generateReportUrl(item.api_site_id)}" onclick="redirectReport('${generateReportUrl(item.api_site_id)}')"><i class="ri-bar-chart-2-line"></i> Statistics</a>
                     </td>
                     <td class="text-end w-10">
-                        ${generateButtons(item)}
+                        ${generateButtons(item, zones)}
                     </td>
                 </tr>
                 <tr>
