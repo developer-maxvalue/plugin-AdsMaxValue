@@ -83,8 +83,7 @@ include_once 'base.php';
                 </div>
             </div>
         </div>
-        <div class="modal fade" id="addZoneModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="addZoneModal"
-            aria-hidden="true">
+        <div class="modal fade" id="addZoneModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="addZoneModal" aria-hidden="true">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -95,85 +94,41 @@ include_once 'base.php';
                         <div class="accordion accordion-faq" id="accordionExample">
                             <div class="accordion-item create-website">
                                 <h2 class="accordion-header" id="headingOne">
-                                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#zoneCollapseOne" aria-expanded="true"
-                                        aria-controls="zoneCollapseOne">
-                                        <span class="site-verified"><i class="ri-checkbox-circle-line"></i></span><b> Add
-                                            zones </b><span class="website-name"></span>
+                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#zoneCollapseOne" aria-expanded="true" aria-controls="zoneCollapseOne">
+                                        <span class="site-verified"><i class="ri-checkbox-circle-line"></i></span><b> Add zones </b><span class="website-name"></span>
                                     </button>
                                 </h2>
                                 <hr>
-                                <div id="zoneCollapseOne" class="accordion-collapse collapse show"
-                                    aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                <div id="zoneCollapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                     <div class="accordion-body pt-0">
                                         <div class="alert-message"></div>
                                         <form id="createZone">
                                             <input type="text" name="websiteId" class="websiteId" value="" hidden>
                                             <div class="mt-3">
-                                                <label for="url" class="fw-bold">URL (<span
-                                                        class="text-danger">*</span>)</label>
-                                                <input type="text" name="url"
-                                                    {{ !empty($websiteInfo) ? ' disabled value="' . $websiteInfo->url . '"' : '' }}
-                                                    class="form-control @error('url') is-invalid @enderror"
-                                                    placeholder="example.com" required>
+                                                <label for="url" class="fw-bold">URL (<span class="text-danger">*</span>)</label>
+                                                <input type="text" name="url" class="form-control" placeholder="example.com" required>
                                             </div>
-                                            <div class="row">
-                                                <div class="col-sm-7 col-xs-12">
-                                                    @foreach ($groupDimensions as $lable => $listDimensions)
-                                                    <label
-                                                        class="control-label fw-semibold mb-2 mt-4">{{ $lable }}</label>
-                                                    <div class="row container">
-                                                        @foreach ($listDimensions as $key => $dimensions)
-                                                        <div
-                                                            class="col-6 @if ($lable === 'Sticky Ads') dimension_sticky @endif ">
-                                                            <div class="form-check">
-                                                                <input
-                                                                    class="form-check-input form-check-label input-dimension"
-                                                                    for="dimension_{{ $key }}"
-                                                                    type="checkbox" value="{{ $key }}"
-                                                                    name="list_zone_dimensions[]"
-                                                                    id="dimension_{{ $key }}">
-                                                                <label class="dimension_label form-check-label"
-                                                                    for="dimension_{{ $key }}">
-                                                                    {{ $dimensions['name'] }}
-                                                                </label>
-                                                            </div>
-                                                        </div>
-                                                        @endforeach
-                                                    </div>
-                                                    @endforeach
-                                                </div>
+                                            <div class="row" id="groupDimensionsContainer">
+                                                <!-- Dynamic dimensions will be filled here -->
                                             </div>
                                             <div>
-                                                <p class="mt-4"><a class="control link-opacity-100" target="_blank"
-                                                        href="{{ route('user.faqs') }}">To view detailed
-                                                        information,
-                                                        please refer to
-                                                        the Frequently Asked Questions (FAQ) section.</a></p>
+                                                <p class="mt-4"><a class="control link-opacity-100" target="_blank" href="{{ route('user.faqs') }}">To view detailed information, please refer to the Frequently Asked Questions (FAQ) section.</a></p>
                                             </div>
-
                                         </form>
                                         <div class="mb-3 text-center">
-                                            <button type="submit" class="btn btn-primary" onclick="addZones()">Add zones
-                                            </button>
+                                            <button type="submit" class="btn btn-primary" onclick="addZones()">Add zones</button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
                             <div class="accordion-item complete pointer-events-none">
                                 <h2 class="accordion-header" id="heading-complete">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#zoneCollapseTwo" aria-expanded="false"
-                                        aria-controls="zoneCollapseTwo">
-                                        <span class="site-complete"><i class="ri-checkbox-circle-line"></i></span> Verify
-                                        site
-                                        ownership
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#zoneCollapseTwo" aria-expanded="false" aria-controls="zoneCollapseTwo">
+                                        <span class="site-complete"><i class="ri-checkbox-circle-line"></i></span> Verify site ownership
                                     </button>
                                 </h2>
                                 <hr>
-                                <div id="zoneCollapseTwo" class="accordion-collapse collapse"
-                                    aria-labelledby="heading-complete" data-bs-parent="#accordionExample">
+                                <div id="zoneCollapseTwo" class="accordion-collapse collapse" aria-labelledby="heading-complete" data-bs-parent="#accordionExample">
                                     <div class="accordion-body pt-0">
                                         <div class="row">
                                             <center>No data !</center>
@@ -337,6 +292,69 @@ include_once 'base.php';
                 $this.modal('show');
             })
     }
+
+    function openAddZoneModal(itemId) {
+        const apiUrl = `your-api-endpoint/${itemId}`; // Replace with your actual API endpoint
+        const token = localStorage.getItem('mv_jwt_token'); // Assuming token is stored in localStorage
+
+        fetch(apiUrl, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const websiteInfo = data.data.websiteInfo;
+                    const groupDimensions = data.data.groupDimensions;
+
+                    document.querySelector('#createZone .websiteId').value = websiteInfo.id;
+                    document.querySelector('#createZone [name="url"]').value = websiteInfo.url;
+                    document.querySelector('.website-name').textContent = ` - ${websiteInfo.name}`;
+
+                    const groupDimensionsContainer = document.getElementById('groupDimensionsContainer');
+                    groupDimensionsContainer.innerHTML = '';
+
+                    Object.keys(groupDimensions).forEach(label => {
+                        const listDimensions = groupDimensions[label];
+                        let labelHtml = `
+                    <div class="col-sm-7 col-xs-12">
+                        <label class="control-label fw-semibold mb-2 mt-4">${label}</label>
+                        <div class="row container">
+                `;
+
+                        listDimensions.forEach(dimensions => {
+                            labelHtml += `
+                        <div class="col-6 ${label === 'Sticky Ads' ? 'dimension_sticky' : ''}">
+                            <div class="form-check">
+                                <input class="form-check-input form-check-label input-dimension" type="checkbox" value="${dimensions.id}" name="list_zone_dimensions[]" id="dimension_${dimensions.id}">
+                                <label class="dimension_label form-check-label" for="dimension_${dimensions.id}">
+                                    ${dimensions.name}
+                                </label>
+                            </div>
+                        </div>
+                    `;
+                        });
+
+                        labelHtml += `</div></div>`;
+                        groupDimensionsContainer.innerHTML += labelHtml;
+                    });
+
+                    const addZoneModal = new bootstrap.Modal(document.getElementById('addZoneModal'));
+                    addZoneModal.show();
+                } else {
+                    console.error('API response unsuccessful:', data.message);
+                    alert('Failed to load data. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+                alert('Failed to load data. Please try again.');
+            });
+    }
+
 
     function openAddZonePopup(itemId, itemName) {
         const modal = document.getElementById('addZoneModal');
