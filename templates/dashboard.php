@@ -355,6 +355,8 @@ include_once 'base.php';
                 .then(res => {
                     if (res.success) {
                         let data = res.data;
+                        console.log('map data = ', data.listMapCountryTraffic);
+
                         $('#yesterday_earning').text("$" + data.revenueYesterday);
                         $('#this_month').text("$" + data.revenueThisMonth);
                         $('#last_month').text("$" + data.revenueLastMonth);
@@ -959,7 +961,11 @@ include_once 'base.php';
                 backgroundColor: '#fff',
                 borderColor: '#fff',
                 color: '#d9dde7',
-                colors: [],
+                colors: {
+                    'ar': "#33d685",
+                    'co': "#6984de",
+                    'mx': "#dc3545"
+                },
                 hoverColor: null,
                 hoverOpacity: 0.8,
                 enableZoom: false,
