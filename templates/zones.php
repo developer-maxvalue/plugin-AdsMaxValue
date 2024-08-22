@@ -1,5 +1,8 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+<link
+    href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css"
+    rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/apexcharts/3.52.0/apexcharts.min.css" integrity="sha512-w3pXofOHrtYzBYpJwC6TzPH6SxD6HLAbT/rffdkA759nCQvYi5AHy5trNWFboZnj4xtdyK0AFMBtck9eTmwybg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
@@ -24,23 +27,7 @@ include_once 'base.php';
                 <h4 class="main-title mb-0">Welcome to Zones</h4>
             </div>
         </div>
-        <div class="table-responsive bg-white pb-5 p-3">
-            <table class="table table-hover m-0">
-                <thead>
-                    <tr>
-                        <th class="border-0 fw-bold">
-                            <span>Website</span>
-                        </th>
-                        <th class="border-0 fw-bold text-center">
-                            <span>Status</span>
-                        </th>
-                        <th class="border-0 text-end">
-                        </th>
-                    </tr>
-                </thead>
-                <tbody class="accordion table-list-website" id="table-list-website"></tbody>
-            </table>
-        </div>
+        <div class="list-group" id="list-websites"></div>
         <div class="table-responsive bg-white pb-5 p-3">
             <table class="table table-hover m-0">
                 <thead>
@@ -204,6 +191,7 @@ include_once 'base.php';
 
 <script>
     const token = localStorage.getItem('mv_jwt_token');
+    if (!token) return;
 
     const currentUrl = new URL(window.location.href);
 
@@ -213,6 +201,7 @@ include_once 'base.php';
     const apiUrl = `https://stg-publisher.maxvalue.media/api/zone?website_name=${encodeURIComponent(website)}`;
 
     $('#loader').show();
+
     fetch(apiUrl, {
             method: 'GET',
             headers: {
@@ -225,57 +214,32 @@ include_once 'base.php';
             if (res.success) {
                 $('#loader').hide();
                 let data = res.data;
-                renderItems(data.items, data.spanStatusSite, data.zones, data.zoneStickyFirst);
-                renderTableRows(data.items, data.spanStatusSite);
+                renderLabels(data.items, data.spanStatusSite);
             }
         })
 
+    function renderLabels(items, spanStatusSite) {
+        const listContainer = document.getElementById('list-websites');
 
-    function renderTableRows(items, spanStatusSite) {
-        const tableBody = document.getElementById('table-list-website');
+        listContainer.innerHTML = '';
 
-        let rowHtml = `
-            <tr>
-                <td class="fw-bold">
-                    ${items.name}
-                </td>
-                <td class="text-center">
-                    ${spanStatusSite}
-                </td>
-                <td class="text-end">
-                     <button class="btn btn-outline-primary btn-sm" onclick="openAddZonePopup('${items.id}', '${items.name}')">
+        items.forEach(item => {
+            let labelHtml = `
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <span class="fw-bold">${item.name}</span>
+                <span class="badge bg-primary">${spanStatusSite}</span>
+                <button class="btn btn-outline-primary btn-sm" onclick="openAddZonePopup('${item.id}', '${item.name}')">
                     <i class="ri-add-circle-fill"></i> Add zone
                 </button>
-                </td>
-            </tr>
+            </div>
         `;
 
-        tableBody.innerHTML += rowHtml;
-    }
-
-    function renderItems(items, spanStatusSite, zones, zoneStickyFirst) {
-        const accordionContainer = document.getElementById('accordionContainer');
-
-        Object.keys(zones).forEach((key, index) => {
-            let item = items[key];
-            let itemHtml = `
-            <div class="accordion-body" style="padding: 0.5rem;">
-                                <table class="table table-hover m-0 tableZone">
-                                    <tbody class="accordion" id="accordionExample${index}">
-                                        ${renderZones(zones, spanStatusSite)}
-                                    </tbody>
-                                </table>
-                            </div>
-        `;
-
-            accordionContainer.innerHTML += itemHtml;
+            listContainer.innerHTML += labelHtml;
         });
     }
 
     function generateReportUrl(apiSiteId) {
         const reportUrl = `${currentUrl.origin}/wp-admin/admin.php?page=mv-report`;
-
-        // window.location.href = reportUrl;
     }
 
     function generateButtons(item, zones) {
@@ -330,7 +294,7 @@ include_once 'base.php';
                 <td class="w-20"><span>${zone.name}</span></td>
                 <td class="text-center w-20">${spanStatusSite}</td>
                 <td class="text-center w-10" style="padding-left: 0.9rem;">
-                    <a class="mb-1" href="${generateZoneReportUrl(zone.ad_zone_id)}"><i class="ri-bar-chart-2-line"></i> Statistics</a>
+                    <a class="mb-1" href="${generateZoneReportUrl(zone.ad_zone_id)}" style="text-decoration: none"><i class="ri-bar-chart-2-line"></i> Statistics</a>
                 </td>
                 <td class="fw-bold w-10" style="padding-left: 0.9rem;">
                     <button class="btn btn-outline-primary btn-sm mb-1" ${zone.status == 7000 ? '' : 'disabled'} onclick="getCode(${zone.ad_zone_id})">
@@ -349,5 +313,26 @@ include_once 'base.php';
 
     function convertSpanStatusZone(zone) {
         return `<!-- Replace with logic for \App\Services\Common::convertSpanStatusZone -->`;
+    }
+
+    function openAddZonePopup(itemId, itemName) {
+        const modal = document.getElementById('addZoneModal');
+        const modalTitle = modal.querySelector('.modal-title');
+        const modalBody = modal.querySelector('.modal-body');
+
+        modalTitle.textContent = `Add Zone for ${itemName}`;
+        modalBody.innerHTML = `
+        <form id="addZoneForm">
+            <input type="hidden" name="item_id" value="${itemId}">
+            <div class="mb-3">
+                <label for="zoneName" class="form-label">Zone Name</label>
+                <input type="text" class="form-control" id="zoneName" name="zone_name" required>
+            </div>
+            <!-- Add more form fields as needed -->
+        </form>
+    `;
+
+        const bootstrapModal = new bootstrap.Modal(modal);
+        bootstrapModal.show();
     }
 </script>
