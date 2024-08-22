@@ -56,6 +56,10 @@
         background-color: #6f42c1 !important;
     }
 
+    .bg-warning {
+        color: black !important;
+    }
+
     @media (min-width: 1200px) {
         .vmap-one {
             height: 350px;
@@ -338,9 +342,15 @@ include_once 'base.php';
 
             const currentUrl = new URL(window.location.href);
             const params = new URLSearchParams(currentUrl.search);
-            const website = window.location.host;
+            const website = 'https://dev.riseearning.com/';
+            var urlParams = new URLSearchParams(window.location.search);
 
-            const apiUrl = `https://stg-publisher.maxvalue.media/api/dashboard?website_name=${encodeURIComponent(website)}`;
+            var start = urlParams.get('start');
+            var end = urlParams.get('end');
+            var date_option = urlParams.get('date_option');
+            var page = urlParams.get('wp_page');
+
+            const apiUrl = `https://stg-publisher.maxvalue.media/api/dashboard?website_name=${encodeURIComponent(website)}&start=${start}&end=${end}&date_option=${date_option}&page=${page}`;
 
             if (!token) return;
             $('#loader').show();
@@ -515,7 +525,7 @@ include_once 'base.php';
                         <td class="textCenter">
                             ${(itemReportSite.date <= formatDate(threeDaysAgo) && itemReportSite.status) || (itemReportSite.status_display !== undefined && itemReportSite.status_display) ? 
                                 '<span class="badge bg-success">Confirmed</span>' : 
-                                (itemReportSite.status_display === false ? '<span class="badge bg-warning">Validating</span><i class="ri-error-warning-fill" data-bs-toggle="tooltip" data-bs-placement="top" title="This is not your final data"></i>' : '')
+                                (itemReportSite.status_display == 0 ? '<span class="badge bg-warning">Validating</span>' : '')
                             }
                         </td>
                     `;
@@ -530,7 +540,7 @@ include_once 'base.php';
                         <td class="textCenter">
                             ${(itemReportSite.date <= formatDate(threeDaysAgo) && itemReportSite.status) || (itemReportSite.status_display !== undefined && itemReportSite.status_display) ? 
                                 '<span class="badge bg-success">Confirmed</span>' : 
-                                (itemReportSite.status_display === false ? '<span class="badge bg-warning">Validating</span><i class="ri-error-warning-fill" data-bs-toggle="tooltip" data-bs-placement="top" title="This is not your final data"></i>' : '')
+                                (itemReportSite.status_display == 0 ? '<span class="badge bg-warning">Validating</span>' : '')
                             }
                         </td>
                     `;
@@ -570,19 +580,31 @@ include_once 'base.php';
                                 if (link.url) {
                                     let a = document.createElement('a');
                                     a.className = 'page-link';
-                                    a.href = link.url;
+
+                                    let url = new URL(window.location.href);
+
+                                    if (link.label == 'Next &raquo;') {
+                                        link.label = '›'
+                                    } else if(link.label == '&laquo; Previous') {
+                                        link.label = '‹';
+                                    }
+
+                                    url.searchParams.set('wp_page', link.label);
+
+                                    a.href = url.toString();
                                     a.textContent = link.label;
                                     li.appendChild(a);
                                 } else {
                                     let span = document.createElement('span');
                                     span.className = 'page-link';
-                                    span.textContent = link.label;
+                                    span.textContent = link.label == '&laquo; Previous' ? '‹' : '›';
                                     li.appendChild(span);
                                 }
 
                                 paginationContainer.appendChild(li);
                             });
                         }
+
                         let listCountryTraffic = data.listCountryTraffic;
                         let totalCountryTraffic = data.totalCountryTraffic;
                         let countryTraffic = document.getElementById('country-traffic-table');
@@ -645,14 +667,15 @@ include_once 'base.php';
             let form = button.closest('form.searchReport');
             let formData = new FormData(form);
 
-            let website = window.location.host;
+            let website = 'https://dev.riseearning.com/';
 
             var urlParams = new URLSearchParams(window.location.search);
             var start = urlParams.get('start');
             var end = urlParams.get('end');
             var date_option = urlParams.get('date_option');
+            var page = urlParams.get('wp_page');
 
-            const apiUrl = `https://stg-publisher.maxvalue.media/api/dashboard?website_name=${encodeURIComponent(website)}&start=${start}&end=${end}&date_option=${date_option}`;
+            const apiUrl = `https://stg-publisher.maxvalue.media/api/dashboard?website_name=${encodeURIComponent(website)}&start=${start}&end=${end}&date_option=${date_option}&page=${page}`;
 
             fetch(apiUrl, {
                     method: 'GET',
@@ -819,7 +842,7 @@ include_once 'base.php';
                         <td class="textCenter">
                             ${(itemReportSite.date <= formatDate(threeDaysAgo) && itemReportSite.status) || (itemReportSite.status_display !== undefined && itemReportSite.status_display) ? 
                                 '<span class="badge bg-success">Confirmed</span>' : 
-                                (itemReportSite.status_display === false ? '<span class="badge bg-warning">Validating</span><i class="ri-error-warning-fill" data-bs-toggle="tooltip" data-bs-placement="top" title="This is not your final data"></i>' : '')
+                                (itemReportSite.status_display == 0 ? '<span class="badge bg-warning">Validating</span>' : '')
                             }
                         </td>
                     `;
@@ -834,7 +857,7 @@ include_once 'base.php';
                         <td class="textCenter">
                             ${(itemReportSite.date <= formatDate(threeDaysAgo) && itemReportSite.status) || (itemReportSite.status_display !== undefined && itemReportSite.status_display) ? 
                                 '<span class="badge bg-success">Confirmed</span>' : 
-                                (itemReportSite.status_display === false ? '<span class="badge bg-warning">Validating</span><i class="ri-error-warning-fill" data-bs-toggle="tooltip" data-bs-placement="top" title="This is not your final data"></i>' : '')
+                                (itemReportSite.status_display == 0 ? '<span class="badge bg-warning">Validating</span>' : '')
                             }
                         </td>
                     `;
@@ -870,23 +893,35 @@ include_once 'base.php';
                             pagination.links.forEach(link => {
                                 let li = document.createElement('li');
                                 li.className = `page-item ${link.active ? 'active' : ''}`;
-
+                                
                                 if (link.url) {
                                     let a = document.createElement('a');
                                     a.className = 'page-link';
-                                    a.href = link.url;
+
+                                    let url = new URL(window.location.href);
+
+                                    if (link.label == 'Next &raquo;') {
+                                        link.label = '›'
+                                    } else if(link.label == '&laquo; Previous') {
+                                        link.label = '‹';
+                                    }
+
+                                    url.searchParams.set('wp_page', link.label);
+
+                                    a.href = url.toString();
                                     a.textContent = link.label;
                                     li.appendChild(a);
                                 } else {
                                     let span = document.createElement('span');
                                     span.className = 'page-link';
-                                    span.textContent = link.label;
+                                    span.textContent = link.label == '&laquo; Previous' ? '‹' : '›';
                                     li.appendChild(span);
                                 }
 
                                 paginationContainer.appendChild(li);
                             });
                         }
+
                         let listCountryTraffic = data.listCountryTraffic;
                         let totalCountryTraffic = data.totalCountryTraffic;
                         let countryTraffic = document.getElementById('country-traffic-table');

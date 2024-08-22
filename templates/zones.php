@@ -51,6 +51,38 @@ include_once 'base.php';
         <div class="modal fade" id="getCode" tabindex="-1" aria-labelledby="getCode" aria-hidden="true"
             style="z-index: 100000">
         </div>
+        <div class="modal fade" id="detailZoneModal" tabindex="-1" aria-labelledby="detailZoneModal" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="detailZoneModalLable"></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="card-body">
+                            <div class="card-body p-3">
+                                <div class="table-responsive">
+                                    <table class="table table-report-detail">
+                                        <thead>
+                                            <tr>
+                                                <th>Zone</th>
+                                                <th>Status</th>
+                                                <th>Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="modal fade" id="addZoneModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="addZoneModal"
             aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -325,16 +357,24 @@ include_once 'base.php';
 
         $('#detailZoneModal').modal('hide');
 
-        callAjax(
-            "GET",
-            "{{ route('user.ajax.getcode') }}" + "?id=" + id, {},
-            (response) => {
-                $("#loader").hide();
-                $this.find('.getcode__info--name input').val(response.name);
-                $this.html(response.html);
-                $this.modal('show');
-            }
-        )
+        let apiUrl = '';
+
+        fetch(apiUrl, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                }
+            })
+            .then(response => response.json())
+            .then(res => {
+                if (res.success) {
+                    $("#loader").hide();
+                    $this.find('.getcode__info--name input').val(response.name);
+                    $this.html(response.html);
+                    $this.modal('show');
+                }
+            })
     }
 
     function openAddZonePopup(itemId, itemName) {
