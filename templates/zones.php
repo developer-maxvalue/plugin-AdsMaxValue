@@ -143,41 +143,6 @@ include_once 'base.php';
                                                     </div>
                                                     @endforeach
                                                 </div>
-                                                <div class="col-md-5 col-sm-12 col-xs-12"
-                                                    style="height: 380px;position: relative;">
-                                                    <div
-                                                        style="position: relative;top: 0;left: 0;width: 100%;height: 100%;background-image: url('{{ asset('/images/dimensions/Screen.png?v=2') }}'); background-size: cover;">
-
-                                                    </div>
-                                                    <div class="demo-zone-ads">
-                                                        <div class="screen" style="height: 380px;">
-                                                            <span class="demo image-top">
-                                                                <img style="width: 50%;"
-                                                                    src="{{ asset('/images/dimensions/row-not-color.png?v=2') }}">
-                                                            </span>
-                                                            <span class="demo image-160x600">
-                                                                <img style="height: 100px;"
-                                                                    src="{{ asset('/images/dimensions/col-not-color.png?v=2') }}">
-                                                            </span>
-                                                            <span class="demo image-728x90">
-                                                                <img style="width: 50%;height: 5%;"
-                                                                    src="{{ asset('/images/dimensions/row-not-color.png?v=2') }}">
-                                                            </span>
-                                                            <span class="demo image-bottom">
-                                                                <img style="width: 50%;"
-                                                                    src="{{ asset('/images/dimensions/row-not-color.png?v=2') }}">
-                                                            </span>
-                                                            <span class="demo image-video">
-                                                                <img style="width: 20%;"
-                                                                    src="{{ asset('/images/dimensions/video-demo-not-color.png?v=2') }}">
-                                                            </span>
-                                                            <span class="demo image-300x250">
-                                                                <img style="height: 10%;"
-                                                                    src="{{ asset('/images/dimensions/banner300x250-not-color.png?v=2') }}">
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                </div>
                                             </div>
                                             <div>
                                                 <p class="mt-4"><a class="control link-opacity-100" target="_blank"
@@ -248,61 +213,59 @@ include_once 'base.php';
                 if (res.success) {
                     $('#loader').hide();
                     let data = res.data;
-                    renderLabels(data.items, data.spanStatusSite);
+                    renderLabels(data.items, data.spanStatusSite, data.zones);
                     renderZones(data.zones);
                 }
             })
     }
 
-    function renderLabels(items, spanStatusSite) {
+    function renderLabels(item, spanStatusSite, zones) {
         const listContainer = document.getElementById('list-websites');
+
+        const isApproved = item.status == 3500;
+        const isReviewingOrAuto = ['AUTO', 'REVIEWING'].includes(item?.type_status);
+        const hasNoZones = zones.length == 0;
+        const isRejected = item.status == 3510;
 
         listContainer.innerHTML = '';
 
+        let buttonsHtml = '';
+        if ((isApproved && !isReviewingOrAuto) || hasNoZones) {
+            buttonsHtml = `<button id="add_zone_${item.id}" class="btn btn-outline-primary btn-sm mb-1 button-format">
+                        <i class="ri-add-circle-fill"></i> Add zone
+                    </button>`;
+        } else {
+            if (!isRejected) {
+                buttonsHtml = `<button class="btn btn-outline-primary btn-sm mb-1 button-format">
+                            <i class="ri-check-double-fill"></i> Verify site
+                        </button>`;
+            }
+        }
+
         let labelHtml = `
-            <div class="list-group-item d-flex justify-content-between align-items-center">
-                <span class="fw-bold">${items.name}</span>
-                <span>${spanStatusSite}</span>
-                <button class="btn btn-outline-primary btn-sm" onclick="openAddZonePopup('${items.id}', '${items.name}')">
-                    <i class="ri-add-circle-fill"></i> Add zone
-                </button>
-            </div>
-        `;
+        <div class="list-group-item d-flex justify-content-between align-items-center">
+            <span class="fw-bold">${item.name}</span>
+            <span>${spanStatusSite}</span>
+            ${buttonsHtml}
+        </div>
+    `;
 
         listContainer.innerHTML += labelHtml;
+
+        document.getElementById(`add_zone_${item.id}`).addEventListener('click', function() {
+            showModelAddZone(item);
+        });
     }
 
     function generateReportUrl(apiSiteId) {
         const reportUrl = `${currentUrl.origin}/wp-admin/admin.php?page=mv-report`;
     }
 
-    function generateButtons(item, zones) {
-        const isApproved = item.status === 3500;
-        const isReviewingOrAuto = ['AUTO', 'REVIEWING'].includes(item?.type_status);
-        const hasNoZones = zones.length === 0;
-        const isRejected = item.status === 3510;
-
-        if ((isApproved && !isReviewingOrAuto) || hasNoZones) {
-            return `<button id="add_zone_${item.id}" class="btn btn-outline-primary btn-sm mb-1 button-format" onclick="showModelAddZone(${item.id})">
-                    <i class="ri-add-circle-fill"></i> Add zone
-                </button>`;
-        } else {
-            if (!isRejected) {
-                return `<button class="btn btn-outline-primary btn-sm mb-1 button-format" ${isRejected ? 'disabled' : ''}>
-                        <i class="ri-check-double-fill"></i> Verify site
-                    </button>`;
-            }
-        }
-        return '';
-    }
-
     function showModelAddZone(websiteInfo) {
         $(".alert-message").empty();
         $(".dimension_sticky").removeClass("pointer-events-none");
         event.stopPropagation();
-        clearImageDemo();
         $(".site-verified i").removeClass('ri-checkbox-circle-fill text-success').addClass('ri-checkbox-circle-line');
-        // add params to input
         $('#addZoneModal input[name="websiteId"]').attr('value', websiteInfo.id)
         $('#addZoneModal input[name="url"]').attr('value', websiteInfo.name)
         $('#addZoneModal input[name="url"]').attr('disabled', 'disabled')
@@ -357,7 +320,7 @@ include_once 'base.php';
 
         $('#detailZoneModal').modal('hide');
 
-        let apiUrl = '';
+        let apiUrl = `https://stg-publisher.maxvalue.media/api/getCode?id=${id}`;
 
         fetch(apiUrl, {
                 method: 'GET',
@@ -368,12 +331,10 @@ include_once 'base.php';
             })
             .then(response => response.json())
             .then(res => {
-                if (res.success) {
-                    $("#loader").hide();
-                    $this.find('.getcode__info--name input').val(response.name);
-                    $this.html(response.html);
-                    $this.modal('show');
-                }
+                $("#loader").hide();
+                $this.find('.getcode__info--name input').val(res.zoneInfo.name);
+                $this.html(res.html);
+                $this.modal('show');
             })
     }
 
