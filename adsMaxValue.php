@@ -143,15 +143,4 @@ function aap_enqueue_assets() {
 //    wp_enqueue_script('mv-admin-js', AAP_PLUGIN_URL . 'assets/js/admin.js', array('jquery'), null, true);
 }
 
-function enqueue_custom_scripts() {
-    die('test');
-    wp_enqueue_script('custom-script', plugin_dir_url(__FILE__) . 'assets/js/script.js', array('jquery'), null, true);
-
-    wp_localize_script('custom-script', 'myAjax', array(
-        'ajaxurl' => admin_url('client-ajax.php'),  // URL for AJAX requests
-        'security' => wp_create_nonce('my-special-string')  // Security nonce
-    ));
-}
-add_action('wp_enqueue_scripts', 'enqueue_custom_scripts');
-
 add_action('admin_enqueue_scripts', 'aap_enqueue_assets');
