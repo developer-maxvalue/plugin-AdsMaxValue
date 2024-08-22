@@ -614,18 +614,7 @@ include_once 'base.php';
                             countryTraffic.appendChild(noDataRow);
                         }
 
-                        jQuery('#vmap').vectorMap({
-                            map: 'world_en',
-                            backgroundColor: '#fff',
-                            borderColor: '#fff',
-                            color: '#d9dde7',
-                            colors: data.listMapCountryTraffic,
-                            hoverColor: null,
-                            hoverOpacity: 0.8,
-                            enableZoom: false,
-                            showTooltip: true,
-                            multiSelectRegion: true
-                        });
+                        jQuery('#vmap').vectorMap('set', 'colors', data.listMapCountryTraffic);
                         $('#loader').hide();
                     } else {
                         alert(res.message || 'Get data dashboard fail');
@@ -929,18 +918,7 @@ include_once 'base.php';
                             countryTraffic.appendChild(noDataRow);
                         }
 
-                        jQuery('#vmap').vectorMap({
-                            map: 'world_en',
-                            backgroundColor: '#fff',
-                            borderColor: '#fff',
-                            color: '#d9dde7',
-                            colors: data.listMapCountryTraffic,
-                            hoverColor: null,
-                            hoverOpacity: 0.8,
-                            enableZoom: false,
-                            showTooltip: true,
-                            multiSelectRegion: true
-                        });
+                        jQuery('#vmap').vectorMap('set', 'colors', data.listMapCountryTraffic);
                         $('#loader').hide();
                     } else {
                         alert(res.message || 'Get data dashboard fail');
@@ -961,11 +939,7 @@ include_once 'base.php';
                 backgroundColor: '#fff',
                 borderColor: '#fff',
                 color: '#d9dde7',
-                colors: {
-                    'ar': "#33d685",
-                    'co': "#6984de",
-                    'mx': "#dc3545"
-                },
+                colors: {},
                 hoverColor: null,
                 hoverOpacity: 0.8,
                 enableZoom: false,

@@ -48,6 +48,9 @@ include_once 'base.php';
                 <tbody class="accordion table-list-website" id="accordionContainer"></tbody>
             </table>
         </div>
+        <div class="modal fade" id="getCode" tabindex="-1" aria-labelledby="getCode" aria-hidden="true"
+            style="z-index: 100000">
+        </div>
         <div class="modal fade" id="addZoneModal" tabindex="-1" data-bs-backdrop="static" aria-labelledby="addZoneModal"
             aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -195,7 +198,7 @@ include_once 'base.php';
         const currentUrl = new URL(window.location.href);
 
         const params = new URLSearchParams(currentUrl.search);
-        const website = window.location.host;
+        const website = 'https://dev.riseearning.com/';
 
         const apiUrl = `https://stg-publisher.maxvalue.media/api/zone?website_name=${encodeURIComponent(website)}`;
 
@@ -313,6 +316,25 @@ include_once 'base.php';
 
     function convertSpanStatusZone(zone) {
         return `<!-- Replace with logic for \App\Services\Common::convertSpanStatusZone -->`;
+    }
+
+    function getCode(id) {
+        $("#loader").show();
+        var $this = $('#getCode');
+        $this.find('form').attr('data-id', id);
+
+        $('#detailZoneModal').modal('hide');
+
+        callAjax(
+            "GET",
+            "{{ route('user.ajax.getcode') }}" + "?id=" + id, {},
+            (response) => {
+                $("#loader").hide();
+                $this.find('.getcode__info--name input').val(response.name);
+                $this.html(response.html);
+                $this.modal('show');
+            }
+        )
     }
 
     function openAddZonePopup(itemId, itemName) {
