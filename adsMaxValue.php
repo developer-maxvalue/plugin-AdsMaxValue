@@ -17,6 +17,7 @@ define( 'AAP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'AAP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'AAP_MAXVALUE_URL', 'https://publisher.maxvalue.media');
 define('MY_WEBHOOK_SECRET_KEY', 'SaYoWRY6B9uIgL3QJNBkLw5wiEodXzm7');
+define('MV_DEBUG', true);
 
 require_once plugin_dir_path(__FILE__) . 'includes/controllers/controller.php';
 require_once plugin_dir_path(__FILE__) . 'includes/models/zones.php';
@@ -60,23 +61,11 @@ function aap_admin_menu() {
 
 function register_webhook()
 {
-    if (isset($_SERVER['REQUEST_URI']) && '/ads.txt' == $_SERVER['REQUEST_URI']) {
-        header('Content-Type: text/plain');
-        $post_id = get_option('adstxt_post', 0);
-        if ($post_id) {
-            $post_content = get_post_field('post_content', $post_id);
-            echo esc_textarea($post_content);
-            exit;
-        }
-    } else{
-        add_action('rest_api_init', function () {
-            register_rest_route('mv', '/webhook', array(
-                'methods' => 'POST',
-                'callback' => 'handle_my_webhook',
-                'permission_callback' => '__return_true',
-            ));
-        });
-    }
+    register_rest_route('webhook/mv', '/v1/', array(
+        'methods' => 'POST',
+        'callback' => 'handle_my_webhook',
+        'permission_callback' => '__return_true', // Cho phép mọi yêu cầu POST mà không cần xác thực
+    ));
 }
 
 function handle_my_webhook(WP_REST_Request $request)
@@ -111,23 +100,8 @@ function handle_my_webhook(WP_REST_Request $request)
 
 function addAdsTxt($content)
 {
-    $post_id = get_option('adstxt_post', 0);
-    if ($post_id) {
-        $post_data = array(
-            'ID'           => $post_id,
-            'post_content' => wp_kses_post($content),
-        );
-        wp_update_post($post_data);
-    } else {
-        $new_post = array(
-            'post_title'   => 'Ads.txt',
-            'post_content' => wp_kses_post($content),
-            'post_status'  => 'publish',
-            'post_type'    => 'adstxt',
-        );
-        $post_id = wp_insert_post($new_post);
-        update_option('adstxt_post', $post_id);
-    }
+    $ads_file = ABSPATH . 'ads.txt';
+    file_put_contents($ads_file, $content);
     return new WP_REST_Response([
         'success' => true,
         'messages' => 'ads.txt created successfully.'
@@ -135,7 +109,8 @@ function addAdsTxt($content)
 }
 
 add_action('admin_menu', 'aap_admin_menu');
-add_action('init', 'register_webhook');
+add_action('rest_api_init', 'register_webhook');
+//add_action('template_redirect', 'register_webhook');
 
 // Tải các file CSS và JS cần thiết
 function aap_enqueue_assets() {

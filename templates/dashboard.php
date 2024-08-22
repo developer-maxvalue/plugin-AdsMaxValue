@@ -338,7 +338,7 @@ include_once 'base.php';
 
             const currentUrl = new URL(window.location.href);
             const params = new URLSearchParams(currentUrl.search);
-            const website = window.location.host;
+            const website = <?php echo MV_DEBUG ? "'dev.riseearning.com'" : "'" . $_SERVER['HTTP_HOST'] . "'" ?>;
 
             const apiUrl = `https://stg-publisher.maxvalue.media/api/dashboard?website_name=${encodeURIComponent(website)}`;
 
