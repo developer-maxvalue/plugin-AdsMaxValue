@@ -913,6 +913,19 @@ include_once 'base.php';
                 `;
                             countryTraffic.appendChild(noDataRow);
                         }
+
+                        jQuery('#vmap').vectorMap({
+                            map: 'world_en',
+                            backgroundColor: '#fff',
+                            borderColor: '#fff',
+                            color: '#d9dde7',
+                            colors: data.listMapCountryTraffic,
+                            hoverColor: null,
+                            hoverOpacity: 0.8,
+                            enableZoom: false,
+                            showTooltip: true,
+                            multiSelectRegion: true
+                        });
                         $('#loader').hide();
                     } else {
                         alert(res.message || 'Get data dashboard fail');
@@ -933,7 +946,7 @@ include_once 'base.php';
                 backgroundColor: '#fff',
                 borderColor: '#fff',
                 color: '#d9dde7',
-                colors: <?php echo json_encode($dashboardData['listMapCountryTraffic']); ?>,
+                colors: [],
                 hoverColor: null,
                 hoverOpacity: 0.8,
                 enableZoom: false,

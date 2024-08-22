@@ -214,7 +214,7 @@ include_once 'base.php';
                     $('#loader').hide();
                     let data = res.data;
                     renderLabels(data.items, data.spanStatusSite);
-                    renderZones(data.zones, data.spanStatusSite);
+                    renderZones(data.zones);
                 }
             })
     }
@@ -227,7 +227,7 @@ include_once 'base.php';
         let labelHtml = `
             <div class="list-group-item d-flex justify-content-between align-items-center">
                 <span class="fw-bold">${items.name}</span>
-                <span class="badge bg-primary">${spanStatusSite}</span>
+                <span>${spanStatusSite}</span>
                 <button class="btn btn-outline-primary btn-sm" onclick="openAddZonePopup('${items.id}', '${items.name}')">
                     <i class="ri-add-circle-fill"></i> Add zone
                 </button>
@@ -285,13 +285,14 @@ include_once 'base.php';
         $('#addZoneModal').modal('show');
     }
 
-    function renderZones(zones, spanStatusSite) {
+    function renderZones(zones) {
+        const accordionContainer = document.getElementById('accordionContainer');
         let zonesHtml = '';
         zones.forEach(zone => {
             zonesHtml += `
             <tr>
                 <td class="w-20"><span>${zone.name}</span></td>
-                <td class="text-center w-20">${spanStatusSite}</td>
+                <td class="text-center w-20">${zone.span_status}</td>
                 <td class="text-center w-10" style="padding-left: 0.9rem;">
                     <a class="mb-1" href="${generateZoneReportUrl(zone.ad_zone_id)}" style="text-decoration: none"><i class="ri-bar-chart-2-line"></i> Statistics</a>
                 </td>
@@ -303,7 +304,7 @@ include_once 'base.php';
             </tr>
         `;
         });
-        return zonesHtml;
+        accordionContainer.innerHTML += zonesHtml;
     }
 
     function generateZoneReportUrl(adZoneId) {
