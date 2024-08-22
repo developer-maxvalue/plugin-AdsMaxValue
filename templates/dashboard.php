@@ -342,8 +342,12 @@ include_once 'base.php';
 
             const currentUrl = new URL(window.location.href);
             const params = new URLSearchParams(currentUrl.search);
+<<<<<<< HEAD
+            const website = <?php echo MV_DEBUG ? "'dev.riseearning.com'" : "'" . $_SERVER['HTTP_HOST'] . "'" ?>;
+=======
             const website = 'https://dev.riseearning.com/';
             var urlParams = new URLSearchParams(window.location.search);
+>>>>>>> 85b63b2030260090b9c3a8232b081a40ed84b574
 
             var start = urlParams.get('start');
             var end = urlParams.get('end');
