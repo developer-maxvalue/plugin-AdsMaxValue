@@ -214,6 +214,7 @@ include_once 'base.php';
                     $('#loader').hide();
                     let data = res.data;
                     renderLabels(data.items, data.spanStatusSite);
+                    renderZones(data.zones, data.spanStatusSite);
                 }
             })
     }
@@ -223,19 +224,17 @@ include_once 'base.php';
 
         listContainer.innerHTML = '';
 
-        items.forEach(item => {
-            let labelHtml = `
+        let labelHtml = `
             <div class="list-group-item d-flex justify-content-between align-items-center">
-                <span class="fw-bold">${item.name}</span>
+                <span class="fw-bold">${items.name}</span>
                 <span class="badge bg-primary">${spanStatusSite}</span>
-                <button class="btn btn-outline-primary btn-sm" onclick="openAddZonePopup('${item.id}', '${item.name}')">
+                <button class="btn btn-outline-primary btn-sm" onclick="openAddZonePopup('${items.id}', '${items.name}')">
                     <i class="ri-add-circle-fill"></i> Add zone
                 </button>
             </div>
         `;
 
-            listContainer.innerHTML += labelHtml;
-        });
+        listContainer.innerHTML += labelHtml;
     }
 
     function generateReportUrl(apiSiteId) {
