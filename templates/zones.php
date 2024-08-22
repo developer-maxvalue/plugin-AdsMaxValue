@@ -243,7 +243,9 @@ include_once 'base.php';
                     ${spanStatusSite}
                 </td>
                 <td class="text-end">
-                    
+                     <button class="btn btn-outline-primary btn-sm" onclick="openAddZonePopup('${items.id}', '${items.name}')">
+                    <i class="ri-add-circle-fill"></i> Add zone
+                </button>
                 </td>
             </tr>
         `;
@@ -331,7 +333,7 @@ include_once 'base.php';
                     <a class="mb-1" href="${generateZoneReportUrl(zone.ad_zone_id)}"><i class="ri-bar-chart-2-line"></i> Statistics</a>
                 </td>
                 <td class="fw-bold w-10" style="padding-left: 0.9rem;">
-                    <button class="btn btn-outline-primary btn-sm mb-1" ${zone.status === 7000 ? '' : 'disabled'} onclick="getCode(${zone.ad_zone_id})">
+                    <button class="btn btn-outline-primary btn-sm mb-1" ${zone.status == 7000 ? '' : 'disabled'} onclick="getCode(${zone.ad_zone_id})">
                         <i class="ri-code-s-slash-line"></i> Get Code
                     </button>
                 </td>
