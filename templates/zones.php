@@ -191,32 +191,32 @@ include_once 'base.php';
 
 <script>
     const token = localStorage.getItem('mv_jwt_token');
-    if (!token) return;
+    if (token) {
+        const currentUrl = new URL(window.location.href);
 
-    const currentUrl = new URL(window.location.href);
+        const params = new URLSearchParams(currentUrl.search);
+        const website = window.location.host;
 
-    const params = new URLSearchParams(currentUrl.search);
-    const website = window.location.host;
+        const apiUrl = `https://stg-publisher.maxvalue.media/api/zone?website_name=${encodeURIComponent(website)}`;
 
-    const apiUrl = `https://stg-publisher.maxvalue.media/api/zone?website_name=${encodeURIComponent(website)}`;
+        $('#loader').show();
 
-    $('#loader').show();
-
-    fetch(apiUrl, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${token}`,
-            }
-        })
-        .then(response => response.json())
-        .then(res => {
-            if (res.success) {
-                $('#loader').hide();
-                let data = res.data;
-                renderLabels(data.items, data.spanStatusSite);
-            }
-        })
+        fetch(apiUrl, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                }
+            })
+            .then(response => response.json())
+            .then(res => {
+                if (res.success) {
+                    $('#loader').hide();
+                    let data = res.data;
+                    renderLabels(data.items, data.spanStatusSite);
+                }
+            })
+    }
 
     function renderLabels(items, spanStatusSite) {
         const listContainer = document.getElementById('list-websites');

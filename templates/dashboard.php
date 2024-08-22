@@ -45,7 +45,7 @@
     }
 
     .bg-orange {
-        background-color: #fd7e14;
+        background-color: #fd7e14 !important;
     }
 
     .bg-pink {
