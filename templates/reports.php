@@ -128,9 +128,9 @@ include_once 'base.php';
                 <tr>
                     <td class="textCenter">${item.date}</td>
                     <td class="textCenter">${item.zoneName}</td>
-                    <td class="textCenter">${item.total_impressions ? item.total_impressions : 0}</td>
-                    <td class="textCenter">${item.date !== today && item.average_cpm !== 0 ? item.average_cpm : ''}</td>
-                    <td class="textCenter">${item.date !== today && item.total_revenue !== 0 ? '$' + item.average_cpm : ''}</td>
+                    <td class="textCenter">${item.total_impressions ? formatNumberWithCommas(item.total_impressions) : 0}</td>
+                    <td class="textCenter">${item.date !== today && item.average_cpm !== 0 && item.average_cpm ? item.average_cpm : ''}</td>
+                    <td class="textCenter">${item.date !== today && item.total_revenue !== 0 && item.total_revenue ? '$' + item.total_revenue : ''}</td>
                     <td class="textCenter">
                         ${confirmed ? '<span class="badge bg-success">Confirmed</span>' : ''}
                         ${!confirmed && statusDisplay === false ? '<span class="badge bg-warning">Validating</span><i class="ri-error-warning-fill" data-bs-toggle="tooltip" data-bs-placement="top" title="This is not your final data"></i>' : ''}
@@ -146,7 +146,7 @@ include_once 'base.php';
                 <tr style="font-weight: bold">
                     <td class="textCenter" scope="row">Total</td>
                     <td></td>
-                    <td class="textCenter">${countItem.totalImpressions ? countItem.totalImpressions : 0}</td>
+                    <td class="textCenter">${countItem.totalImpressions ? formatNumberWithCommas(countItem.totalImpressions) : 0}</td>
                     <td class="textCenter">${countItem.averageCPM ? countItem.averageCPM : 0}</td>
                     <td class="textCenter">${countItem.totalChangeRevenue ? '$' + countItem.totalChangeRevenue : 0}</td>
                     <td></td>
@@ -163,6 +163,10 @@ include_once 'base.php';
                 console.error('Error fetching report data:', error);
             });
     });
+
+    function formatNumberWithCommas(number) {
+        return number.toLocaleString('en-US');
+    }
 
     function clickSearchReport(button) {
         event.preventDefault();
