@@ -239,38 +239,6 @@ include_once 'base.php';
                     </div>
                 </div>
             </div>
-
-            <div id="loader" style="display: none">
-                <div id="loader-text" class="d-flex justify-content-center align-items-center">
-                    <div class="text-primary" role="status">
-                        <h4 class="text-center loader-logo">Loading...</h4>
-                        <div class="spinner-grow text-primary" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                        <div class="spinner-grow text-secondary" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                        <div class="spinner-grow text-success" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                        <div class="spinner-grow text-danger" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                        <div class="spinner-grow text-warning" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                        <div class="spinner-grow text-info" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                        <div class="spinner-grow text-light" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                        <div class="spinner-grow text-dark" role="status">
-                            <span class="visually-hidden">Loading...</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 

@@ -109,14 +109,14 @@ include_once 'base.php';
                                                 <input type="text" name="url" class="form-control" placeholder="example.com" required>
                                             </div>
                                             <div class="row" id="groupDimensionsContainer">
-                                                <!-- Dynamic dimensions will be filled here -->
+
                                             </div>
                                             <div>
                                                 <p class="mt-4"><a class="control link-opacity-100" target="_blank" href="{{ route('user.faqs') }}">To view detailed information, please refer to the Frequently Asked Questions (FAQ) section.</a></p>
                                             </div>
                                         </form>
                                         <div class="mb-3 text-center">
-                                            <button type="submit" class="btn btn-primary" onclick="addZones()">Add zones</button>
+                                            <button type="submit" class="btn btn-primary" onclick="addZones(event)">Add zones</button>
                                         </div>
                                     </div>
                                 </div>
@@ -146,6 +146,7 @@ include_once 'base.php';
 
 <script>
     const token = localStorage.getItem('mv_jwt_token');
+    let groupDimensions;
     if (token) {
         const currentUrl = new URL(window.location.href);
 
@@ -168,13 +169,14 @@ include_once 'base.php';
                 if (res.success) {
                     $('#loader').hide();
                     let data = res.data;
-                    renderLabels(data.items, data.spanStatusSite, data.zones);
+                    renderLabels(data.items, data.spanStatusSite, data.zones, data.groupDimensions, data.zoneStickyFirst);
                     renderZones(data.zones);
+                    groupDimensions = data.groupDimensions;
                 }
             })
     }
 
-    function renderLabels(item, spanStatusSite, zones) {
+    function renderLabels(item, spanStatusSite, zones, dimensions, zoneStickyFirst) {
         const listContainer = document.getElementById('list-websites');
 
         const isApproved = item.status == 3500;
@@ -208,7 +210,7 @@ include_once 'base.php';
         listContainer.innerHTML += labelHtml;
 
         document.getElementById(`add_zone_${item.id}`).addEventListener('click', function() {
-            showModelAddZone(item);
+            showModelAddZone(item, dimensions, zoneStickyFirst);
         });
     }
 
@@ -216,14 +218,30 @@ include_once 'base.php';
         const reportUrl = `${currentUrl.origin}/wp-admin/admin.php?page=mv-report`;
     }
 
-    function showModelAddZone(websiteInfo) {
+    function findDimensionNameById(groupDimensions, searchId) {
+        for (let category in groupDimensions) {
+            if (groupDimensions.hasOwnProperty(category)) {
+                const dimensions = groupDimensions[category];
+                
+                for (let dimensionName in dimensions) {
+                    if (dimensions.hasOwnProperty(dimensionName) && dimensions[dimensionName].id === searchId) {
+                        return dimensionName;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    function showModelAddZone(websiteInfo, dimensions, zoneStickyFirst) {
         $(".alert-message").empty();
         $(".dimension_sticky").removeClass("pointer-events-none");
         event.stopPropagation();
         $(".site-verified i").removeClass('ri-checkbox-circle-fill text-success').addClass('ri-checkbox-circle-line');
-        $('#addZoneModal input[name="websiteId"]').attr('value', websiteInfo.id)
-        $('#addZoneModal input[name="url"]').attr('value', websiteInfo.name)
-        $('#addZoneModal input[name="url"]').attr('disabled', 'disabled')
+
+        $('#addZoneModal input[name="websiteId"]').attr('value', websiteInfo.id);
+        $('#addZoneModal input[name="url"]').attr('value', websiteInfo.name);
+        $('#addZoneModal input[name="url"]').attr('disabled', 'disabled');
 
         $(".complete").addClass("pointer-events-none");
         websiteInfo.zones.forEach(item => {
@@ -231,9 +249,41 @@ include_once 'base.php';
                 $(".dimension_sticky").addClass("pointer-events-none");
             }
         });
+
         $(".complete .accordion-button").addClass("collapsed");
         $("#addZoneModal #zoneCollapseOne").addClass("show");
         $(".complete #zoneCollapseTwo").removeClass("show");
+
+        const groupDimensionsContainer = $("#groupDimensionsContainer");
+        groupDimensionsContainer.empty();
+
+        Object.keys(dimensions).forEach(label => {
+            let dimensionHtml = `
+            <div class="col-sm-7 col-xs-12">
+                <label class="control-label fw-semibold mb-2 mt-4">${label}</label>
+                <div class="row container">
+        `;
+
+            Object.values(dimensions[label]).forEach(dimension => {
+                let isStickyAd = label === 'Sticky Ads' && dimension.size.join('x') === '1x1';
+                let isDisabled = zoneStickyFirst && isStickyAd ? 'disabled' : '';
+                let pointerEventsNone = isStickyAd ? 'pointer-events-none' : '';
+
+                dimensionHtml += `
+                <div class="col-6 ${isStickyAd ? 'dimension_sticky' : ''} ${pointerEventsNone}">
+                    <div class="form-check">
+                        <input class="form-check-input form-check-label input-dimension" type="checkbox" value="${dimension.id}" name="list_zone_dimensions[]" id="dimension_${dimension.id}" ${isDisabled}>
+                        <label class="dimension_label form-check-label" for="dimension_${dimension.id}">
+                            ${dimension.name}
+                        </label>
+                    </div>
+                </div>
+            `;
+            });
+
+            dimensionHtml += `</div></div>`;
+            groupDimensionsContainer.append(dimensionHtml);
+        });
 
         $('#addZoneModal').modal('show');
     }
@@ -260,12 +310,63 @@ include_once 'base.php';
         accordionContainer.innerHTML += zonesHtml;
     }
 
-    function generateZoneReportUrl(adZoneId) {
-        return `admin.php?page=mv-reports`;
+    function addZones(event) {
+        event.preventDefault();
+
+        const formData = new FormData();
+
+        const websiteId = document.querySelector('input[name="websiteId"]').value;
+        formData.append('websiteId', websiteId);
+
+        document.querySelectorAll('input[name="list_zone_dimensions[]"]:checked').forEach((input) => {
+            const dimensionId = parseInt(input.value, 10);
+            const dimensionName = findDimensionNameById(groupDimensions, dimensionId);
+            
+            if (dimensionName) {
+                formData.append('list_zone_dimensions[]', dimensionName);
+            }
+        });
+
+        const apiUrl = 'https://stg-publisher.maxvalue.media/api/zone/store';
+
+        fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('mv_jwt_token')}`,
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(response => {
+                if (response.success) {
+                    $(".site-verified i").removeClass('ri-checkbox-circle-line').addClass('ri-checkbox-circle-fill text-success');
+
+                    $(".complete .accordion-body").empty();
+                    $(".website-name").empty();
+                    $(".website-name").text(': ' + response.data.websiteInfo.name);
+
+                    $("#addZoneModal .complete .accordion-body").html(response.data.html);
+
+                    $("#addZoneModal #zoneCollapseOne .accordion-body").addClass("pointer-events-none");
+                    $(".complete").removeClass("pointer-events-none");
+                    $(".complete .accordion-button").removeClass("collapsed");
+                    $(".create-website #zoneCollapseOne").removeClass("show");
+                    $(".complete #zoneCollapseTwo").addClass("show");
+
+                    var websiteIdInput = document.querySelector('.websiteId');
+                    websiteIdInput.setAttribute('value', response.data.websiteInfo.id);
+                } else {
+                    alert('Failed to add zones: ' + response.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while adding zones.');
+            });
     }
 
-    function convertSpanStatusZone(zone) {
-        return `<!-- Replace with logic for \App\Services\Common::convertSpanStatusZone -->`;
+    function generateZoneReportUrl(adZoneId) {
+        return `admin.php?page=mv-reports&zoneId=${adZoneId}`;
     }
 
     function getCode(id) {
@@ -292,69 +393,6 @@ include_once 'base.php';
                 $this.modal('show');
             })
     }
-
-    function openAddZoneModal(itemId) {
-        const apiUrl = `your-api-endpoint/${itemId}`; // Replace with your actual API endpoint
-        const token = localStorage.getItem('mv_jwt_token'); // Assuming token is stored in localStorage
-
-        fetch(apiUrl, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    const websiteInfo = data.data.websiteInfo;
-                    const groupDimensions = data.data.groupDimensions;
-
-                    document.querySelector('#createZone .websiteId').value = websiteInfo.id;
-                    document.querySelector('#createZone [name="url"]').value = websiteInfo.url;
-                    document.querySelector('.website-name').textContent = ` - ${websiteInfo.name}`;
-
-                    const groupDimensionsContainer = document.getElementById('groupDimensionsContainer');
-                    groupDimensionsContainer.innerHTML = '';
-
-                    Object.keys(groupDimensions).forEach(label => {
-                        const listDimensions = groupDimensions[label];
-                        let labelHtml = `
-                    <div class="col-sm-7 col-xs-12">
-                        <label class="control-label fw-semibold mb-2 mt-4">${label}</label>
-                        <div class="row container">
-                `;
-
-                        listDimensions.forEach(dimensions => {
-                            labelHtml += `
-                        <div class="col-6 ${label === 'Sticky Ads' ? 'dimension_sticky' : ''}">
-                            <div class="form-check">
-                                <input class="form-check-input form-check-label input-dimension" type="checkbox" value="${dimensions.id}" name="list_zone_dimensions[]" id="dimension_${dimensions.id}">
-                                <label class="dimension_label form-check-label" for="dimension_${dimensions.id}">
-                                    ${dimensions.name}
-                                </label>
-                            </div>
-                        </div>
-                    `;
-                        });
-
-                        labelHtml += `</div></div>`;
-                        groupDimensionsContainer.innerHTML += labelHtml;
-                    });
-
-                    const addZoneModal = new bootstrap.Modal(document.getElementById('addZoneModal'));
-                    addZoneModal.show();
-                } else {
-                    console.error('API response unsuccessful:', data.message);
-                    alert('Failed to load data. Please try again.');
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-                alert('Failed to load data. Please try again.');
-            });
-    }
-
 
     function openAddZonePopup(itemId, itemName) {
         const modal = document.getElementById('addZoneModal');
