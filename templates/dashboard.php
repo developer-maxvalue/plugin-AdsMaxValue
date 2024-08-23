@@ -342,12 +342,9 @@ include_once 'base.php';
 
             const currentUrl = new URL(window.location.href);
             const params = new URLSearchParams(currentUrl.search);
-<<<<<<< HEAD
             const website = <?php echo MV_DEBUG ? "'dev.riseearning.com'" : "'" . $_SERVER['HTTP_HOST'] . "'" ?>;
-=======
-            const website = 'https://dev.riseearning.com/';
+
             var urlParams = new URLSearchParams(window.location.search);
->>>>>>> 85b63b2030260090b9c3a8232b081a40ed84b574
 
             var start = urlParams.get('start');
             var end = urlParams.get('end');
@@ -584,17 +581,13 @@ include_once 'base.php';
                                 if (link.url) {
                                     let a = document.createElement('a');
                                     a.className = 'page-link';
-
                                     let url = new URL(window.location.href);
-
                                     if (link.label == 'Next &raquo;') {
-                                        link.label = '›'
-                                    } else if(link.label == '&laquo; Previous') {
+                                        link.label = '›';
+                                    } else if (link.label == '&laquo; Previous') {
                                         link.label = '‹';
                                     }
-
                                     url.searchParams.set('wp_page', link.label);
-
                                     a.href = url.toString();
                                     a.textContent = link.label;
                                     li.appendChild(a);
@@ -671,7 +664,7 @@ include_once 'base.php';
             let form = button.closest('form.searchReport');
             let formData = new FormData(form);
 
-            let website = 'https://dev.riseearning.com/';
+            let website = <?php echo MV_DEBUG ? "'dev.riseearning.com'" : "'" . $_SERVER['HTTP_HOST'] . "'" ?>;
 
             var urlParams = new URLSearchParams(window.location.search);
             var start = urlParams.get('start');
@@ -897,21 +890,17 @@ include_once 'base.php';
                             pagination.links.forEach(link => {
                                 let li = document.createElement('li');
                                 li.className = `page-item ${link.active ? 'active' : ''}`;
-                                
+
                                 if (link.url) {
                                     let a = document.createElement('a');
                                     a.className = 'page-link';
-
                                     let url = new URL(window.location.href);
-
                                     if (link.label == 'Next &raquo;') {
-                                        link.label = '›'
-                                    } else if(link.label == '&laquo; Previous') {
+                                        link.label = '›';
+                                    } else if (link.label == '&laquo; Previous') {
                                         link.label = '‹';
                                     }
-
                                     url.searchParams.set('wp_page', link.label);
-
                                     a.href = url.toString();
                                     a.textContent = link.label;
                                     li.appendChild(a);
