@@ -127,6 +127,24 @@ include_once 'base.php';
                 </div>
             </div>
         </div>
+        <div class="modal fade" id="reviewRequestedModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Review Requested</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -179,25 +197,33 @@ include_once 'base.php';
                     </button>`;
         } else {
             if (!isRejected) {
-                buttonsHtml = `<button class="btn btn-outline-primary btn-sm mb-1 button-format">
+                buttonsHtml = `<button id="verify_site_${item.id}" class="btn btn-outline-primary btn-sm mb-1 button-format">
                             <i class="ri-check-double-fill"></i> Verify site
                         </button>`;
             }
         }
 
         let labelHtml = `
-        <div class="list-group-item d-flex justify-content-between align-items-center">
-            <span class="fw-bold">${item.name}</span>
-            <span>${spanStatusSite}</span>
-            ${buttonsHtml}
-        </div>
+    <div class="list-group-item d-flex justify-content-between align-items-center">
+        <span class="fw-bold">${item.name}</span>
+        <span>${spanStatusSite}</span>
+        ${buttonsHtml}
+    </div>
     `;
 
         listContainer.innerHTML += labelHtml;
 
-        document.getElementById(`add_zone_${item.id}`).addEventListener('click', function() {
-            showModelAddZone(item, dimensions, zoneStickyFirst);
-        });
+        if ((isApproved && !isReviewingOrAuto) || hasNoZones) {
+            document.getElementById(`add_zone_${item.id}`).addEventListener('click', function() {
+                showModelAddZone(item, dimensions, zoneStickyFirst);
+            });
+        } else {
+            if (!isRejected) {
+                document.getElementById(`verify_site_${item.id}`).addEventListener('click', function() {
+                    $('#reviewRequestedModal').modal('show');
+                });
+            }
+        }
     }
 
     function generateReportUrl(apiSiteId) {
