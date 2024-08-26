@@ -42,7 +42,9 @@ include_once 'base.php';
                                 <input type="text" class="form-control" id="date_select" readonly>
                             </div>
                             <div class="col-md-5 col-sm-5">
-                                <select id="zoneSearch" class="form-select form-control" name="zoneId"></select>
+                                <select id="zoneSearch" class="form-select form-control" name="zoneId">
+                                    <option value="">-Zone-</option>
+                                </select>
                             </div>
                             <div class="col-md-4 col-sm-4">
                                 <div class="form-group">
@@ -101,6 +103,11 @@ include_once 'base.php';
 
         var page = urlParams.get('wp_page');
         const zoneId = urlParams.get('zoneId');
+
+        if (!zoneId) {
+            $('#zoneSearch').val(null).trigger('change');
+        }
+
         const dateSelect = urlParams.get('dateSelect');
 
         const apiUrl = new URL(`https://stg-publisher.maxvalue.media/api/report`);
@@ -124,8 +131,6 @@ include_once 'base.php';
 
                 if (res.success) {
                     const data = res.data;
-
-                    $('#zoneSearch').empty();
 
                     if (data.zones && Array.isArray(data.zones)) {
                         data.zones.forEach(zone => {
@@ -256,6 +261,10 @@ include_once 'base.php';
 
         const zoneId = document.getElementById('zoneSearch').value;
 
+        if (!zoneId) {
+            $('#zoneSearch').val(null).trigger('change');
+        }
+
         let website = <?php echo MV_DEBUG ? "'dev.riseearning.com'" : "'" . $_SERVER['HTTP_HOST'] . "'" ?>;
 
         var urlParams = new URLSearchParams(window.location.search);
@@ -275,8 +284,6 @@ include_once 'base.php';
             .then(res => {
                 if (res.success) {
                     const data = res.data;
-
-                    $('#zoneSearch').empty();
 
                     if (data.zones && Array.isArray(data.zones)) {
                         data.zones.forEach(zone => {

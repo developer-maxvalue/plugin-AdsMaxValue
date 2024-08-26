@@ -21,6 +21,35 @@
 <?php
 include_once 'base.php';
 ?>
+
+<style>
+    .bd-clipboard {
+        position: relative;
+        display: block;
+        float: right;
+    }
+    .btn-clipboard {
+        position: absolute;
+        top: 0.5rem;
+        right: 2rem;
+        z-index: 10;
+        display: block;
+        padding: 0.25rem 0.5rem;
+        font-size: .65em;
+        color: #0d6efd;
+        background-color: #fff;
+        border: 1px solid;
+        border-radius: 0.25rem;
+    }
+    .btn-clipboard:hover, .btn-clipboard:focus {
+        color: #fff;
+        background-color: #0d6efd;
+    }
+    .btn-clipboard {
+        right: 1rem;
+    }
+</style>
+
 <div id="content-wrapper" style="display:none;">
     <div class="wrap">
         <div class="d-flex align-items-center justify-content-between mb-4">
@@ -128,19 +157,35 @@ include_once 'base.php';
             </div>
         </div>
         <div class="modal fade" id="reviewRequestedModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">Review Requested</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+                        <h5 class="modal-title" id="showReviewRequestedLabel">Verify site ownership</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save changes</button>
+                        <div class="row">
+                            <div class="col-12">
+                                <span class="text-danger"> Please add our script into the &lt;head&gt; tag of your
+                                    website</span>
+                                <p class="pt-1"><i style="font-size: 11px">If you have integrated successfully our script,
+                                        your website will be reviewed within 24
+                                        hours (72h if the review falls on weekends). You will be notified of the
+                                        results via email</i></p>
+                            </div>
+                            <div class="col-12">
+                                <div class="row review-request-content">
+                                    <div class="bd-clipboard">
+                                        <button type="button" class="btn-clipboard btn btn-primary btn-sm" title data-bs-original-title="Copy to clipboard" onclick="copyCode()">
+                                            copy
+                                        </button>
+                                    </div>
+                                    <div class="col-12 highlight">
+                                        <textarea class="form-control" style="padding-top: 30px" rows="3" readonly placeholder="Code ..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -180,6 +225,12 @@ include_once 'base.php';
             })
     }
 
+    function getNormalAdCode(zoneStickyFirst) {
+        const adCodes = JSON.parse(zoneStickyFirst.ad_code);
+        const normalAdCodeObj = adCodes.find(ad => ad.id === 'normal');
+        return normalAdCodeObj ? normalAdCodeObj.code : null;
+    }
+
     function renderLabels(item, spanStatusSite, zones, dimensions, zoneStickyFirst) {
         const listContainer = document.getElementById('list-websites');
 
@@ -193,23 +244,23 @@ include_once 'base.php';
         let buttonsHtml = '';
         if ((isApproved && !isReviewingOrAuto) || hasNoZones) {
             buttonsHtml = `<button id="add_zone_${item.id}" class="btn btn-outline-primary btn-sm mb-1 button-format">
-                        <i class="ri-add-circle-fill"></i> Add zone
-                    </button>`;
+                            <i class="ri-add-circle-fill"></i> Add zone
+                        </button>`;
         } else {
             if (!isRejected) {
                 buttonsHtml = `<button id="verify_site_${item.id}" class="btn btn-outline-primary btn-sm mb-1 button-format">
-                            <i class="ri-check-double-fill"></i> Verify site
-                        </button>`;
+                                <i class="ri-check-double-fill"></i> Verify site
+                            </button>`;
             }
         }
 
         let labelHtml = `
-    <div class="list-group-item d-flex justify-content-between align-items-center">
-        <span class="fw-bold">${item.name}</span>
-        <span>${spanStatusSite}</span>
-        ${buttonsHtml}
-    </div>
-    `;
+            <div class="list-group-item d-flex justify-content-between align-items-center">
+                <span class="fw-bold">${item.name}</span>
+                <span>${spanStatusSite}</span>
+                ${buttonsHtml}
+            </div>
+        `;
 
         listContainer.innerHTML += labelHtml;
 
@@ -220,10 +271,23 @@ include_once 'base.php';
         } else {
             if (!isRejected) {
                 document.getElementById(`verify_site_${item.id}`).addEventListener('click', function() {
+                    const normalAdCode = getNormalAdCode(zoneStickyFirst);
+                    document.querySelector('#reviewRequestedModal textarea').value = normalAdCode;
+
                     $('#reviewRequestedModal').modal('show');
                 });
             }
         }
+
+        document.querySelector('.btn-clipboard').addEventListener('click', function() {
+            copyCode();
+        });
+    }
+
+    function copyCode() {
+        const textarea = document.querySelector('#reviewRequestedModal textarea');
+        textarea.select();
+        document.execCommand('copy');
     }
 
     function generateReportUrl(apiSiteId) {
