@@ -38,13 +38,11 @@ include_once 'base.php';
                                 <input type="text" class="form-control" id="date_select" readonly>
                             </div>
                             <div class="col-md-5 col-sm-5">
-
+                                <select id="zoneSearch" class="form-select form-control" name="zones"></select>
                             </div>
                             <div class="col-md-4 col-sm-4">
                                 <div class="form-group">
                                     <button type="button" class="btn btn-outline-primary generate" onclick="clickSearchReport(this)"> Search
-                                    </button>
-                                    <button type="button" class="btn btn-outline-success generate" onclick="clickSearchReport(this)"> Download
                                     </button>
                                 </div>
                             </div>
@@ -83,18 +81,28 @@ include_once 'base.php';
 <script>
     const token = localStorage.getItem('mv_jwt_token');
 
+    $(document).ready(function() {
+        $("#zoneSearch").select2({
+            placeholder: "- Zone -",
+            allowClear: true,
+        });
+    });
+
     document.addEventListener('DOMContentLoaded', function() {
         const currentUrl = new URL(window.location.href);
-        const params = new URLSearchParams(currentUrl.search);
         const website = <?php echo MV_DEBUG ? "'dev.riseearning.com'" : "'" . $_SERVER['HTTP_HOST'] . "'" ?>;
 
-        var urlParams = new URLSearchParams(window.location.search);
+        var urlParams = new URLSearchParams(currentUrl.search);
 
-        var dateSelect = urlParams.get('dateSelect');
         var page = urlParams.get('wp_page');
-        var date_option = urlParams.get('date_option');
+        const zoneId = urlParams.get('zoneId');
 
-        const apiUrl = `https://stg-publisher.maxvalue.media/api/report?website_name=${encodeURIComponent(website)}&date_option=${date_option}&page=${page}`;
+        const apiUrl = new URL(`https://stg-publisher.maxvalue.media/api/report`);
+        apiUrl.searchParams.append('website_name', website);
+        apiUrl.searchParams.append('page', page);
+        apiUrl.searchParams.append('zoneId', zoneId);
+
+        console.log("Constructed API URL: ", apiUrl.toString());
 
         $('#loader').show();
 
@@ -111,6 +119,19 @@ include_once 'base.php';
 
                 if (res.success) {
                     const data = res.data;
+
+                    $('#zoneSearch').empty();
+
+                    if (data.zones && Array.isArray(data.zones)) {
+                        data.zones.forEach(zone => {
+                            $('#zoneSearch').append('<option value="' +
+                                zone.id + '">' + zone.name +
+                                '</option>');
+                        });
+                    } else {
+                        $('#zoneSearch').empty();
+                    }
+
                     const items = data.items;
 
                     const threeDaysAgo = new Date();
@@ -162,6 +183,58 @@ include_once 'base.php';
                 $('#loader').hide();
                 console.error('Error fetching report data:', error);
             });
+    });
+
+    jQuery(document).ready(function($) {
+        var urlParams = new URLSearchParams(window.location.search);
+        var startDateParam = urlParams.get('start');
+        var endDateParam = urlParams.get('end');
+
+        var startDate = startDateParam ? moment(startDateParam, 'YYYY-MM-DD') : moment().subtract(6, 'days');
+        var endDate = endDateParam ? moment(endDateParam, 'YYYY-MM-DD') : moment();
+
+        $('#date_select').daterangepicker({
+            startDate: startDate,
+            endDate: endDate,
+            ranges: {
+                'Today': [moment(), moment()],
+                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            "alwaysShowCalendars": true
+        }, function(start, end, label) {
+            var from = start.format('YYYY-MM-DD');
+            var to = end.format('YYYY-MM-DD');
+            var route = "<?php echo esc_js(admin_url('admin.php?page=mv-dashboard')); ?>";
+            route += "&website_id=" + <?php echo json_encode($siteId); ?> + "&date_option=";
+            switch (label) {
+                case 'Today':
+                    route += "TODAY";
+                    break;
+                case 'Yesterday':
+                    route += "YESTERDAY";
+                    break;
+                case 'Last 7 Days':
+                    route += "SUB_7";
+                    break;
+                case 'Last 30 Days':
+                    route += "SUB_30";
+                    break;
+                case 'This Month':
+                    route += "SUB_THIS_MONTH";
+                    break;
+                case 'Last Month':
+                    route += "SUB_LAST_MONTH";
+                    break;
+                default:
+                    route += "CUSTOM";
+                    break;
+            }
+            window.history.pushState(null, '', route + "&start=" + from + "&end=" + to);
+        });
     });
 
     function formatNumberWithCommas(number) {

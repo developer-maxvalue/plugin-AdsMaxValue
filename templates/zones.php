@@ -16,6 +16,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js" integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqvmap/1.5.1/jquery.vmap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqvmap/1.5.1/maps/jquery.vmap.world.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
 
 <?php
 include_once 'base.php';
@@ -121,55 +122,6 @@ include_once 'base.php';
                                     </div>
                                 </div>
                             </div>
-                            <div class="accordion-item complete pointer-events-none">
-                                <h2 class="accordion-header" id="heading-complete">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#zoneCollapseTwo" aria-expanded="false" aria-controls="zoneCollapseTwo">
-                                        <span class="site-complete"><i class="ri-checkbox-circle-line"></i></span> Verify site ownership
-                                    </button>
-                                </h2>
-                                <hr>
-                                <div id="zoneCollapseTwo" class="accordion-collapse collapse" aria-labelledby="heading-complete" data-bs-parent="#accordionExample">
-                                    <div class="accordion-body pt-0">
-                                        <div class="row">
-                                            <center>No data !</center>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="modal fade" id="showReviewRequested" data-bs-backdrop="static" tabindex="-1"
-            aria-labelledby="showReviewRequestedLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="showReviewRequestedLabel">Verify site ownership</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="row">
-                            <div class="col-12">
-                                <span class="text-danger"> Please add our script into the &lt;head&gt; tag of your
-                                    website</span>
-                                <p class="pt-1"><i style="font-size: 11px">If you have integrated successfully our script,
-                                        your website will be reviewed within 24
-                                        hours (72h if the review falls on weekends). You will be notified of the
-                                        results via email</i></p>
-                            </div>
-                            <div class="col-12">
-                                <div class="row review-request-content">
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="alert-ads"></div>
-                            <div class="col mt-3 text-center button-verify">
-
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -256,7 +208,7 @@ include_once 'base.php';
         for (let category in groupDimensions) {
             if (groupDimensions.hasOwnProperty(category)) {
                 const dimensions = groupDimensions[category];
-                
+
                 for (let dimensionName in dimensions) {
                     if (dimensions.hasOwnProperty(dimensionName) && dimensions[dimensionName].id === searchId) {
                         return dimensionName;
@@ -355,7 +307,7 @@ include_once 'base.php';
         document.querySelectorAll('input[name="list_zone_dimensions[]"]:checked').forEach((input) => {
             const dimensionId = parseInt(input.value, 10);
             const dimensionName = findDimensionNameById(groupDimensions, dimensionId);
-            
+
             if (dimensionName) {
                 formData.append('list_zone_dimensions[]', dimensionName);
             }
@@ -373,22 +325,7 @@ include_once 'base.php';
             .then(response => response.json())
             .then(response => {
                 if (response.success) {
-                    $(".site-verified i").removeClass('ri-checkbox-circle-line').addClass('ri-checkbox-circle-fill text-success');
-
-                    $(".complete .accordion-body").empty();
-                    $(".website-name").empty();
-                    $(".website-name").text(': ' + response.data.websiteInfo.name);
-
-                    $("#addZoneModal .complete .accordion-body").html(response.data.html);
-
-                    $("#addZoneModal #zoneCollapseOne .accordion-body").addClass("pointer-events-none");
-                    $(".complete").removeClass("pointer-events-none");
-                    $(".complete .accordion-button").removeClass("collapsed");
-                    $(".create-website #zoneCollapseOne").removeClass("show");
-                    $(".complete #zoneCollapseTwo").addClass("show");
-
-                    var websiteIdInput = document.querySelector('.websiteId');
-                    websiteIdInput.setAttribute('value', response.data.websiteInfo.id);
+                    window.location.reload();
                 } else {
                     alert('Failed to add zones: ' + response.message);
                 }
