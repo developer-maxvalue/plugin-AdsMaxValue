@@ -84,26 +84,11 @@ class AAP_Controller
 
     public static function adsTxt()
     {
-        $post_id = get_option('adstxt_post', 0);
+        $ads_file = ABSPATH . 'ads.txt';
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($_POST['adsTxt'])) {
-            if ($post_id) {
-                $post_data = array(
-                    'ID'           => $post_id,
-                    'post_content' => wp_kses_post($_POST['adsTxt']),
-                );
-                wp_update_post($post_data);
-            } else {
-                $new_post = array(
-                    'post_title'   => 'Ads.txt',
-                    'post_content' => wp_kses_post($_POST['adsTxt']),
-                    'post_status'  => 'publish',
-                    'post_type'    => 'adstxt',
-                );
-                $post_id = wp_insert_post($new_post);
-                update_option('adstxt_post', $post_id);
-            }
+            file_put_contents($ads_file, $_POST['adsTxt']);
         }
-        $contentAdsTxt = get_post_field('post_content', $post_id);
+        $contentAdsTxt = file_get_contents($ads_file);
         include AAP_PLUGIN_DIR . 'templates/adsTxt.php';
     }
 
