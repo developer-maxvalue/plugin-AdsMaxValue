@@ -141,6 +141,40 @@ include_once 'base.php';
                 </div>
             </div>
         </div>
+
+        <div class="modal fade" id="showReviewRequested" data-bs-backdrop="static" tabindex="-1"
+            aria-labelledby="showReviewRequestedLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="showReviewRequestedLabel">Verify site ownership</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <span class="text-danger"> Please add our script into the &lt;head&gt; tag of your
+                                    website</span>
+                                <p class="pt-1"><i style="font-size: 11px">If you have integrated successfully our script,
+                                        your website will be reviewed within 24
+                                        hours (72h if the review falls on weekends). You will be notified of the
+                                        results via email</i></p>
+                            </div>
+                            <div class="col-12">
+                                <div class="row review-request-content">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="alert-ads"></div>
+                            <div class="col mt-3 text-center button-verify">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -392,26 +426,5 @@ include_once 'base.php';
                 $this.html(res.html);
                 $this.modal('show');
             })
-    }
-
-    function openAddZonePopup(itemId, itemName) {
-        const modal = document.getElementById('addZoneModal');
-        const modalTitle = modal.querySelector('.modal-title');
-        const modalBody = modal.querySelector('.modal-body');
-
-        modalTitle.textContent = `Add Zone for ${itemName}`;
-        modalBody.innerHTML = `
-        <form id="addZoneForm">
-            <input type="hidden" name="item_id" value="${itemId}">
-            <div class="mb-3">
-                <label for="zoneName" class="form-label">Zone Name</label>
-                <input type="text" class="form-control" id="zoneName" name="zone_name" required>
-            </div>
-            <!-- Add more form fields as needed -->
-        </form>
-    `;
-
-        const bootstrapModal = new bootstrap.Modal(modal);
-        bootstrapModal.show();
     }
 </script>

@@ -538,10 +538,10 @@ include_once 'base.php';
 
                         let pagination = data.items;
 
-                        if (pagination.last_page > 1) {
-                            let paginationContainer = document.getElementById('pagination-links');
-                            paginationContainer.innerHTML = '';
+                        let paginationContainer = document.getElementById('pagination-links');
+                        paginationContainer.innerHTML = '';
 
+                        if (pagination.last_page > 1) {
                             pagination.links.forEach(link => {
                                 let li = document.createElement('li');
                                 li.className = `page-item ${link.active ? 'active' : ''}`;
@@ -851,10 +851,10 @@ include_once 'base.php';
 
                         let pagination = data.items;
 
-                        if (pagination.last_page > 1) {
-                            let paginationContainer = document.getElementById('pagination-links');
-                            paginationContainer.innerHTML = '';
+                        let paginationContainer = document.getElementById('pagination-links');
+                        paginationContainer.innerHTML = '';
 
+                        if (pagination.last_page > 1) {
                             pagination.links.forEach(link => {
                                 let li = document.createElement('li');
                                 li.className = `page-item ${link.active ? 'active' : ''}`;
