@@ -184,7 +184,7 @@ include_once 'base.php';
                         <h6 class="card-title">Your Top Countries</h6>
                     </div>
                     <div class="card-body p-4 d-flex align-items-center justify-content-center">
-                        <div class="row g-3">
+                        <div class="row g-3" style="width: 100%;">
                             <div class="col-md-3 d-flex flex-column">
                                 <table class="table table-one mb-4">
                                     <tbody id="country-traffic-table"></tbody>

@@ -18,10 +18,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jqvmap/1.5.1/maps/jquery.vmap.world.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
 
-<?php
-include_once 'base.php';
-?>
-
 <style>
     .bd-clipboard {
         position: relative;
@@ -56,19 +52,19 @@ include_once 'base.php';
         padding: 0 !important;
     }
     .wrap {
-        margin-top: 0;
+        margin: 0 20px !important;
     }
     .content-wrapper {
         background-color: #F9FAFC;
     }
 </style>
 
-<div id="content-wrapper" style="display:none;">
+<div id="content-wrapper" style="display:none; background-color: #F9FAFC; margin-left: -22px">
     <div class="wrap">
         <?php
         include_once 'header.php';
         ?>
-        <div class="list-group" id="list-websites"></div>
+        <div class="list-group mb-4" id="list-websites"></div>
         <div class="table-responsive bg-white pb-5 p-3">
             <table class="table table-hover m-0">
                 <thead>
@@ -134,12 +130,6 @@ include_once 'base.php';
                     <div class="modal-body">
                         <div class="accordion accordion-faq" id="accordionExample">
                             <div class="accordion-item create-website">
-                                <h2 class="accordion-header" id="headingOne">
-                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#zoneCollapseOne" aria-expanded="true" aria-controls="zoneCollapseOne">
-                                        <span class="site-verified"><i class="ri-checkbox-circle-line"></i></span><b> Add zones </b><span class="website-name"></span>
-                                    </button>
-                                </h2>
-                                <hr>
                                 <div id="zoneCollapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                     <div class="accordion-body pt-0">
                                         <div class="alert-message"></div>
@@ -200,6 +190,10 @@ include_once 'base.php';
         </div>
     </div>
 </div>
+
+<?php
+include_once 'base.php';
+?>
 
 <script>
     localStorage.setItem('page_title', 'Zone');
@@ -356,7 +350,7 @@ include_once 'base.php';
 
         Object.keys(dimensions).forEach(label => {
             let dimensionHtml = `
-            <div class="col-sm-7 col-xs-12">
+            <div class="col-sm-12 col-xs-12">
                 <label class="control-label fw-semibold mb-2 mt-4">${label}</label>
                 <div class="row container">
         `;
@@ -369,7 +363,7 @@ include_once 'base.php';
                 dimensionHtml += `
                 <div class="col-6 ${isStickyAd ? 'dimension_sticky' : ''} ${pointerEventsNone}">
                     <div class="form-check">
-                        <input style="margin-top: 0.4em;" class="form-check-input form-check-label input-dimension" type="checkbox" value="${dimension.id}" name="list_zone_dimensions[]" id="dimension_${dimension.id}" ${isDisabled}>
+                        <input style="margin-top: 0.4em;" class="form-check-label input-dimension" type="checkbox" value="${dimension.id}" name="list_zone_dimensions[]" id="dimension_${dimension.id}" ${isDisabled}>
                         <label class="dimension_label form-check-label" for="dimension_${dimension.id}">
                             ${dimension.name}
                         </label>

@@ -105,9 +105,19 @@ check_user_token();
         border-radius: 100%;
         background-color: #506fd9;
     }
+
+    #loader-text {
+        width: 100%;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: rgba(255, 255, 255, 0.7);
+        z-index: 9999;
+    }
 </style>
 <div class="container page-sign" id="login-popup">
-    <div class="card card-sign">
+    <div class="card-sign">
         <div class="card-header" style="background-color: unset; border-bottom: 0; padding: 2rem 1rem 0;">
             <a href="<?php echo home_url('/'); ?>" class="header-logo mb-4">MaxValue</a>
             <h3 class="card-title">Login</h3>

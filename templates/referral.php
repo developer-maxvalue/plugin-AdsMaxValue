@@ -64,8 +64,9 @@
     }
 
     .wrap {
-        margin-top: 0;
+        margin: 0 20px !important;
     }
+
     .content-wrapper {
         background-color: #F9FAFC;
     }
@@ -78,7 +79,7 @@ $userInfo = get_transient('user_info');
 $userInfo = $userInfo['user'] ?? [];
 ?>
 
-<div id="content-wrapper" style="display:none;">
+<div id="content-wrapper" style="display:none; background-color: #F9FAFC; margin-left: -22px">
     <div class="row referralProgram wrap" id="referralProgram">
         <?php
         include_once 'header.php';

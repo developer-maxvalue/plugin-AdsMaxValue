@@ -9,9 +9,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js" integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-<?php
-include_once 'base.php';
-?>
 <style>
     .unsetWidth {
         max-width: unset;
@@ -20,17 +17,20 @@ include_once 'base.php';
     .select2-container .select2-selection--single {
         height: 33px !important;
     }
+
     .card {
         padding: 0 !important;
     }
+
     .wrap {
-        margin-top: 0;
+        margin: 0 20px !important;
     }
+
     .content-wrapper {
         background-color: #F9FAFC;
     }
 </style>
-<div id="content-wrapper" style="display:none;">
+<div id="content-wrapper" style="display:none; background-color: #F9FAFC; margin-left: -22px">
     <div class="wrap">
         <?php
         include_once 'header.php';
@@ -70,7 +70,7 @@ include_once 'base.php';
                 <div class="table-responsive" id="table-report">
                     <table class="table table-hover table-four table-bordered">
                         <thead>
-                            <tr>
+                            <tr style="background-color: rgba(0, 0, 0, .03);">
                                 <th scope="col" class="textCenter">Date</th>
                                 <th scope="col" class="textCenter">Zone</th>
                                 <th scope="col" class="textCenter cpm_sort">Impressions</th>
@@ -90,6 +90,10 @@ include_once 'base.php';
         </div>
     </div>
 </div>
+
+<?php
+include_once 'base.php';
+?>
 
 <script>
     localStorage.setItem('page_title', 'Report');
@@ -136,8 +140,6 @@ include_once 'base.php';
             })
             .then(response => response.json())
             .then(res => {
-                $('#loader').hide();
-
                 if (res.success) {
                     const data = res.data;
 
@@ -164,20 +166,34 @@ include_once 'base.php';
                                 let a = document.createElement('a');
                                 a.className = 'page-link';
                                 let url = new URL(window.location.href);
-                                if (link.label == 'Next &raquo;') {
+                                if (link.label === 'Next &raquo;') {
                                     link.label = '›';
-                                } else if (link.label == '&laquo; Previous') {
+                                } else if (link.label === '&laquo; Previous') {
                                     link.label = '‹';
                                 }
-                                url.searchParams.set('wp_page', link.label);
+
+                                url.searchParams.set('wp_page', new URL(link.url).searchParams.get('page') || link.label);
                                 a.href = url.toString();
                                 a.textContent = link.label;
                                 li.appendChild(a);
+
+                                if (link.label === '‹' && pagination.current_page === 1) {
+                                    li.classList.add('disabled');
+                                    a.href = '#';
+                                }
+
+                                if (link.label === '›' && pagination.current_page === pagination.last_page) {
+                                    li.classList.add('disabled');
+                                    a.href = '#';
+                                }
+
                             } else {
                                 let span = document.createElement('span');
                                 span.className = 'page-link';
-                                span.textContent = link.label == '&laquo; Previous' ? '‹' : '›';
+                                span.textContent = link.label === '&laquo; Previous' ? '‹' : '›';
                                 li.appendChild(span);
+
+                                li.classList.add('disabled');
                             }
 
                             paginationContainer.appendChild(li);
@@ -230,6 +246,7 @@ include_once 'base.php';
                 } else {
                     console.error('Failed to fetch report data:', data.message);
                 }
+                $('#loader').hide();
             })
             .catch(error => {
                 $('#loader').hide();
@@ -300,125 +317,6 @@ include_once 'base.php';
 
     function clickSearchReport(button) {
         event.preventDefault();
-        $('#loader').show();
-
-        const zoneId = document.getElementById('zoneSearch').value;
-
-        if (!zoneId) {
-            $('#zoneSearch').val(null).trigger('change');
-        }
-
-        let website = <?php echo MV_DEBUG ? "'dev.riseearning.com'" : "'" . $_SERVER['HTTP_HOST'] . "'" ?>;
-
-        var urlParams = new URLSearchParams(window.location.search);
-        var dateSelect = urlParams.get('dateSelect');
-        var page = urlParams.get('wp_page');
-
-        const apiUrl = `https://stg-publisher.maxvalue.media/api/report?website_name=${encodeURIComponent(website)}&page=${page}&zoneId=${zoneId}&dateSelect=${dateSelect}`;
-
-        fetch(apiUrl, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                }
-            })
-            .then(response => response.json())
-            .then(res => {
-                if (res.success) {
-                    const data = res.data;
-
-                    if (data.zones && Array.isArray(data.zones)) {
-                        data.zones.forEach(zone => {
-                            var selectedAttribute = (zoneId && zoneId === String(zone.ad_zone_id)) ? ' selected' : '';
-                            $('#zoneSearch').append('<option value="' + zone.ad_zone_id + '"' + selectedAttribute + '>' + zone.name + '</option>');
-                        });
-                    } else {
-                        $('#zoneSearch').empty();
-                    }
-
-                    let pagination = data.items;
-
-                    let paginationContainer = document.getElementById('pagination-links');
-                    paginationContainer.innerHTML = '';
-
-                    if (pagination.last_page > 1) {
-                        pagination.links.forEach(link => {
-                            let li = document.createElement('li');
-                            li.className = `page-item ${link.active ? 'active' : ''}`;
-
-                            if (link.url) {
-                                let a = document.createElement('a');
-                                a.className = 'page-link';
-                                let url = new URL(window.location.href);
-                                if (link.label == 'Next &raquo;') {
-                                    link.label = '›';
-                                } else if (link.label == '&laquo; Previous') {
-                                    link.label = '‹';
-                                }
-                                url.searchParams.set('wp_page', link.label);
-                                a.href = url.toString();
-                                a.textContent = link.label;
-                                li.appendChild(a);
-                            } else {
-                                let span = document.createElement('span');
-                                span.className = 'page-link';
-                                span.textContent = link.label == '&laquo; Previous' ? '‹' : '›';
-                                li.appendChild(span);
-                            }
-
-                            paginationContainer.appendChild(li);
-                        });
-                    }
-
-                    const items = data.items;
-
-                    const threeDaysAgo = new Date();
-                    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
-                    const today = new Date();
-                    const reportTableBody = document.getElementById('report-table-body');
-                    reportTableBody.innerHTML = '';
-
-                    items.data && items.data.forEach(item => {
-                        const currentDate = new Date(item.date);
-                        const statusDisplay = item.status_display || false;
-                        const confirmed = (currentDate <= threeDaysAgo && item.status) || statusDisplay;
-
-                        const rowHtml = `
-                <tr>
-                    <td class="textCenter">${item.date}</td>
-                    <td class="textCenter">${item.zoneName}</td>
-                    <td class="textCenter">${item.total_impressions ? formatNumberWithCommas(item.total_impressions) : 0}</td>
-                    <td class="textCenter">${item.date !== today && item.average_cpm !== 0 && item.average_cpm ? item.average_cpm : ''}</td>
-                    <td class="textCenter">${item.date !== today && item.total_revenue !== 0 && item.total_revenue ? '$' + item.total_revenue : ''}</td>
-                    <td class="textCenter">
-                        ${confirmed ? '<span class="badge bg-success">Confirmed</span>' : ''}
-                        ${!confirmed && statusDisplay === false ? '<span class="badge bg-warning">Validating</span><i class="ri-error-warning-fill" data-bs-toggle="tooltip" data-bs-placement="top" title="This is not your final data"></i>' : ''}
-                    </td>
-                </tr>
-            `;
-                        reportTableBody.insertAdjacentHTML('beforeend', rowHtml);
-                    });
-
-                    if (data.countItem) {
-                        const countItem = data.countItem;
-                        const totalRowHtml = `
-                <tr style="font-weight: bold">
-                    <td class="textCenter" scope="row">Total</td>
-                    <td></td>
-                    <td class="textCenter">${countItem.totalImpressions ? formatNumberWithCommas(countItem.totalImpressions) : 0}</td>
-                    <td class="textCenter">${countItem.averageCPM ? countItem.averageCPM : 0}</td>
-                    <td class="textCenter">${countItem.totalChangeRevenue ? '$' + countItem.totalChangeRevenue : 0}</td>
-                    <td></td>
-                </tr>
-            `;
-                        reportTableBody.insertAdjacentHTML('beforeend', totalRowHtml);
-                    }
-                    $('#loader').hide();
-                } else {
-                    console.error('Failed to fetch report data:', data.message);
-                    $('#loader').hide();
-                }
-            });
+        window.location.reload();
     }
 </script>

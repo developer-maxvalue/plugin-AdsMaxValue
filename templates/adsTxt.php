@@ -11,14 +11,14 @@ include_once 'base.php';
 ?>
 <style>
     .wrap {
-        margin-top: 0;
+        margin: 0 20px !important;
     }
+
     .content-wrapper {
         background-color: #F9FAFC;
     }
-
 </style>
-<div id="content-wrapper" style="display:none;">
+<div id="content-wrapper" style="display:none; background-color: #F9FAFC; margin-left: -22px">
     <div class="wrap">
         <?php
         include_once 'header.php';
