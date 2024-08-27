@@ -18,30 +18,29 @@
     .unsetWidth {
         max-width: unset;
     }
+
     .header-card {
         display: flex;
         justify-content: space-between;
     }
+
     .card {
         padding: 0 !important;
     }
+
     .wrap {
         margin-top: 0;
     }
+
     .content-wrapper {
         background-color: #F9FAFC;
     }
-
 </style>
 
-<div class="row g-3 justify-content-center mb-4">
-    <div class="col-md-12 col-xl-12" style="margin-top: 0 !important">
-        <div class="card card-one unsetWidth">
-            <div class="card-body header-card">
-                <span id="greeting" style="font-weight: 900;"></span>
-                <span class="text-end" id="email-user" style="font-size: 14px;"></span>
-            </div>
-        </div>
+<div class="card card-one unsetWidth" style="width: calc(100% + 22px); margin-left: -22px;">
+    <div class="card-body header-card">
+        <span id="greeting" style="font-weight: 900;"></span>
+        <span class="text-end" id="email-user" style="font-size: 14px;"></span>
     </div>
 </div>
 

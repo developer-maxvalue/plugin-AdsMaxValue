@@ -30,12 +30,13 @@
         background-color: #F9FAFC;
     }
 </style>
+
+<?php
+include_once 'header.php';
+?>
+
 <div id="content-wrapper" style="display:none; background-color: #F9FAFC; margin-left: -22px">
     <div class="wrap">
-        <?php
-        include_once 'header.php';
-        ?>
-
         <div class="col-md-12 col-xl-12">
             <div class="card card-one unsetWidth">
                 <div class="card-body">

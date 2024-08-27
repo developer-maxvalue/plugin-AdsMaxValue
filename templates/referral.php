@@ -70,7 +70,6 @@
     .content-wrapper {
         background-color: #F9FAFC;
     }
-
 </style>
 <?php
 include_once 'base.php';
@@ -79,11 +78,12 @@ $userInfo = get_transient('user_info');
 $userInfo = $userInfo['user'] ?? [];
 ?>
 
+<?php
+include_once 'header.php';
+?>
+
 <div id="content-wrapper" style="display:none; background-color: #F9FAFC; margin-left: -22px">
     <div class="row referralProgram wrap" id="referralProgram">
-        <?php
-        include_once 'header.php';
-        ?>
         <div class="col-sm-12 col-md-12 col-xl-6 d-flex align-items-end justify-content-start">
             <img src="<?php echo plugins_url('assets/img/banner-referral-mv.png', dirname(__FILE__)); ?>" class="img-fluid"
                 alt="referral program maxvalue">
@@ -121,3 +121,6 @@ $userInfo = $userInfo['user'] ?? [];
         </div>
     </div>
 </div>
+<script>
+    localStorage.setItem('page_title', 'Referral');
+</script>

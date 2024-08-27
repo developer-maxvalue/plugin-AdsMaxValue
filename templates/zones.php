@@ -48,23 +48,27 @@
     .btn-clipboard {
         right: 1rem;
     }
+
     .card {
         padding: 0 !important;
     }
+
     .wrap {
         margin: 0 20px !important;
     }
+
     .content-wrapper {
         background-color: #F9FAFC;
     }
 </style>
 
+<?php
+include_once 'header.php';
+?>
+
 <div id="content-wrapper" style="display:none; background-color: #F9FAFC; margin-left: -22px">
     <div class="wrap">
-        <?php
-        include_once 'header.php';
-        ?>
-        <div class="list-group mb-4" id="list-websites"></div>
+        <div class="list-group mb-4 pt-4" id="list-websites"></div>
         <div class="table-responsive bg-white pb-5 p-3">
             <table class="table table-hover m-0">
                 <thead>

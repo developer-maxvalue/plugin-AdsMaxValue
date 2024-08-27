@@ -18,14 +18,15 @@ include_once 'base.php';
         background-color: #F9FAFC;
     }
 </style>
+
+<?php
+include_once 'header.php';
+?>
+
 <div id="content-wrapper" style="display:none; background-color: #F9FAFC; margin-left: -22px">
     <div class="wrap">
-        <?php
-        include_once 'header.php';
-        ?>
-        <div class="d-flex align-items-center justify-content-between mb-4">
+        <div class="d-flex align-items-center justify-content-between mb-4 pt-4">
             <div>
-                <h4 class="main-title mb-0">Ads.Txt Configuration</h4>
                 <p>You have successfully uploaded ads.txt on your website</p>
             </div>
         </div>
@@ -42,3 +43,7 @@ include_once 'base.php';
         </div>
     </div>
 </div>
+
+<script>
+    localStorage.setItem('page_title', 'Ads.Txt Configuration');
+</script>

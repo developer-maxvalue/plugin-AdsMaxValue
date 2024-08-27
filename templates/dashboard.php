@@ -89,11 +89,12 @@
 include_once 'base.php';
 ?>
 
+<?php
+include_once 'header.php';
+?>
+
 <div id="content-wrapper" style="display:none; background-color: #F9FAFC; margin-left: -22px">
     <div class="wrap">
-        <?php
-        include_once 'header.php';
-        ?>
         <div class="row g-3 justify-content-center mb-4">
             <div class="col-md-3 col-xl">
                 <div class="card card-one">
