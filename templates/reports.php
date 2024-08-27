@@ -295,20 +295,20 @@ include_once 'base.php';
             }, '', newUrl);
         });
 
-        function updateQueryStringParameter(uri, key, value) {
-            var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
-            var separator = uri.indexOf('?') !== -1 ? "&" : "?";
-            if (uri.match(re)) {
-                return uri.replace(re, '$1' + key + "=" + value + '$2');
-            } else {
-                return uri + separator + key + "=" + value;
-            }
-        }
-
         $('#date_select').on('cancel.daterangepicker', function(ev, picker) {
             $(this).val('');
         });
     });
+
+    function updateQueryStringParameter(uri, key, value) {
+        var re = new RegExp("([?&])" + key + "=.*?(&|$)", "i");
+        var separator = uri.indexOf('?') !== -1 ? "&" : "?";
+        if (uri.match(re)) {
+            return uri.replace(re, '$1' + key + "=" + value + '$2');
+        } else {
+            return uri + separator + key + "=" + value;
+        }
+    }
 
     function formatNumberWithCommas(number) {
         return number.toLocaleString('en-US');
@@ -316,6 +316,12 @@ include_once 'base.php';
 
     function clickSearchReport(button) {
         event.preventDefault();
+        const zoneId = document.getElementById('zoneSearch').value;
+
+        var newUrl = updateQueryStringParameter(window.location.href, 'zoneId', encodeURIComponent(zoneId));
+        window.history.pushState({
+            path: newUrl
+        }, '', newUrl);
         window.location.reload();
     }
 </script>
