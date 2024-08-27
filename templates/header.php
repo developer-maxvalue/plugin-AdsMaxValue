@@ -36,7 +36,7 @@
 
 <div class="row g-3 justify-content-center mb-4">
     <div class="col-md-12 col-xl-12" style="margin-top: 0 !important">
-        <div class="card card-one unsetWidth" style="margin-top: 0 !important">
+        <div class="card card-one unsetWidth">
             <div class="card-body header-card">
                 <span id="greeting" style="font-weight: 900;"></span>
                 <span class="text-end" id="email-user" style="font-size: 14px;"></span>
