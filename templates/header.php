@@ -37,7 +37,7 @@
     }
 </style>
 
-<div class="card card-one unsetWidth" style="width: calc(100% + 22px); margin-left: -22px;">
+<div class="card card-one unsetWidth" style="width: calc(100% + 22px); margin-left: -22px; margin-top: 0">
     <div class="card-body header-card">
         <span id="greeting" style="font-weight: 900;"></span>
         <span class="text-end" id="email-user" style="font-size: 14px;"></span>
