@@ -272,7 +272,7 @@ include_once 'base.php';
                     ${spanStatusSite}
                 </div>
                 <div class="col-md-1">
-                    ${zones.length}(zones)
+                    ${zones.length} zone(s)
                 </div>
                 <div class="col-md-2 text-center">
                     ${buttonsHtml}
