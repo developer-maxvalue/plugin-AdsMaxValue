@@ -37,7 +37,7 @@
     }
 </style>
 
-<div class="card card-one unsetWidth" style="width: calc(100% + 22px); margin-left: -22px; margin-top: 0">
+<div id="header-wp" class="card card-one unsetWidth" style="display: none; width: calc(100% + 22px); margin-left: -22px; margin-top: 0">
     <div class="card-body header-card">
         <span id="greeting" style="font-weight: 900;"></span>
         <span class="text-end" id="email-user" style="font-size: 14px;"></span>
@@ -45,6 +45,12 @@
 </div>
 
 <script>
+    const token = localStorage.getItem('mv_jwt_token')
+
+    if (token) {
+        document.getElementById('header-wp').style.display = 'block';
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         const userInfo = localStorage.getItem('user_info');
         const pageTitle = localStorage.getItem('page_title') || '';
