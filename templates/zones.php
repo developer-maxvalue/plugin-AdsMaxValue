@@ -28,6 +28,7 @@ include_once 'base.php';
         display: block;
         float: right;
     }
+
     .btn-clipboard {
         position: absolute;
         top: 0.5rem;
@@ -41,22 +42,32 @@ include_once 'base.php';
         border: 1px solid;
         border-radius: 0.25rem;
     }
-    .btn-clipboard:hover, .btn-clipboard:focus {
+
+    .btn-clipboard:hover,
+    .btn-clipboard:focus {
         color: #fff;
         background-color: #0d6efd;
     }
+
     .btn-clipboard {
         right: 1rem;
+    }
+    .card {
+        padding: 0 !important;
+    }
+    .wrap {
+        margin-top: 0;
+    }
+    .content-wrapper {
+        background-color: #F9FAFC;
     }
 </style>
 
 <div id="content-wrapper" style="display:none;">
     <div class="wrap">
-        <div class="d-flex align-items-center justify-content-between mb-4">
-            <div>
-                <h4 class="main-title mb-0">Welcome to Zones</h4>
-            </div>
-        </div>
+        <?php
+        include_once 'header.php';
+        ?>
         <div class="list-group" id="list-websites"></div>
         <div class="table-responsive bg-white pb-5 p-3">
             <table class="table table-hover m-0">
@@ -141,9 +152,6 @@ include_once 'base.php';
                                             <div class="row" id="groupDimensionsContainer">
 
                                             </div>
-                                            <div>
-                                                <p class="mt-4"><a class="control link-opacity-100" target="_blank" href="{{ route('user.faqs') }}">To view detailed information, please refer to the Frequently Asked Questions (FAQ) section.</a></p>
-                                            </div>
                                         </form>
                                         <div class="mb-3 text-center">
                                             <button type="submit" class="btn btn-primary" onclick="addZones(event)">Add zones</button>
@@ -194,6 +202,8 @@ include_once 'base.php';
 </div>
 
 <script>
+    localStorage.setItem('page_title', 'Zone');
+
     const token = localStorage.getItem('mv_jwt_token');
     let groupDimensions;
     if (token) {
@@ -255,11 +265,22 @@ include_once 'base.php';
         }
 
         let labelHtml = `
-            <div class="list-group-item d-flex justify-content-between align-items-center">
-                <span class="fw-bold">${item.name}</span>
-                <span>${spanStatusSite}</span>
-                ${buttonsHtml}
+            <div class="list-group-item">
+            <div class="row align-items-center">
+                <div class="col-md-6 fw-bold">
+                    ${item.name}
+                </div>
+                <div class="col-md-2">
+                    ${spanStatusSite}
+                </div>
+                <div class="col-md-1">
+                    ${zones.length}(zones)
+                </div>
+                <div class="col-md-2 text-center">
+                    ${buttonsHtml}
+                </div>
             </div>
+        </div>
         `;
 
         listContainer.innerHTML += labelHtml;
@@ -348,7 +369,7 @@ include_once 'base.php';
                 dimensionHtml += `
                 <div class="col-6 ${isStickyAd ? 'dimension_sticky' : ''} ${pointerEventsNone}">
                     <div class="form-check">
-                        <input class="form-check-input form-check-label input-dimension" type="checkbox" value="${dimension.id}" name="list_zone_dimensions[]" id="dimension_${dimension.id}" ${isDisabled}>
+                        <input style="margin-top: 0.4em;" class="form-check-input form-check-label input-dimension" type="checkbox" value="${dimension.id}" name="list_zone_dimensions[]" id="dimension_${dimension.id}" ${isDisabled}>
                         <label class="dimension_label form-check-label" for="dimension_${dimension.id}">
                             ${dimension.name}
                         </label>

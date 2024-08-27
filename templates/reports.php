@@ -20,14 +20,21 @@ include_once 'base.php';
     .select2-container .select2-selection--single {
         height: 33px !important;
     }
+    .card {
+        padding: 0 !important;
+    }
+    .wrap {
+        margin-top: 0;
+    }
+    .content-wrapper {
+        background-color: #F9FAFC;
+    }
 </style>
 <div id="content-wrapper" style="display:none;">
     <div class="wrap">
-        <div class="d-flex align-items-center justify-content-between mb-4">
-            <div>
-                <h4 class="main-title mb-0">Welcome to Reports</h4>
-            </div>
-        </div>
+        <?php
+        include_once 'header.php';
+        ?>
 
         <div class="col-md-12 col-xl-12">
             <div class="card card-one unsetWidth">
@@ -85,6 +92,8 @@ include_once 'base.php';
 </div>
 
 <script>
+    localStorage.setItem('page_title', 'Report');
+
     const token = localStorage.getItem('mv_jwt_token');
 
     $(document).ready(function() {
@@ -139,6 +148,40 @@ include_once 'base.php';
                         });
                     } else {
                         $('#zoneSearch').empty();
+                    }
+
+                    let pagination = data.items;
+
+                    let paginationContainer = document.getElementById('pagination-links');
+                    paginationContainer.innerHTML = '';
+
+                    if (pagination.last_page > 1) {
+                        pagination.links.forEach(link => {
+                            let li = document.createElement('li');
+                            li.className = `page-item ${link.active ? 'active' : ''}`;
+
+                            if (link.url) {
+                                let a = document.createElement('a');
+                                a.className = 'page-link';
+                                let url = new URL(window.location.href);
+                                if (link.label == 'Next &raquo;') {
+                                    link.label = '›';
+                                } else if (link.label == '&laquo; Previous') {
+                                    link.label = '‹';
+                                }
+                                url.searchParams.set('wp_page', link.label);
+                                a.href = url.toString();
+                                a.textContent = link.label;
+                                li.appendChild(a);
+                            } else {
+                                let span = document.createElement('span');
+                                span.className = 'page-link';
+                                span.textContent = link.label == '&laquo; Previous' ? '‹' : '›';
+                                li.appendChild(span);
+                            }
+
+                            paginationContainer.appendChild(li);
+                        });
                     }
 
                     const items = data.items;
@@ -292,6 +335,40 @@ include_once 'base.php';
                         });
                     } else {
                         $('#zoneSearch').empty();
+                    }
+
+                    let pagination = data.items;
+
+                    let paginationContainer = document.getElementById('pagination-links');
+                    paginationContainer.innerHTML = '';
+
+                    if (pagination.last_page > 1) {
+                        pagination.links.forEach(link => {
+                            let li = document.createElement('li');
+                            li.className = `page-item ${link.active ? 'active' : ''}`;
+
+                            if (link.url) {
+                                let a = document.createElement('a');
+                                a.className = 'page-link';
+                                let url = new URL(window.location.href);
+                                if (link.label == 'Next &raquo;') {
+                                    link.label = '›';
+                                } else if (link.label == '&laquo; Previous') {
+                                    link.label = '‹';
+                                }
+                                url.searchParams.set('wp_page', link.label);
+                                a.href = url.toString();
+                                a.textContent = link.label;
+                                li.appendChild(a);
+                            } else {
+                                let span = document.createElement('span');
+                                span.className = 'page-link';
+                                span.textContent = link.label == '&laquo; Previous' ? '‹' : '›';
+                                li.appendChild(span);
+                            }
+
+                            paginationContainer.appendChild(li);
+                        });
                     }
 
                     const items = data.items;

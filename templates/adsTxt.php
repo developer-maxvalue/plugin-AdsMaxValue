@@ -9,8 +9,20 @@
 <?php
 include_once 'base.php';
 ?>
+<style>
+    .wrap {
+        margin-top: 0;
+    }
+    .content-wrapper {
+        background-color: #F9FAFC;
+    }
+
+</style>
 <div id="content-wrapper" style="display:none;">
     <div class="wrap">
+        <?php
+        include_once 'header.php';
+        ?>
         <div class="d-flex align-items-center justify-content-between mb-4">
             <div>
                 <h4 class="main-title mb-0">Ads.Txt Configuration</h4>
@@ -23,7 +35,7 @@ include_once 'base.php';
                     <textarea class="form-control" id="adsTxt" name="adsTxt" rows="10"> <?php echo esc_textarea(trim($contentAdsTxt ?? '')); ?></textarea>
                     <p class="mt-3">The file is available on <a href='<?php echo (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']
                                                                             === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'] ?>/ads.txt' target="_blank"><?php echo (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']
-                                                                                                                    === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'] ?>/ads.txt</a> .</p>
+                                                                                                                                                                            === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'] ?>/ads.txt</a> .</p>
                 </div>
                 <button type="submit" class="btn btn-primary mb-3">Update</button>
             </form>

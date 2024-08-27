@@ -60,6 +60,14 @@
         color: black !important;
     }
 
+    .card {
+        padding: 0 !important;
+    }
+    
+    .wrap {
+        margin-top: 0;
+    }
+
     @media (min-width: 1200px) {
         .vmap-one {
             height: 350px;
@@ -77,13 +85,11 @@
 include_once 'base.php';
 ?>
 
-<div id="content-wrapper" style="display:none;">
+<div id="content-wrapper" style="display:none; background-color: #F9FAFC">
     <div class="wrap">
-        <div class="d-flex align-items-center justify-content-between mb-4">
-            <div>
-                <h4 class="main-title mb-0">Welcome to Dashboard</h4>
-            </div>
-        </div>
+        <?php
+        include_once 'header.php';
+        ?>
         <div class="row g-3 justify-content-center mb-4">
             <div class="col-md-3 col-xl">
                 <div class="card card-one">
@@ -243,6 +249,7 @@ include_once 'base.php';
     </div>
 
     <script>
+        localStorage.setItem('page_title', 'Dashboard');
         let chart;
 
         const token = localStorage.getItem('mv_jwt_token');

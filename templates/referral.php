@@ -58,6 +58,18 @@
         display: block;
         float: right;
     }
+
+    .card {
+        padding: 0 !important;
+    }
+
+    .wrap {
+        margin-top: 0;
+    }
+    .content-wrapper {
+        background-color: #F9FAFC;
+    }
+
 </style>
 <?php
 include_once 'base.php';
@@ -67,7 +79,10 @@ $userInfo = $userInfo['user'] ?? [];
 ?>
 
 <div id="content-wrapper" style="display:none;">
-    <div class="row referralProgram" id="referralProgram">
+    <div class="row referralProgram wrap" id="referralProgram">
+        <?php
+        include_once 'header.php';
+        ?>
         <div class="col-sm-12 col-md-12 col-xl-6 d-flex align-items-end justify-content-start">
             <img src="<?php echo plugins_url('assets/img/banner-referral-mv.png', dirname(__FILE__)); ?>" class="img-fluid"
                 alt="referral program maxvalue">
