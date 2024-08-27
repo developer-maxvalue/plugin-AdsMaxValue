@@ -45,7 +45,7 @@
 </div>
 
 <script>
-    const token = localStorage.getItem('mv_jwt_token')
+    let token = localStorage.getItem('mv_jwt_token')
 
     if (token) {
         document.getElementById('header-wp').style.display = 'block';

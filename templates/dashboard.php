@@ -252,252 +252,250 @@ include_once 'header.php';
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-        localStorage.setItem('page_title', 'Dashboard');
-        let chart;
+<script>
+    localStorage.setItem('page_title', 'Dashboard');
+    let chart;
 
-        const token = localStorage.getItem('mv_jwt_token');
-
-        document.addEventListener('DOMContentLoaded', function() {
-            var options = {
-                colors: ['rgb(0, 143, 251)', 'rgb(0, 227, 150)', 'rgb(254, 176, 25)', 'rgb(255, 69, 96)',
-                    'rgb(119, 93, 208)', '#FF4081', '#4CAF50', '#2196F3', '#FF9800', '#9C27B0', '#FFC107', '#03A9F4',
-                    '#E91E63', '#00BCD4', '#8BC34A', '#673AB7', '#FF5722', '#607D8B', '#9E9E9E', '#795548', '#F44336',
-                    '#FFEB3B', '#9C27B0', '#009688', '#FF5722'
-                ],
-                series: [],
-                dataLabels: {
-                    enabled: true,
-                    enabledOnSeries: [0]
-                },
-                chart: {
-                    height: 350,
-                    type: 'line',
-                    toolbar: {
-                        show: true,
-                        offsetX: 0,
-                        offsetY: 0,
-                        tools: {
-                            download: true
-                        },
-                        export: {
-                            csv: {
-                                filename: '',
-                            },
-                            svg: {
-                                filename: '',
-                            },
-                            png: {
-                                filename: '',
-                            }
-                        },
-                        autoSelected: 'zoom'
+    document.addEventListener('DOMContentLoaded', function() {
+        var options = {
+            colors: ['rgb(0, 143, 251)', 'rgb(0, 227, 150)', 'rgb(254, 176, 25)', 'rgb(255, 69, 96)',
+                'rgb(119, 93, 208)', '#FF4081', '#4CAF50', '#2196F3', '#FF9800', '#9C27B0', '#FFC107', '#03A9F4',
+                '#E91E63', '#00BCD4', '#8BC34A', '#673AB7', '#FF5722', '#607D8B', '#9E9E9E', '#795548', '#F44336',
+                '#FFEB3B', '#9C27B0', '#009688', '#FF5722'
+            ],
+            series: [],
+            dataLabels: {
+                enabled: true,
+                enabledOnSeries: [0]
+            },
+            chart: {
+                height: 350,
+                type: 'line',
+                toolbar: {
+                    show: true,
+                    offsetX: 0,
+                    offsetY: 0,
+                    tools: {
+                        download: true
                     },
-                },
-                stroke: {
-                    width: [0, 4]
-                },
-                xaxis: {
-                    categories: [],
-                },
-                yaxis: [{
-                    title: {
-                        text: 'Revenue',
+                    export: {
+                        csv: {
+                            filename: '',
+                        },
+                        svg: {
+                            filename: '',
+                        },
+                        png: {
+                            filename: '',
+                        }
                     },
-                    labels: {
-                        formatter: function(value) {
-                            if (value >= 1000) {
-                                return (value / 1000).toFixed(2) + "k";
-                            } else {
-                                return value.toFixed(2);
-                            }
+                    autoSelected: 'zoom'
+                },
+            },
+            stroke: {
+                width: [0, 4]
+            },
+            xaxis: {
+                categories: [],
+            },
+            yaxis: [{
+                title: {
+                    text: 'Revenue',
+                },
+                labels: {
+                    formatter: function(value) {
+                        if (value >= 1000) {
+                            return (value / 1000).toFixed(2) + "k";
+                        } else {
+                            return value.toFixed(2);
                         }
                     }
-                }]
-            };
+                }
+            }]
+        };
 
-            chart = new ApexCharts(document.querySelector("#chart_custom"), options);
-            chart.render();
+        chart = new ApexCharts(document.querySelector("#chart_custom"), options);
+        chart.render();
 
-            const currentUrl = new URL(window.location.href);
-            const params = new URLSearchParams(currentUrl.search);
-            const website = <?php echo MV_DEBUG ? "'dev.riseearning.com'" : "'" . $_SERVER['HTTP_HOST'] . "'" ?>;
+        const currentUrl = new URL(window.location.href);
+        const params = new URLSearchParams(currentUrl.search);
+        const website = <?php echo MV_DEBUG ? "'dev.riseearning.com'" : "'" . $_SERVER['HTTP_HOST'] . "'" ?>;
 
-            var urlParams = new URLSearchParams(window.location.search);
+        var urlParams = new URLSearchParams(window.location.search);
 
-            var start = urlParams.get('start');
-            var end = urlParams.get('end');
-            var date_option = urlParams.get('date_option');
-            var page = urlParams.get('wp_page');
+        var start = urlParams.get('start');
+        var end = urlParams.get('end');
+        var date_option = urlParams.get('date_option');
+        var page = urlParams.get('wp_page');
 
-            const apiUrl = `https://stg-publisher.maxvalue.media/api/dashboard?website_name=${encodeURIComponent(website)}&start=${start}&end=${end}&date_option=${date_option}&page=${page}`;
+        const apiUrl = `https://stg-publisher.maxvalue.media/api/dashboard?website_name=${encodeURIComponent(website)}&start=${start}&end=${end}&date_option=${date_option}&page=${page}`;
 
-            if (!token) return;
-            $('#loader').show();
-            fetch(apiUrl, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`,
-                    }
-                })
-                .then(response => response.json())
-                .then(res => {
-                    if (res.success) {
-                        let data = res.data;
-                        console.log('map data = ', data.listMapCountryTraffic);
+        $('#loader').show();
+        fetch(apiUrl, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
+                }
+            })
+            .then(response => response.json())
+            .then(res => {
+                if (res.success) {
+                    let data = res.data;
+                    console.log('map data = ', data.listMapCountryTraffic);
 
-                        $('#yesterday_earning').text("$" + data.revenueYesterday);
-                        $('#this_month').text("$" + data.revenueThisMonth);
-                        $('#last_month').text("$" + data.revenueLastMonth);
-                        $('#total_earning').text("$" + data.totalReport);
-                        chart.updateSeries(data.chart.data);
-                        chart.updateOptions({
-                            xaxis: {
-                                categories: data.chart.date
-                            },
-                            chart: {
-                                toolbar: {
-                                    export: {
-                                        csv: {
-                                            filename: data.fileNameExport,
-                                        },
-                                        svg: {
-                                            filename: data.fileNameExport,
-                                        },
-                                        png: {
-                                            filename: data.fileNameExport,
-                                        }
+                    $('#yesterday_earning').text("$" + data.revenueYesterday);
+                    $('#this_month').text("$" + data.revenueThisMonth);
+                    $('#last_month').text("$" + data.revenueLastMonth);
+                    $('#total_earning').text("$" + data.totalReport);
+                    chart.updateSeries(data.chart.data);
+                    chart.updateOptions({
+                        xaxis: {
+                            categories: data.chart.date
+                        },
+                        chart: {
+                            toolbar: {
+                                export: {
+                                    csv: {
+                                        filename: data.fileNameExport,
+                                    },
+                                    svg: {
+                                        filename: data.fileNameExport,
+                                    },
+                                    png: {
+                                        filename: data.fileNameExport,
                                     }
                                 }
                             }
-                        });
-                        let colors = ['bg-success', 'bg-orange', 'bg-pink', 'bg-info', 'bg-indigo'];
-                        let progressContainerTrafic = document.getElementById('progress-container');
-                        progressContainerTrafic.innerHTML = '';
+                        }
+                    });
+                    let colors = ['bg-success', 'bg-orange', 'bg-pink', 'bg-info', 'bg-indigo'];
+                    let progressContainerTrafic = document.getElementById('progress-container');
+                    progressContainerTrafic.innerHTML = '';
+                    data.reportRefererDomain.forEach((domain, index) => {
+                        let progressBar = document.createElement('div');
+                        progressBar.className = `progress ${colors[index % colors.length]}`;
+                        progressBar.style.width = `${domain.percent}%`;
+                        progressBar.setAttribute('aria-valuenow', domain.percent);
+                        progressBar.setAttribute('aria-valuemin', '0');
+                        progressBar.setAttribute('aria-valuemax', '100');
+                        progressBar.style.borderRadius = 'unset';
+
+                        progressContainerTrafic.appendChild(progressBar);
+                    });
+                    let tableDomain = document.getElementById('domain-table-body');
+                    tableDomain.innerHTML = '';
+
+                    if (data.reportRefererDomain.length > 0) {
                         data.reportRefererDomain.forEach((domain, index) => {
-                            let progressBar = document.createElement('div');
-                            progressBar.className = `progress ${colors[index % colors.length]}`;
-                            progressBar.style.width = `${domain.percent}%`;
-                            progressBar.setAttribute('aria-valuenow', domain.percent);
-                            progressBar.setAttribute('aria-valuemin', '0');
-                            progressBar.setAttribute('aria-valuemax', '100');
-                            progressBar.style.borderRadius = 'unset';
+                            let row = document.createElement('tr');
 
-                            progressContainerTrafic.appendChild(progressBar);
+                            let colorCell = document.createElement('td');
+                            let badgeDot = document.createElement('div');
+                            badgeDot.className = `badge-dot ${colors[index % colors.length]}`;
+                            colorCell.appendChild(badgeDot);
+                            row.appendChild(colorCell);
+
+                            let nameCell = document.createElement('td');
+                            nameCell.className = 'domain-name';
+                            nameCell.textContent = domain.name;
+                            row.appendChild(nameCell);
+
+                            let percentCell = document.createElement('td');
+                            percentCell.textContent = `${domain.percent}%`;
+                            row.appendChild(percentCell);
+
+                            tableDomain.appendChild(row);
                         });
-                        let tableDomain = document.getElementById('domain-table-body');
-                        tableDomain.innerHTML = '';
+                    } else {
+                        let noDataRow = document.createElement('tr');
+                        let noDataCell = document.createElement('td');
+                        noDataCell.colSpan = 3;
+                        noDataCell.textContent = 'No data available';
+                        noDataRow.appendChild(noDataCell);
+                        tableDomain.appendChild(noDataRow);
+                    }
 
-                        if (data.reportRefererDomain.length > 0) {
-                            data.reportRefererDomain.forEach((domain, index) => {
-                                let row = document.createElement('tr');
+                    let progressContainerDevice = document.getElementById('progress-device');
+                    progressContainerDevice.innerHTML = '';
 
-                                let colorCell = document.createElement('td');
-                                let badgeDot = document.createElement('div');
-                                badgeDot.className = `badge-dot ${colors[index % colors.length]}`;
-                                colorCell.appendChild(badgeDot);
-                                row.appendChild(colorCell);
+                    data.reportDevice.forEach((device, index) => {
+                        let progressBar = document.createElement('div');
+                        progressBar.className = `progress ${colors[index % colors.length]}`;
+                        progressBar.style.width = `${device.percent}%`;
+                        progressBar.setAttribute('aria-valuenow', device.percent);
+                        progressBar.setAttribute('aria-valuemin', '0');
+                        progressBar.setAttribute('aria-valuemax', '100');
+                        progressBar.style.borderRadius = 'unset';
 
-                                let nameCell = document.createElement('td');
-                                nameCell.className = 'domain-name';
-                                nameCell.textContent = domain.name;
-                                row.appendChild(nameCell);
+                        progressContainerDevice.appendChild(progressBar);
+                    });
 
-                                let percentCell = document.createElement('td');
-                                percentCell.textContent = `${domain.percent}%`;
-                                row.appendChild(percentCell);
+                    let tableDevice = document.getElementById('table-device');
+                    tableDevice.innerHTML = '';
 
-                                tableDomain.appendChild(row);
-                            });
-                        } else {
-                            let noDataRow = document.createElement('tr');
-                            let noDataCell = document.createElement('td');
-                            noDataCell.colSpan = 3;
-                            noDataCell.textContent = 'No data available';
-                            noDataRow.appendChild(noDataCell);
-                            tableDomain.appendChild(noDataRow);
-                        }
-
-                        let progressContainerDevice = document.getElementById('progress-device');
-                        progressContainerDevice.innerHTML = '';
-
+                    if (data.reportDevice.length > 0) {
                         data.reportDevice.forEach((device, index) => {
-                            let progressBar = document.createElement('div');
-                            progressBar.className = `progress ${colors[index % colors.length]}`;
-                            progressBar.style.width = `${device.percent}%`;
-                            progressBar.setAttribute('aria-valuenow', device.percent);
-                            progressBar.setAttribute('aria-valuemin', '0');
-                            progressBar.setAttribute('aria-valuemax', '100');
-                            progressBar.style.borderRadius = 'unset';
+                            let row = document.createElement('tr');
 
-                            progressContainerDevice.appendChild(progressBar);
+                            let colorCell = document.createElement('td');
+                            let badgeDot = document.createElement('div');
+                            badgeDot.className = `badge-dot ${colors[index % colors.length]}`;
+                            colorCell.appendChild(badgeDot);
+                            row.appendChild(colorCell);
+
+                            let nameCell = document.createElement('td');
+                            nameCell.textContent = device.name;
+                            row.appendChild(nameCell);
+
+                            let percentCell = document.createElement('td');
+                            percentCell.textContent = `${device.percent}%`;
+                            row.appendChild(percentCell);
+
+                            tableDevice.appendChild(row);
                         });
+                    } else {
+                        let noDataRow = document.createElement('tr');
+                        let noDataCell = document.createElement('td');
+                        noDataCell.colSpan = 3;
+                        noDataCell.textContent = 'No data available';
+                        noDataRow.appendChild(noDataCell);
+                        tableDevice.appendChild(noDataRow);
+                    }
 
-                        let tableDevice = document.getElementById('table-device');
-                        tableDevice.innerHTML = '';
+                    let items = data.items && data.items.data.length > 0 ? data.items.data : [];
+                    let countItem = data.countItem;
+                    let isNewPub = data.isNewPub;
+                    let currentDate = new Date();
+                    let yesterday = new Date();
+                    yesterday.setDate(currentDate.getDate() - 1);
+                    let threeDaysAgo = new Date();
+                    threeDaysAgo.setDate(currentDate.getDate() - 3);
+                    let currentHourUTC = new Date().getUTCHours();
+                    let previousDate = null;
 
-                        if (data.reportDevice.length > 0) {
-                            data.reportDevice.forEach((device, index) => {
-                                let row = document.createElement('tr');
+                    let tableBody = document.getElementById('report-table-body');
+                    tableBody.innerHTML = '';
 
-                                let colorCell = document.createElement('td');
-                                let badgeDot = document.createElement('div');
-                                badgeDot.className = `badge-dot ${colors[index % colors.length]}`;
-                                colorCell.appendChild(badgeDot);
-                                row.appendChild(colorCell);
-
-                                let nameCell = document.createElement('td');
-                                nameCell.textContent = device.name;
-                                row.appendChild(nameCell);
-
-                                let percentCell = document.createElement('td');
-                                percentCell.textContent = `${device.percent}%`;
-                                row.appendChild(percentCell);
-
-                                tableDevice.appendChild(row);
-                            });
-                        } else {
-                            let noDataRow = document.createElement('tr');
-                            let noDataCell = document.createElement('td');
-                            noDataCell.colSpan = 3;
-                            noDataCell.textContent = 'No data available';
-                            noDataRow.appendChild(noDataCell);
-                            tableDevice.appendChild(noDataRow);
+                    items.forEach((itemReportSite, index) => {
+                        if (
+                            isNewPub &&
+                            currentHourUTC < 12 &&
+                            (itemReportSite.date === formatDate(yesterday) ||
+                                itemReportSite.date === formatDate(currentDate) ||
+                                itemReportSite.total_impressions === 0)
+                        ) {
+                            return;
                         }
 
-                        let items = data.items && data.items.data.length > 0 ? data.items.data : [];
-                        let countItem = data.countItem;
-                        let isNewPub = data.isNewPub;
-                        let currentDate = new Date();
-                        let yesterday = new Date();
-                        yesterday.setDate(currentDate.getDate() - 1);
-                        let threeDaysAgo = new Date();
-                        threeDaysAgo.setDate(currentDate.getDate() - 3);
-                        let currentHourUTC = new Date().getUTCHours();
-                        let previousDate = null;
+                        let currentDate = itemReportSite.date;
+                        let rowspanCount = items.filter(item => item.date === currentDate).length;
 
-                        let tableBody = document.getElementById('report-table-body');
-                        tableBody.innerHTML = '';
-
-                        items.forEach((itemReportSite, index) => {
-                            if (
-                                isNewPub &&
-                                currentHourUTC < 12 &&
-                                (itemReportSite.date === formatDate(yesterday) ||
-                                    itemReportSite.date === formatDate(currentDate) ||
-                                    itemReportSite.total_impressions === 0)
-                            ) {
-                                return;
-                            }
-
-                            let currentDate = itemReportSite.date;
-                            let rowspanCount = items.filter(item => item.date === currentDate).length;
-
-                            if (currentDate !== previousDate) {
-                                let row = document.createElement('tr');
-                                row.innerHTML = `
+                        if (currentDate !== previousDate) {
+                            let row = document.createElement('tr');
+                            row.innerHTML = `
                         <td class="textCenter" rowspan="${rowspanCount}" style="vertical-align: middle;">${itemReportSite.date}</td>
                         <td class="textCenter"><div>${itemReportSite.websiteName}</div></td>
                         <td class="textCenter">${formatNumber(itemReportSite.total_impressions)}</td>
@@ -510,10 +508,10 @@ include_once 'header.php';
                             }
                         </td>
                     `;
-                                tableBody.appendChild(row);
-                            } else {
-                                let row = document.createElement('tr');
-                                row.innerHTML = `
+                            tableBody.appendChild(row);
+                        } else {
+                            let row = document.createElement('tr');
+                            row.innerHTML = `
                         <td class="textCenter"><div>${itemReportSite.websiteName}</div></td>
                         <td class="textCenter">${formatNumber(itemReportSite.total_impressions)}</td>
                         <td class="textCenter">${(itemReportSite.date !== formatDate(new Date()) && itemReportSite.average_cpm !== 0) ? formatNumber(itemReportSite.average_cpm, 2) : ''}</td>
@@ -525,19 +523,19 @@ include_once 'header.php';
                             }
                         </td>
                     `;
-                                tableBody.appendChild(row);
-                            }
+                            tableBody.appendChild(row);
+                        }
 
-                            previousDate = currentDate;
-                        });
+                        previousDate = currentDate;
+                    });
 
-                        if (
-                            (countItem.totalImpressions === 0 && countItem.averageCPM === 0 && countItem.totalChangeRevenue === 0) ||
-                            (isNewPub && currentHourUTC < 12)
-                        ) {} else {
-                            let totalRow = document.createElement('tr');
-                            totalRow.style.fontWeight = 'bold';
-                            totalRow.innerHTML = `
+                    if (
+                        (countItem.totalImpressions === 0 && countItem.averageCPM === 0 && countItem.totalChangeRevenue === 0) ||
+                        (isNewPub && currentHourUTC < 12)
+                    ) {} else {
+                        let totalRow = document.createElement('tr');
+                        totalRow.style.fontWeight = 'bold';
+                        totalRow.innerHTML = `
                     <td class="textCenter" scope="row" data-column="Date">Total</td>
                     <td></td>
                     <td class="textCenter">${formatNumber(countItem.totalImpressions)}</td>
@@ -545,71 +543,71 @@ include_once 'header.php';
                     <td class="textCenter">$${formatNumber(countItem.totalChangeRevenue, 2)}</td>
                     <td></td>
                 `;
-                            tableBody.appendChild(totalRow);
-                        }
+                        tableBody.appendChild(totalRow);
+                    }
 
-                        let pagination = data.items;
+                    let pagination = data.items;
 
-                        let paginationContainer = document.getElementById('pagination-links');
-                        paginationContainer.innerHTML = '';
+                    let paginationContainer = document.getElementById('pagination-links');
+                    paginationContainer.innerHTML = '';
 
-                        if (pagination.last_page > 1) {
-                            pagination.links.forEach(link => {
-                                let li = document.createElement('li');
-                                li.className = `page-item ${link.active ? 'active' : ''}`;
+                    if (pagination.last_page > 1) {
+                        pagination.links.forEach(link => {
+                            let li = document.createElement('li');
+                            li.className = `page-item ${link.active ? 'active' : ''}`;
 
-                                if (link.url) {
-                                    let a = document.createElement('a');
-                                    a.className = 'page-link';
-                                    let url = new URL(window.location.href);
-                                    if (link.label === 'Next &raquo;') {
-                                        link.label = '›';
-                                    } else if (link.label === '&laquo; Previous') {
-                                        link.label = '‹';
-                                    }
-
-                                    url.searchParams.set('wp_page', new URL(link.url).searchParams.get('page') || link.label);
-                                    a.href = url.toString();
-                                    a.textContent = link.label;
-                                    li.appendChild(a);
-
-                                    if (link.label === '‹' && pagination.current_page === 1) {
-                                        li.classList.add('disabled');
-                                        a.href = '#';
-                                    }
-
-                                    if (link.label === '›' && pagination.current_page === pagination.last_page) {
-                                        li.classList.add('disabled');
-                                        a.href = '#';
-                                    }
-
-                                } else {
-                                    let span = document.createElement('span');
-                                    span.className = 'page-link';
-                                    span.textContent = link.label === '&laquo; Previous' ? '‹' : '›';
-                                    li.appendChild(span);
-
-                                    li.classList.add('disabled');
+                            if (link.url) {
+                                let a = document.createElement('a');
+                                a.className = 'page-link';
+                                let url = new URL(window.location.href);
+                                if (link.label === 'Next &raquo;') {
+                                    link.label = '›';
+                                } else if (link.label === '&laquo; Previous') {
+                                    link.label = '‹';
                                 }
 
-                                paginationContainer.appendChild(li);
-                            });
-                        }
+                                url.searchParams.set('wp_page', new URL(link.url).searchParams.get('page') || link.label);
+                                a.href = url.toString();
+                                a.textContent = link.label;
+                                li.appendChild(a);
 
-                        let listCountryTraffic = data.listCountryTraffic;
-                        let totalCountryTraffic = data.totalCountryTraffic;
-                        let countryTraffic = document.getElementById('country-traffic-table');
+                                if (link.label === '‹' && pagination.current_page === 1) {
+                                    li.classList.add('disabled');
+                                    a.href = '#';
+                                }
 
-                        countryTraffic.innerHTML = '';
+                                if (link.label === '›' && pagination.current_page === pagination.last_page) {
+                                    li.classList.add('disabled');
+                                    a.href = '#';
+                                }
 
-                        if (listCountryTraffic.length > 0) {
-                            listCountryTraffic.forEach(itemTraffic => {
-                                let percentage = totalCountryTraffic != 0 ?
-                                    ((itemTraffic.total_impressions / totalCountryTraffic) * 100).toFixed(2) :
-                                    0;
+                            } else {
+                                let span = document.createElement('span');
+                                span.className = 'page-link';
+                                span.textContent = link.label === '&laquo; Previous' ? '‹' : '›';
+                                li.appendChild(span);
 
-                                let row = document.createElement('tr');
-                                row.innerHTML = `
+                                li.classList.add('disabled');
+                            }
+
+                            paginationContainer.appendChild(li);
+                        });
+                    }
+
+                    let listCountryTraffic = data.listCountryTraffic;
+                    let totalCountryTraffic = data.totalCountryTraffic;
+                    let countryTraffic = document.getElementById('country-traffic-table');
+
+                    countryTraffic.innerHTML = '';
+
+                    if (listCountryTraffic.length > 0) {
+                        listCountryTraffic.forEach(itemTraffic => {
+                            let percentage = totalCountryTraffic != 0 ?
+                                ((itemTraffic.total_impressions / totalCountryTraffic) * 100).toFixed(2) :
+                                0;
+
+                            let row = document.createElement('tr');
+                            row.innerHTML = `
                         <td scope="row" data-column="Date">
                             <span class="flag-icon flag-icon-${itemTraffic.code}"></span>
                             <span class="fw-medium">${itemTraffic.name}</span>
@@ -617,114 +615,114 @@ include_once 'header.php';
                         <td>${percentage}%</td>
                     `;
 
-                                countryTraffic.appendChild(row);
-                            });
-                        } else {
-                            let noDataRow = document.createElement('tr');
-                            noDataRow.innerHTML = `
+                            countryTraffic.appendChild(row);
+                        });
+                    } else {
+                        let noDataRow = document.createElement('tr');
+                        noDataRow.innerHTML = `
                     <td colspan="2">No data available</td>
                 `;
-                            countryTraffic.appendChild(noDataRow);
-                        }
-
-                        jQuery('#vmap').vectorMap('set', 'colors', data.listMapCountryTraffic);
-                        $('#loader').hide();
-                    } else {
-                        alert(res.message || 'Get data dashboard fail');
-                        $('#loader').hide();
+                        countryTraffic.appendChild(noDataRow);
                     }
-                })
-                .catch(error => {
-                    console.error('Error fetching dashboard data:', error);
+
+                    jQuery('#vmap').vectorMap('set', 'colors', data.listMapCountryTraffic);
                     $('#loader').hide();
-                });
-
-        });
-
-        function formatDate(date) {
-            return date.toISOString().split('T')[0];
-        }
-
-        function formatNumber(number, decimals = 0) {
-            return number ? number.toLocaleString(undefined, {
-                minimumFractionDigits: decimals,
-                maximumFractionDigits: decimals
-            }) : 0;
-        }
-
-        function clickSearchReport(button) {
-            event.preventDefault();
-            window.location.reload();
-        }
-    </script>
-
-    <script type="text/javascript">
-        jQuery(document).ready(function() {
-            jQuery('#vmap').vectorMap({
-                map: 'world_en',
-                backgroundColor: '#fff',
-                borderColor: '#fff',
-                color: '#d9dde7',
-                colors: {},
-                hoverColor: null,
-                hoverOpacity: 0.8,
-                enableZoom: false,
-                showTooltip: true,
-                multiSelectRegion: true
-            });
-        });
-    </script>
-
-    <script>
-        jQuery(document).ready(function($) {
-            var urlParams = new URLSearchParams(window.location.search);
-            var startDateParam = urlParams.get('start');
-            var endDateParam = urlParams.get('end');
-
-            var startDate = startDateParam ? moment(startDateParam, 'YYYY-MM-DD') : moment().subtract(6, 'days');
-            var endDate = endDateParam ? moment(endDateParam, 'YYYY-MM-DD') : moment();
-
-            $('#date_select').daterangepicker({
-                startDate: startDate,
-                endDate: endDate,
-                ranges: {
-                    'Today': [moment(), moment()],
-                    'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-                    'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-                    'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-                    'This Month': [moment().startOf('month'), moment().endOf('month')],
-                    'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-                },
-                "alwaysShowCalendars": true
-            }, function(start, end, label) {
-                var from = start.format('YYYY-MM-DD');
-                var to = end.format('YYYY-MM-DD');
-                var route = "<?php echo esc_js(admin_url('admin.php?page=mv-dashboard')); ?>";
-                route += "&website_id=" + <?php echo json_encode($siteId); ?> + "&date_option=";
-                switch (label) {
-                    case 'Today':
-                        route += "TODAY";
-                        break;
-                    case 'Yesterday':
-                        route += "YESTERDAY";
-                        break;
-                    case 'Last 7 Days':
-                        route += "SUB_7";
-                        break;
-                    case 'Last 30 Days':
-                        route += "SUB_30";
-                        break;
-                    case 'This Month':
-                        route += "SUB_THIS_MONTH";
-                        break;
-                    case 'Last Month':
-                        route += "SUB_LAST_MONTH";
-                        break;
-                    default:
-                        route += "CUSTOM";
-                        break;
+                } else {
+                    alert(res.message || 'Get data dashboard fail');
+                    $('#loader').hide();
                 }
-                window.history.pushState(null, '', route + "&start=" + from + "&end=" + to);
+            })
+            .catch(error => {
+                console.error('Error fetching dashboard data:', error);
+                $('#loader').hide();
             });
+
+    });
+
+    function formatDate(date) {
+        return date.toISOString().split('T')[0];
+    }
+
+    function formatNumber(number, decimals = 0) {
+        return number ? number.toLocaleString(undefined, {
+            minimumFractionDigits: decimals,
+            maximumFractionDigits: decimals
+        }) : 0;
+    }
+
+    function clickSearchReport(button) {
+        event.preventDefault();
+        window.location.reload();
+    }
+</script>
+
+<script type="text/javascript">
+    jQuery(document).ready(function() {
+        jQuery('#vmap').vectorMap({
+            map: 'world_en',
+            backgroundColor: '#fff',
+            borderColor: '#fff',
+            color: '#d9dde7',
+            colors: {},
+            hoverColor: null,
+            hoverOpacity: 0.8,
+            enableZoom: false,
+            showTooltip: true,
+            multiSelectRegion: true
         });
-    </script>
+    });
+</script>
+
+<script>
+    jQuery(document).ready(function($) {
+        var urlParams = new URLSearchParams(window.location.search);
+        var startDateParam = urlParams.get('start');
+        var endDateParam = urlParams.get('end');
+
+        var startDate = startDateParam ? moment(startDateParam, 'YYYY-MM-DD') : moment().subtract(6, 'days');
+        var endDate = endDateParam ? moment(endDateParam, 'YYYY-MM-DD') : moment();
+
+        $('#date_select').daterangepicker({
+            startDate: startDate,
+            endDate: endDate,
+            ranges: {
+                'Today': [moment(), moment()],
+                'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                'This Month': [moment().startOf('month'), moment().endOf('month')],
+                'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+            },
+            "alwaysShowCalendars": true
+        }, function(start, end, label) {
+            var from = start.format('YYYY-MM-DD');
+            var to = end.format('YYYY-MM-DD');
+            var route = "<?php echo esc_js(admin_url('admin.php?page=mv-dashboard')); ?>";
+            route += "&website_id=" + <?php echo json_encode($siteId); ?> + "&date_option=";
+            switch (label) {
+                case 'Today':
+                    route += "TODAY";
+                    break;
+                case 'Yesterday':
+                    route += "YESTERDAY";
+                    break;
+                case 'Last 7 Days':
+                    route += "SUB_7";
+                    break;
+                case 'Last 30 Days':
+                    route += "SUB_30";
+                    break;
+                case 'This Month':
+                    route += "SUB_THIS_MONTH";
+                    break;
+                case 'Last Month':
+                    route += "SUB_LAST_MONTH";
+                    break;
+                default:
+                    route += "CUSTOM";
+                    break;
+            }
+            window.history.pushState(null, '', route + "&start=" + from + "&end=" + to);
+        });
+    });
+</script>

@@ -99,8 +99,6 @@ include_once 'base.php';
 <script>
     localStorage.setItem('page_title', 'Report');
 
-    const token = localStorage.getItem('mv_jwt_token');
-
     $(document).ready(function() {
         $("#zoneSearch").select2({
             placeholder: "- Zone -",

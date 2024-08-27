@@ -202,8 +202,8 @@ include_once 'base.php';
 <script>
     localStorage.setItem('page_title', 'Zone');
 
-    const token = localStorage.getItem('mv_jwt_token');
     let groupDimensions;
+
     if (token) {
         const currentUrl = new URL(window.location.href);
 
@@ -424,6 +424,7 @@ include_once 'base.php';
 
         const apiUrl = 'https://stg-publisher.maxvalue.media/api/zone/store';
 
+        $('#loader').show();
         fetch(apiUrl, {
                 method: 'POST',
                 headers: {
@@ -433,6 +434,7 @@ include_once 'base.php';
             })
             .then(response => response.json())
             .then(response => {
+                $('#loader').hide();
                 if (response.success) {
                     window.location.reload();
                 } else {
@@ -441,6 +443,7 @@ include_once 'base.php';
             })
             .catch(error => {
                 console.error('Error:', error);
+                $('#loader').hide();
                 alert('An error occurred while adding zones.');
             });
     }
