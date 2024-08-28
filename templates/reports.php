@@ -29,6 +29,10 @@
     .content-wrapper {
         background-color: #F9FAFC;
     }
+
+    .textCenter {
+        text-align: center !important;
+    }
 </style>
 
 <?php

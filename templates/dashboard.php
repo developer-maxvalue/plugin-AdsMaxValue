@@ -10,9 +10,6 @@
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" integrity="sha512-nMNlpuaDPrqlEls3IX/Q56H36qvBASwb3ipuo3MxeWbsQB1881ox0cRv7UPTgBlriqoynt35KjEwgGUeUXIPnw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.full.min.js" integrity="sha512-RtZU3AyMVArmHLiW0suEZ9McadTdegwbgtiQl5Qqo9kunkVg1ofwueXD8/8wv3Af8jkME3DDe3yLfR8HSJfT2g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jqvmap/1.5.1/jquery.vmap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jqvmap/1.5.1/maps/jquery.vmap.world.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqvmap/1.5.1/jqvmap.min.css">
 
 <style>
     .textCenter {
@@ -38,10 +35,6 @@
         left: 0;
         background-color: rgba(255, 255, 255, 0.7);
         z-index: 9999;
-    }
-
-    .vmap-one {
-        height: 200px;
     }
 
     .card-header {
@@ -70,18 +63,6 @@
 
     .wrap {
         margin: 0 20px !important;
-    }
-
-    @media (min-width: 1200px) {
-        .vmap-one {
-            height: 350px;
-        }
-    }
-
-    @media (min-width: 768px) and (max-width: 1199px) {
-        .vmap-one {
-            height: 300px;
-        }
     }
 </style>
 
@@ -179,52 +160,6 @@ include_once 'header.php';
                 </div>
             </div>
 
-            <div class="col-md-12 col-lg-8 col-xl-9">
-                <div class="card card-one unsetWidth" style="height: 95%;">
-                    <div class="card-header">
-                        <h6 class="card-title">Your Top Countries</h6>
-                    </div>
-                    <div class="card-body p-4 d-flex align-items-center justify-content-center">
-                        <div class="row g-3" style="width: 100%;">
-                            <div class="col-md-3 d-flex flex-column">
-                                <table class="table table-one mb-4">
-                                    <tbody id="country-traffic-table"></tbody>
-                                </table>
-                            </div>
-                            <div class="col-md-9 mt-5 mt-md-0">
-                                <div id="vmap" class="vmap-one" style="width: 600px; height: 400px;"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-12 col-lg-4 col-xl-3 d-flex flex-column">
-                <div class="card card-one mb-1">
-                    <div class="card-header">
-                        <h6 class="card-title">Traffic Source</h6>
-                    </div>
-                    <div class="card-body p-3">
-                        <div class="progress progress-one ht-8 mt-2 mb-4" id="progress-container">
-                        </div>
-                        <table class="table table-three">
-                            <tbody id="domain-table-body"></tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="card card-one">
-                    <div class="card-header">
-                        <h6 class="card-title">Device Used By Users</h6>
-                    </div>
-                    <div class="card-body p-3">
-                        <div class="progress progress-one ht-8 mt-2 mb-4" id="progress-device"></div>
-                        <table class="table table-three">
-                            <tbody id="table-device"></tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
             <div class="col-md-12">
                 <div class="card card-one mt-3 unsetWidth">
                     <div class="card-body p-3">
@@ -344,12 +279,12 @@ include_once 'header.php';
             .then(res => {
                 if (res.success) {
                     let data = res.data;
-                    console.log('map data = ', data.listMapCountryTraffic);
 
                     $('#yesterday_earning').text("$" + data.revenueYesterday);
                     $('#this_month').text("$" + data.revenueThisMonth);
                     $('#last_month').text("$" + data.revenueLastMonth);
                     $('#total_earning').text("$" + data.totalReport);
+
                     chart.updateSeries(data.chart.data);
                     chart.updateOptions({
                         xaxis: {
@@ -371,99 +306,6 @@ include_once 'header.php';
                             }
                         }
                     });
-                    let colors = ['bg-success', 'bg-orange', 'bg-pink', 'bg-info', 'bg-indigo'];
-                    let progressContainerTrafic = document.getElementById('progress-container');
-                    progressContainerTrafic.innerHTML = '';
-                    data.reportRefererDomain.forEach((domain, index) => {
-                        let progressBar = document.createElement('div');
-                        progressBar.className = `progress ${colors[index % colors.length]}`;
-                        progressBar.style.width = `${domain.percent}%`;
-                        progressBar.setAttribute('aria-valuenow', domain.percent);
-                        progressBar.setAttribute('aria-valuemin', '0');
-                        progressBar.setAttribute('aria-valuemax', '100');
-                        progressBar.style.borderRadius = 'unset';
-
-                        progressContainerTrafic.appendChild(progressBar);
-                    });
-                    let tableDomain = document.getElementById('domain-table-body');
-                    tableDomain.innerHTML = '';
-
-                    if (data.reportRefererDomain.length > 0) {
-                        data.reportRefererDomain.forEach((domain, index) => {
-                            let row = document.createElement('tr');
-
-                            let colorCell = document.createElement('td');
-                            let badgeDot = document.createElement('div');
-                            badgeDot.className = `badge-dot ${colors[index % colors.length]}`;
-                            colorCell.appendChild(badgeDot);
-                            row.appendChild(colorCell);
-
-                            let nameCell = document.createElement('td');
-                            nameCell.className = 'domain-name';
-                            nameCell.textContent = domain.name;
-                            row.appendChild(nameCell);
-
-                            let percentCell = document.createElement('td');
-                            percentCell.textContent = `${domain.percent}%`;
-                            row.appendChild(percentCell);
-
-                            tableDomain.appendChild(row);
-                        });
-                    } else {
-                        let noDataRow = document.createElement('tr');
-                        let noDataCell = document.createElement('td');
-                        noDataCell.colSpan = 3;
-                        noDataCell.textContent = 'No data available';
-                        noDataRow.appendChild(noDataCell);
-                        tableDomain.appendChild(noDataRow);
-                    }
-
-                    let progressContainerDevice = document.getElementById('progress-device');
-                    progressContainerDevice.innerHTML = '';
-
-                    data.reportDevice.forEach((device, index) => {
-                        let progressBar = document.createElement('div');
-                        progressBar.className = `progress ${colors[index % colors.length]}`;
-                        progressBar.style.width = `${device.percent}%`;
-                        progressBar.setAttribute('aria-valuenow', device.percent);
-                        progressBar.setAttribute('aria-valuemin', '0');
-                        progressBar.setAttribute('aria-valuemax', '100');
-                        progressBar.style.borderRadius = 'unset';
-
-                        progressContainerDevice.appendChild(progressBar);
-                    });
-
-                    let tableDevice = document.getElementById('table-device');
-                    tableDevice.innerHTML = '';
-
-                    if (data.reportDevice.length > 0) {
-                        data.reportDevice.forEach((device, index) => {
-                            let row = document.createElement('tr');
-
-                            let colorCell = document.createElement('td');
-                            let badgeDot = document.createElement('div');
-                            badgeDot.className = `badge-dot ${colors[index % colors.length]}`;
-                            colorCell.appendChild(badgeDot);
-                            row.appendChild(colorCell);
-
-                            let nameCell = document.createElement('td');
-                            nameCell.textContent = device.name;
-                            row.appendChild(nameCell);
-
-                            let percentCell = document.createElement('td');
-                            percentCell.textContent = `${device.percent}%`;
-                            row.appendChild(percentCell);
-
-                            tableDevice.appendChild(row);
-                        });
-                    } else {
-                        let noDataRow = document.createElement('tr');
-                        let noDataCell = document.createElement('td');
-                        noDataCell.colSpan = 3;
-                        noDataCell.textContent = 'No data available';
-                        noDataRow.appendChild(noDataCell);
-                        tableDevice.appendChild(noDataRow);
-                    }
 
                     let items = data.items && data.items.data.length > 0 ? data.items.data : [];
                     let countItem = data.countItem;
@@ -490,10 +332,10 @@ include_once 'header.php';
                             return;
                         }
 
-                        let currentDate = itemReportSite.date;
-                        let rowspanCount = items.filter(item => item.date === currentDate).length;
+                        let reportDate = itemReportSite.date;
+                        let rowspanCount = items.filter(item => item.date === reportDate).length;
 
-                        if (currentDate !== previousDate) {
+                        if (reportDate !== previousDate) {
                             let row = document.createElement('tr');
                             row.innerHTML = `
                         <td class="textCenter" rowspan="${rowspanCount}" style="vertical-align: middle;">${itemReportSite.date}</td>
@@ -526,7 +368,7 @@ include_once 'header.php';
                             tableBody.appendChild(row);
                         }
 
-                        previousDate = currentDate;
+                        previousDate = reportDate;
                     });
 
                     if (
@@ -594,38 +436,6 @@ include_once 'header.php';
                         });
                     }
 
-                    let listCountryTraffic = data.listCountryTraffic;
-                    let totalCountryTraffic = data.totalCountryTraffic;
-                    let countryTraffic = document.getElementById('country-traffic-table');
-
-                    countryTraffic.innerHTML = '';
-
-                    if (listCountryTraffic.length > 0) {
-                        listCountryTraffic.forEach(itemTraffic => {
-                            let percentage = totalCountryTraffic != 0 ?
-                                ((itemTraffic.total_impressions / totalCountryTraffic) * 100).toFixed(2) :
-                                0;
-
-                            let row = document.createElement('tr');
-                            row.innerHTML = `
-                        <td scope="row" data-column="Date">
-                            <span class="flag-icon flag-icon-${itemTraffic.code}"></span>
-                            <span class="fw-medium">${itemTraffic.name}</span>
-                        </td>
-                        <td>${percentage}%</td>
-                    `;
-
-                            countryTraffic.appendChild(row);
-                        });
-                    } else {
-                        let noDataRow = document.createElement('tr');
-                        noDataRow.innerHTML = `
-                    <td colspan="2">No data available</td>
-                `;
-                        countryTraffic.appendChild(noDataRow);
-                    }
-
-                    jQuery('#vmap').vectorMap('set', 'colors', data.listMapCountryTraffic);
                     $('#loader').hide();
                 } else {
                     alert(res.message || 'Get data dashboard fail');
@@ -654,23 +464,6 @@ include_once 'header.php';
         event.preventDefault();
         window.location.reload();
     }
-</script>
-
-<script type="text/javascript">
-    jQuery(document).ready(function() {
-        jQuery('#vmap').vectorMap({
-            map: 'world_en',
-            backgroundColor: '#fff',
-            borderColor: '#fff',
-            color: '#d9dde7',
-            colors: {},
-            hoverColor: null,
-            hoverOpacity: 0.8,
-            enableZoom: false,
-            showTooltip: true,
-            multiSelectRegion: true
-        });
-    });
 </script>
 
 <script>
