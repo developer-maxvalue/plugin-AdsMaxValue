@@ -14,7 +14,7 @@ class AAP_Model_Users
             email varchar(255) NOT NULL,
             password varchar(255) NOT NULL,
             token text DEFAULT NULL,
-            PRIMARY KEY  (id),
+            PRIMARY KEY  (id)
         ) $charset_collate;";
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
