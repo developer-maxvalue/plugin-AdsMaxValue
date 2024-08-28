@@ -15,7 +15,6 @@ class AAP_Model_Users
             password varchar(255) NOT NULL,
             token text DEFAULT NULL,
             PRIMARY KEY  (id),
-            UNIQUE KEY email (email)
         ) $charset_collate;";
 
         require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
@@ -82,6 +81,13 @@ class AAP_Model_Users
         global $wpdb;
         $table_name = $wpdb->prefix . 'mv_users';
         return $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE email = %s", $email));
+    }
+
+    public static function get_user_by_token($token)
+    {
+        global $wpdb;
+        $table_name = $wpdb->prefix . 'mv_users';
+        return $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE token = %s", $token));
     }
 
     public static function update_user_token($email, $token)
