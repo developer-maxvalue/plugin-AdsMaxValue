@@ -14,6 +14,7 @@ class AAP_Controller
         AAP_Model_Users::aap_uninstall();
 
         // remove file ads.txt
+        unlink(ABSPATH . 'ads.txt');
 
     }
 
