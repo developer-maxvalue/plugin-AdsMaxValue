@@ -22,18 +22,15 @@ include_once 'base.php';
 <?php
 include_once 'header.php';
 ?>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.4.12/ace.js"></script>
 <div id="content-wrapper" style="display:none; background-color: #F9FAFC; margin-left: -22px">
     <div class="wrap">
-        <div class="d-flex align-items-center justify-content-between mb-4 pt-4">
-            <div>
-                <p>You have successfully uploaded ads.txt on your website</p>
-            </div>
-        </div>
-        <div class="row mb-3">
-            <form method="POST">
+        <div class="row mb-3 pt-4">
+            <form method="POST" id="formAdsTxt">
                 <div class="mb-3">
-                    <textarea class="form-control" id="adsTxt" name="adsTxt" rows="10"> <?php echo esc_textarea(trim($contentAdsTxt ?? '')); ?></textarea>
+<!--                    <textarea class="form-control" id="editorAdsTxt" name="adsTxt" rows="10"> --><?php //echo esc_textarea(trim($contentAdsTxt ?? '')); ?><!--</textarea>-->
+                    <div id="editorAdsTxt"><?php echo esc_textarea(trim($contentAdsTxt ?? '')); ?></div>
+                    <textarea hidden name="adsTxt" id="adsTxt"></textarea>
                     <p class="mt-3">The file is available on <a href='<?php echo (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']
                                                                             === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'] ?>/ads.txt' target="_blank"><?php echo (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS']
                                                                                                                                                                             === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'] ?>/ads.txt</a> .</p>
@@ -43,7 +40,20 @@ include_once 'header.php';
         </div>
     </div>
 </div>
+<style>
+    #editorAdsTxt {
+        height: 300px;
+        width: 100%;
+        border: 1px solid #ccc;
+    }
+</style>
+<script>
+    var editor = ace.edit("editorAdsTxt");
 
+    document.getElementById("formAdsTxt").onsubmit = function() {
+        document.getElementById("adsTxt").value = editor.getValue();
+    };
+</script>
 <script>
     localStorage.setItem('page_title', 'Ads.Txt Configuration');
 </script>
