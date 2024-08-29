@@ -265,7 +265,7 @@ include_once 'header.php';
         var date_option = urlParams.get('date_option');
         var page = urlParams.get('wp_page');
 
-        const apiUrl = `https://stg-publisher.maxvalue.media/api/dashboard?website_name=${encodeURIComponent(website)}&start=${start}&end=${end}&date_option=${date_option}&page=${page}`;
+        const apiUrl = `<?php echo AAP_MAXVALUE_URL; ?>/api/dashboard?website_name=${encodeURIComponent(website)}&start=${start}&end=${end}&date_option=${date_option}&page=${page}`;
 
         $('#loader').show();
         fetch(apiUrl, {

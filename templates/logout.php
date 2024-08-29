@@ -8,7 +8,7 @@
     <script>
         var token = localStorage.getItem('mv_jwt_token');
 
-        fetch('https://stg-publisher.maxvalue.media/api/logout', {
+        fetch('<?php echo AAP_MAXVALUE_URL; ?>/api/logout', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

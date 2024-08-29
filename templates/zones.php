@@ -210,7 +210,7 @@ include_once 'base.php';
         const params = new URLSearchParams(currentUrl.search);
         const website = 'https://dev.riseearning.com/';
 
-        const apiUrl = `https://stg-publisher.maxvalue.media/api/zone?website_name=${encodeURIComponent(website)}`;
+        const apiUrl = `<?php echo AAP_MAXVALUE_URL; ?>/api/zone?website_name=${encodeURIComponent(website)}`;
 
         $('#loader').show();
 
@@ -422,7 +422,7 @@ include_once 'base.php';
             }
         });
 
-        const apiUrl = 'https://stg-publisher.maxvalue.media/api/zone/store';
+        const apiUrl = '<?php echo AAP_MAXVALUE_URL; ?>/api/zone/store';
 
         $('#loader').show();
         fetch(apiUrl, {
@@ -459,7 +459,7 @@ include_once 'base.php';
 
         $('#detailZoneModal').modal('hide');
 
-        let apiUrl = `https://stg-publisher.maxvalue.media/api/getCode?id=${id}`;
+        let apiUrl = `<?php echo AAP_MAXVALUE_URL; ?>/api/getCode?id=${id}`;
 
         fetch(apiUrl, {
                 method: 'GET',

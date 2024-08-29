@@ -131,7 +131,7 @@ check_user_token();
                 </div>
                 <div class="mb-4">
                     <label class="form-label d-flex justify-content-between">Password
-                        <a href="https://stg-publisher.maxvalue.media/password/reset" style="text-decoration: none;" target="_blank">Forgot password?</a>
+                        <a href="<?php echo AAP_MAXVALUE_URL; ?>/password/reset" style="text-decoration: none;" target="_blank">Forgot password?</a>
                     </label>
                     <input type="password" class="form-control" name="password" id="password" placeholder="Enter your password" required>
                 </div>
@@ -140,7 +140,7 @@ check_user_token();
             <p id="login-error" style="color: red;"></p>
         </div>
         <div class="card-footer" style="background-color: unset; border-top: unset">
-            Don't have an account? <a href="https://stg-publisher.maxvalue.media/register" style="text-decoration: none;" target="_blank">Create an Account</a>
+            Don't have an account? <a href="<?php echo AAP_MAXVALUE_URL; ?>/register" style="text-decoration: none;" target="_blank">Create an Account</a>
         </div>
     </div>
 </div>
@@ -183,7 +183,7 @@ check_user_token();
         var email = document.getElementById('email').value;
         var password = document.getElementById('password').value;
 
-        fetch('https://stg-publisher.maxvalue.media/api/login-jwt', {
+        fetch('<?php echo AAP_MAXVALUE_URL; ?>/api/login-jwt', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

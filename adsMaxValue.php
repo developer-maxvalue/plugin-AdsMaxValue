@@ -15,7 +15,7 @@ if ( !defined( 'ABSPATH' ) ) exit;
 // Định nghĩa các hằng số
 define( 'AAP_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 define( 'AAP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-define( 'AAP_MAXVALUE_URL', 'https://publisher.maxvalue.media');
+define( 'AAP_MAXVALUE_URL', 'https://stg-publisher.maxvalue.media');
 define('MY_WEBHOOK_SECRET_KEY', 'SaYoWRY6B9uIgL3QJNBkLw5wiEodXzm7');
 define('MV_DEBUG', true);
 

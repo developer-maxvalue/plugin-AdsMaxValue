@@ -126,7 +126,7 @@ include_once 'base.php';
 
         const dateSelect = urlParams.get('dateSelect');
 
-        const apiUrl = new URL(`https://stg-publisher.maxvalue.media/api/report`);
+        const apiUrl = new URL(`<?php echo AAP_MAXVALUE_URL; ?>/api/report`);
         apiUrl.searchParams.append('website_name', website);
         apiUrl.searchParams.append('page', page);
         apiUrl.searchParams.append('zoneId', zoneId);
