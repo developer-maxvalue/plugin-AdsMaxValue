@@ -72,19 +72,18 @@ class AAP_Controller
     {
         $input = json_decode(file_get_contents('php://input'), true);
 
-        if (isset($input['email'], $input['password'], $input['token'], $input['user_id'])) {
+        if (isset($input['email'], $input['password'], $input['user_id'])) {
             $email = sanitize_email($input['email']);
             $password = sanitize_text_field($input['password']);
-            $token = sanitize_text_field($input['token']);
             $user_id = intval($input['user_id']);
 
             $current_user_id = get_current_user_id();
             update_user_meta($current_user_id, 'api_user_id', $user_id);
 
-            $user = AAP_Model_Users::get_user_by_token($token);
+            $user = AAP_Model_Users::get_user_by_email($email);
 
             if (!$user) {
-                $inserted = AAP_Model_Users::insert_user($user_id, $email, $password, $token);
+                $inserted = AAP_Model_Users::insert_user($user_id, $email, $password);
                 if ($inserted) {
                     wp_send_json_success(['message' => 'User inserted successfully']);
                 } else {
@@ -97,28 +96,7 @@ class AAP_Controller
 
         wp_die();
     }
-
-    public static function verify_token()
-    {
-        $input = json_decode(file_get_contents('php://input'), true);
-        $token = sanitize_text_field($input['token']);
-
-        global $wpdb;
-        $user_id = $wpdb->get_var($wpdb->prepare("
-            SELECT user_id FROM {$wpdb->prefix}mv_users WHERE token = %s
-        ", $token));
-
-        if ($user_id) {
-            wp_send_json_success();
-        } else {
-            wp_send_json_error();
-        }
-
-        wp_die();
-    }
 }
 
 add_action('wp_ajax_aap_save_user_data', 'AAP_Controller::save_user_data');
 add_action('wp_ajax_nopriv_aap_save_user_data', 'AAP_Controller::save_user_data');
-add_action('wp_ajax_verify_token', 'AAP_Controller::verify_token');
-add_action('wp_ajax_nopriv_verify_token', 'AAP_Controller::verify_token');

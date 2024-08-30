@@ -13,7 +13,6 @@ class AAP_Model_Users
             user_id int(11) NOT NULL,
             email varchar(255) NOT NULL,
             password varchar(255) NOT NULL,
-            token text DEFAULT NULL,
             PRIMARY KEY  (id)
         ) $charset_collate;";
 
@@ -33,7 +32,7 @@ class AAP_Model_Users
         $wpdb->query($sql);
     }
 
-    public static function insert_user($user_id, $email, $password, $token = null)
+    public static function insert_user($user_id, $email, $password)
     {
         global $wpdb;
         $table_name = $wpdb->prefix . 'mv_users';
@@ -41,8 +40,7 @@ class AAP_Model_Users
         $inserted = $wpdb->insert($table_name, [
             'user_id' => $user_id,
             'email' => $email,
-            'password' => wp_hash_password($password),
-            'token' => $token,
+            'password' => wp_hash_password($password)
         ]);
 
         if (false === $inserted) {
@@ -52,14 +50,13 @@ class AAP_Model_Users
         return $inserted;
     }
 
-    public static function update_user($user_id, $email, $token)
+    public static function update_user($user_id, $email)
     {
         global $wpdb;
         $table_name = $wpdb->prefix . 'mv_users';
 
         $updated = $wpdb->update($table_name, [
             'user_id' => $user_id,
-            'token' => $token,
         ], ['email' => $email]);
 
         if (false === $updated) {
@@ -83,45 +80,6 @@ class AAP_Model_Users
         return $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE email = %s", $email));
     }
 
-    public static function get_user_by_token($token)
-    {
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'mv_users';
-        return $wpdb->get_row($wpdb->prepare("SELECT * FROM $table_name WHERE token = %s", $token));
-    }
-
-    public static function update_user_token($email, $token)
-    {
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'mv_users';
-        return $wpdb->update($table_name, ['token' => $token], ['email' => $email]);
-    }
-
-    public static function get_user_token_by_user_id($user_id)
-    {
-        global $wpdb;
-        $table_name = $wpdb->prefix . 'mv_users';
-        return $wpdb->get_var($wpdb->prepare("SELECT token FROM $table_name WHERE user_id = %d", $user_id));
-    }
-
-    public static function user_has_valid_token($user_id)
-    {
-        $token = self::get_user_token_by_user_id($user_id);
-        return !empty($token);
-    }
-
-    public static function redirect_if_logged_in_with_token()
-    {
-        if (is_user_logged_in()) {
-            $user_id = get_current_user_id();
-
-            if (self::user_has_valid_token($user_id)) {
-                wp_redirect(admin_url('admin.php?page=mv-dashboard'));
-                exit;
-            }
-        }
-    }
-
     public static function logout_user($user_id)
     {
         global $wpdb;
@@ -129,7 +87,6 @@ class AAP_Model_Users
 
         $wpdb->update(
             $table_name,
-            array('token' => null),
             array('user_id' => $user_id)
         );
 

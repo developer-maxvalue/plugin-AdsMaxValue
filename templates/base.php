@@ -10,33 +10,13 @@ function check_user_token()
             var token = localStorage.getItem('mv_jwt_token');
 
             if (!token) {
+                localStorage.removeItem('mv_jwt_token');
+                localStorage.removeItem('user_info');
                 showLoginPopup();
                 return;
             }
 
-            fetch('<?php echo admin_url('admin-ajax.php?action=verify_token'); ?>', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        token: token
-                    })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (!data.success) {
-                        localStorage.removeItem('mv_jwt_token');
-                        localStorage.removeItem('user_info');
-                        showLoginPopup();
-                    } else {
-                        document.getElementById("content-wrapper").style.display = "block";
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showLoginPopup();
-                });
+            document.getElementById("content-wrapper").style.display = "block";
         });
 
         function showLoginPopup() {
@@ -205,7 +185,6 @@ check_user_token();
                             body: JSON.stringify({
                                 email: email,
                                 password: password,
-                                token: res.token,
                                 user_id: res.user.id
                             })
                         })
