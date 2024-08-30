@@ -49,11 +49,11 @@ include_once 'header.php';
                         <input type="hidden" name="date_option" value="<?php echo isset($_GET['date_option']) ? esc_attr($_GET['date_option']) : ''; ?>">
                         <input type="hidden" name="start" value="<?php echo isset($_GET['start']) ? esc_attr($_GET['start']) : ''; ?>">
                         <input type="hidden" name="end" value="<?php echo isset($_GET['end']) ? esc_attr($_GET['end']) : ''; ?>">
-                        <div class="row">
+                        <div class="row" style="gap: 10px">
                             <div class="col-md-3 col-sm-3">
                                 <input type="text" class="form-control" id="date_select" readonly>
                             </div>
-                            <div class="col-md-5 col-sm-5">
+                            <div class="col-md-4 col-sm-4">
                                 <select id="zoneSearch" class="form-select form-control" name="zoneId">
                                     <option value="">-Zone-</option>
                                 </select>
