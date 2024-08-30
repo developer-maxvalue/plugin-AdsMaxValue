@@ -15,7 +15,6 @@ class AAP_Controller
 
         // remove file ads.txt
         unlink(ABSPATH . 'ads.txt');
-
     }
 
     public static function dashboard()
@@ -89,11 +88,14 @@ class AAP_Controller
                 } else {
                     wp_send_json_error(['message' => 'Failed to insert user']);
                 }
+            } else {
+                wp_send_json_success(['message' => 'User already exists']);
             }
         } else {
             wp_send_json_error(['message' => 'Invalid data']);
         }
 
+        wp_send_json_error(['message' => 'Unexpected error occurred']);
         wp_die();
     }
 }
