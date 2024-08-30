@@ -30,7 +30,7 @@
     }
 
     .referralProgram .bd-clipboard {
-        bottom: 68px;
+        bottom: 56px;
         left: 30px;
     }
 
@@ -49,7 +49,7 @@
     }
 
     .referralProgram .bd-clipboard {
-        bottom: 68px;
+        bottom: 57px;
         left: 30px;
     }
 
@@ -123,4 +123,15 @@ include_once 'header.php';
 </div>
 <script>
     localStorage.setItem('page_title', 'Referral');
+
+    function copyValueInput(Id) {
+        var inputElement = document.createElement("input");
+        inputElement.value = document.getElementById(Id).value;
+        document.body.appendChild(inputElement);
+        inputElement.select();
+        document.execCommand("copy");
+        document.body.removeChild(inputElement);
+        document.getElementById(Id).focus();
+        document.getElementById(Id).select();
+    }
 </script>
